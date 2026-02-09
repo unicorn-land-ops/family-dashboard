@@ -4,7 +4,7 @@ import os
 import requests
 import random
 from datetime import datetime, date, timedelta
-from dateutil import rrule
+from zoneinfo import ZoneInfo
 from threading import Thread, Lock
 import time
 import re
@@ -87,25 +87,27 @@ def save_data(data):
             json.dump(data, f)
         os.replace(tmp_file, DATA_FILE)
 
+BERLIN_TZ = ZoneInfo('Europe/Berlin')
+UTC_TZ = ZoneInfo('UTC')
+
 def parse_ics_datetime(dt_str):
     try:
         # All-day event: YYYYMMDD
         if len(dt_str) == 8 and 'T' not in dt_str:
             return datetime.strptime(dt_str, '%Y%m%d'), True
-        
+
         # UTC datetime: YYYYMMDDTHHMMSSZ
         if 'Z' in dt_str:
             dt_clean = dt_str.replace('Z', '')
-            dt = datetime.strptime(dt_clean[:15], '%Y%m%dT%H%M%S')
-            # Convert UTC to Berlin time (CET = UTC+1)
-            dt = dt + timedelta(hours=1)
-            return dt, False
-        
+            dt_utc = datetime.strptime(dt_clean[:15], '%Y%m%dT%H%M%S').replace(tzinfo=UTC_TZ)
+            dt_berlin = dt_utc.astimezone(BERLIN_TZ)
+            return dt_berlin.replace(tzinfo=None), False
+
         # Local datetime with TZID (Europe/Berlin): already in local time
         if 'T' in dt_str:
             dt = datetime.strptime(dt_str[:15], '%Y%m%dT%H%M%S')
             return dt, False
-        
+
         return None, False
     except Exception as e:
         print(f'Datetime parse error: {e} for {dt_str}')
@@ -133,44 +135,36 @@ def detect_travel_location(event_title, event_location=''):
     return None
 
 def fetch_astrology():
-    """Fetch daily horoscopes by sign using Aztro API"""
+    """Fetch daily horoscopes using horoscope-app-api.vercel.app"""
     today = str(date.today())
     data = load_data()
-    
-    # Return cached astrology if from today
+
     if data.get('cached_astrology_date') == today and data.get('astrology'):
         return data['astrology']
-    
-    # Initialize with default messages
+
     astrology = {
         'capricorn': 'Stars are aligning...',
         'aquarius': 'Cosmic energies at work...',
         'sagittarius': 'Universal wisdom incoming...'
     }
-    
-    signs = ['capricorn', 'aquarius', 'sagittarius']
-    
-    for sign in signs:
+
+    for sign in ['Capricorn', 'Aquarius', 'Sagittarius']:
         try:
-            url = f'https://aztro.sameerkumar.website/v2/?sign={sign}&day=today'
-            resp = requests.post(url, timeout=10)
+            url = f'https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign={sign}&day=TODAY'
+            resp = requests.get(url, timeout=10)
             if resp.status_code == 200:
                 result = resp.json()
-                desc = result.get('description', 'No reading available')
-                if len(desc) > 120:
-                    desc = desc[:117] + '...'
-                astrology[sign] = desc
-            else:
-                astrology[sign] = f'{sign.title()} energy strong today'
+                if result.get('success'):
+                    desc = result['data'].get('horoscope_data', '')
+                    if len(desc) > 150:
+                        desc = desc[:147] + '...'
+                    astrology[sign.lower()] = desc
         except Exception as e:
             print(f'Astro error for {sign}: {e}')
-            astrology[sign] = f'{sign.title()} wisdom incoming'
-    
-    # Save to cache
+
     data['astrology'] = astrology
     data['cached_astrology_date'] = today
     save_data(data)
-    
     return astrology
 
 def fetch_calendar_events():
@@ -329,26 +323,39 @@ def fetch_calendar_events():
 
 def fetch_weather_and_forecast():
     try:
-        url = "https://api.open-meteo.com/v1/forecast?latitude=" + str(config['weather_lat']) + "&longitude=" + str(config['weather_lon']) + "&current_weather=true&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe/Berlin&forecast_days=7"
+        url = ("https://api.open-meteo.com/v1/forecast?"
+               "latitude=" + str(config['weather_lat']) +
+               "&longitude=" + str(config['weather_lon']) +
+               "&current_weather=true"
+               "&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset"
+               "&timezone=Europe/Berlin&forecast_days=7")
         resp = requests.get(url, timeout=10)
         if resp.status_code == 200:
             data = resp.json()
+            daily = data.get('daily', {})
+            today_sunrise = daily.get('sunrise', [''])[0]
+            today_sunset = daily.get('sunset', [''])[0]
             current = {
                 'temp': data['current_weather']['temperature'],
                 'condition': data['current_weather'].get('weathercode', 0),
-                'is_day': data['current_weather'].get('is_day', 1)
+                'is_day': data['current_weather'].get('is_day', 1),
+                'sunrise': today_sunrise[11:16] if today_sunrise else '',
+                'sunset': today_sunset[11:16] if today_sunset else ''
             }
-            
+
             forecast = []
-            daily = data.get('daily', {})
             for i in range(len(daily.get('time', []))):
+                sr = daily.get('sunrise', [''])[i] if i < len(daily.get('sunrise', [])) else ''
+                ss = daily.get('sunset', [''])[i] if i < len(daily.get('sunset', [])) else ''
                 forecast.append({
                     'date': daily['time'][i],
                     'high': round(daily['temperature_2m_max'][i]),
                     'low': round(daily['temperature_2m_min'][i]),
-                    'condition': daily['weather_code'][i]
+                    'condition': daily['weather_code'][i],
+                    'sunrise': sr[11:16] if sr else '',
+                    'sunset': ss[11:16] if ss else ''
                 })
-            
+
             return current, forecast
     except Exception as e:
         print('Weather error: ' + str(e))
@@ -411,25 +418,69 @@ def fetch_random_country():
             'languages': languages[:3],
             'flag_emoji': flag_emoji,
             'region': country_data.get('region', 'Unknown'),
-            'fun_fact': get_fun_fact(country_data.get('name', {}).get('common', '')),
+            'fun_fact': get_fun_fact(country_data.get('name', {}).get('common', ''), cca2, country_data),
             'dish': get_typical_dish(cca2)
         }
     except Exception as e:
         print('Country fetch error: ' + str(e))
         return None
 
-def get_fun_fact(country_name):
-    facts = [
-        "Home to unique wildlife found nowhere else on Earth",
-        "Has more than 700 islands in its territory",
-        "One of the smallest countries in the world by population",
-        "Known for having no traffic lights in the entire country",
-        "Contains the world's oldest rainforest",
-        "Has more sheep than people",
-        "The only country in its region never colonized by Europe",
-        "Famous for having pink sand beaches"
-    ]
-    return random.choice(facts)
+COUNTRY_FACTS = {
+    'ST': 'Straddles the equator in the Gulf of Guinea',
+    'TV': 'Fourth smallest country in the world',
+    'BT': 'Measures success by Gross National Happiness',
+    'MV': 'Lowest-lying country on Earth, avg 1.5m above sea level',
+    'LC': 'Named after Saint Lucy by French sailors',
+    'VC': 'Home to the oldest botanic gardens in the Western Hemisphere',
+    'KI': 'Spans all four hemispheres of the Earth',
+    'NR': 'Smallest island nation in the world',
+    'PW': 'Created the world\'s first shark sanctuary',
+    'FM': 'Contains ancient ruins of Nan Madol, the "Venice of the Pacific"',
+    'AD': 'Has no airport, railway, or seaport',
+    'LI': 'Last country to give women the right to vote (1984)',
+    'MC': 'Smaller than Central Park in New York',
+    'SM': 'Claims to be the world\'s oldest republic (founded 301 AD)',
+    'TO': 'One of the first places in the world to see the new day',
+    'MN': 'Home to the least densely populated country on Earth',
+    'GE': 'Birthplace of wine — 8000 years of winemaking',
+    'AM': 'First country to adopt Christianity as state religion (301 AD)',
+    'RW': 'Known as the "Land of a Thousand Hills"',
+    'SI': 'Over 60% of the country is covered in forest',
+    'EE': 'Has the most startups per capita in Europe',
+    'IS': 'Has no army and no McDonald\'s',
+    'ZA': 'Has three capital cities',
+    'NA': 'Home to the world\'s oldest desert (the Namib)',
+    'BW': 'Home to the Okavango Delta, the largest inland delta',
+    'NP': 'The only country with a non-rectangular flag',
+    'CR': 'Abolished its army in 1948',
+    'PA': 'Only place where you can see the sun rise over the Pacific and set over the Atlantic',
+    'FJ': 'Made up of 333 islands, only 110 inhabited',
+    'JP': 'Has more than 6,800 islands',
+    'DE': 'Has over 1,500 different beers',
+    'BR': 'Contains 60% of the Amazon rainforest',
+    'NZ': 'Has more sheep than people',
+    'AU': 'Home to 21 of the world\'s 25 most venomous snakes',
+}
+
+def get_fun_fact(country_name, country_code='', country_data=None):
+    if country_code in COUNTRY_FACTS:
+        return COUNTRY_FACTS[country_code]
+    if country_data:
+        landlocked = country_data.get('landlocked', False)
+        pop = country_data.get('population', 0)
+        area = country_data.get('area', 0)
+        borders = country_data.get('borders', [])
+        if landlocked:
+            return f'A landlocked country with {len(borders)} neighbor{"s" if len(borders) != 1 else ""}'
+        if pop and area and area > 0:
+            density = pop / area
+            if density < 5:
+                return 'One of the least densely populated places on Earth'
+            if density > 1000:
+                return 'One of the most densely populated places on Earth'
+        if area and area < 1000:
+            return f'Tiny nation — only {int(area)} km² in area'
+    return f'A fascinating place to explore!'
 
 def get_typical_dish(country_code):
     dishes = {
@@ -519,7 +570,7 @@ def update_external_data():
                 print('Weather error: ' + str(e))
             
             try:
-                events, travel = fetch_calendar_events()
+                events, travel, school_off = fetch_calendar_events()
                 data['cached_events'] = events
                 data['travel_info'] = travel
             except Exception as e:

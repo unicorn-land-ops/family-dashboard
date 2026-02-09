@@ -19,7 +19,7 @@ body {
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto auto 1fr;
     padding: 20px;
     gap: 15px;
 }
@@ -51,6 +51,28 @@ body {
 }
 .weather-temp { font-size: 4rem; font-weight: 300; }
 .weather-icon { font-size: 3rem; }
+.sun-times {
+    font-size: 1.4rem;
+    color: rgba(255,255,255,0.7);
+    text-align: right;
+    line-height: 1.6;
+}
+.sun-times .sunrise { color: #FFD700; }
+.sun-times .sunset { color: #FF8C42; }
+.travel-banner {
+    display: none;
+    background: linear-gradient(135deg, rgba(0, 150, 255, 0.25), rgba(0, 100, 200, 0.15));
+    border: 2px solid rgba(0, 150, 255, 0.5);
+    border-radius: 15px;
+    padding: 15px 25px;
+    font-size: 1.4rem;
+    align-items: center;
+    gap: 15px;
+}
+.travel-banner.active { display: flex; }
+.travel-location { font-size: 1.8rem; font-weight: 600; color: #64B5F6; }
+.travel-time { font-size: 2rem; font-weight: 300; color: #FFD700; font-family: monospace; }
+.travel-sun { font-size: 1.2rem; color: rgba(255,255,255,0.7); }
 .country-section {
     background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(142, 68, 173, 0.2));
     border-radius: 15px;
@@ -73,13 +95,12 @@ body {
 .country-name { font-size: 2.5rem; font-weight: 700; color: #E8DAEF; }
 .country-details { font-size: 1.4rem; color: rgba(255,255,255,0.9); margin-top: 8px; }
 
-/* ASTROLOGY SECTION - SIMPLIFIED */
+/* ASTROLOGY SECTION */
 .astrology-section {
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.1));
     border-radius: 15px;
     padding: 20px 25px;
     border: 2px solid rgba(255, 215, 0, 0.4);
-    margin-top: 15px;
 }
 .astrology-header {
     font-size: 1.4rem;
@@ -107,8 +128,16 @@ body {
     min-width: 50px;
     text-align: center;
 }
+.astro-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #FFD700;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 .astro-reading {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: rgba(255,255,255,0.9);
     line-height: 1.4;
     flex: 1;
@@ -195,6 +224,14 @@ body {
     line-height: 1.3;
 }
 .no-events { color: rgba(255,255,255,0.3); font-style: italic; font-size: 1.3rem; }
+.event-no-school {
+    background: rgba(0, 212, 170, 0.2);
+    border: 1px solid rgba(0, 212, 170, 0.4);
+    border-radius: 6px;
+    padding: 2px 8px;
+    color: #00D4AA;
+    font-weight: 600;
+}
 .right-section {
     width: 38%;
     min-width: 380px;
@@ -319,11 +356,15 @@ body {
             <div class="time" id="clock">--:--</div>
             <div class="date" id="date">------</div>
         </div>
-        <div class="weather-header">
-            <div class="weather-temp" id="current-temp">--</div>
-            <div class="weather-icon" id="current-icon">☀️</div>
+        <div style="display:flex;align-items:center;gap:20px;">
+            <div class="sun-times" id="sun-times"></div>
+            <div class="weather-header">
+                <div class="weather-temp" id="current-temp">--</div>
+                <div class="weather-icon" id="current-icon">☀️</div>
+            </div>
         </div>
     </div>
+    <div class="travel-banner" id="travel-banner"></div>
 
     <div class="country-section">
         <div class="country-header">🗺️ Country of the Day</div>
@@ -342,28 +383,36 @@ body {
                 <div class="calendar-header">📅 Next 7 Days</div>
                 <div class="calendar-grid" id="calendar-grid"></div>
             </div>
-            
-            <!-- ASTROLOGY SECTION - SIMPLIFIED -->
+        </div>
+
+        <div class="right-section">
+            <!-- ASTROLOGY SECTION -->
             <div class="astrology-section">
                 <div class="astrology-header">✨ Daily Horoscope</div>
                 <div class="astro-list">
                     <div class="astro-item">
                         <div class="astro-symbol">♑</div>
-                        <div class="astro-reading" id="astro-capricorn">Loading...</div>
+                        <div>
+                            <div class="astro-name">Daddy & Wren</div>
+                            <div class="astro-reading" id="astro-capricorn">Loading...</div>
+                        </div>
                     </div>
                     <div class="astro-item">
                         <div class="astro-symbol">♒</div>
-                        <div class="astro-reading" id="astro-aquarius">Loading...</div>
+                        <div>
+                            <div class="astro-name">Ellis</div>
+                            <div class="astro-reading" id="astro-aquarius">Loading...</div>
+                        </div>
                     </div>
                     <div class="astro-item">
                         <div class="astro-symbol">♐</div>
-                        <div class="astro-reading" id="astro-sagittarius">Loading...</div>
+                        <div>
+                            <div class="astro-name">Papa</div>
+                            <div class="astro-reading" id="astro-sagittarius">Loading...</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="right-section">
             <div class="kids-section">
                 <div class="kid-card">
                     <div class="kid-header">🌸 Wren</div>
@@ -400,12 +449,24 @@ const dayAbbrev = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 let activeTimers = [];
 let lastDataStr = '';
+let currentTravelInfo = null;
 
 function updateClock() {
     const now = new Date();
     document.getElementById('clock').textContent = now.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Berlin'});
     document.getElementById('date').textContent = dayAbbrev[now.getDay()] + ', ' + monthNames[now.getMonth()] + ' ' + now.getDate();
-    
+
+    // Update travel time live
+    if (currentTravelInfo && currentTravelInfo.timezone) {
+        const travelBanner = document.getElementById('travel-banner');
+        try {
+            const travelTime = now.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit', hour12: false, timeZone: currentTravelInfo.timezone});
+            const berlinTime = now.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Berlin'});
+            const travelerName = currentTravelInfo.traveler || 'Someone';
+            travelBanner.innerHTML = '✈️ <span class="travel-location">' + travelerName + ' in ' + currentTravelInfo.location + '</span> <span class="travel-time">' + travelTime + '</span> <span class="travel-sun">(Berlin: ' + berlinTime + ')</span>';
+        } catch(e) {}
+    }
+
     if (activeTimers.length > 0) {
         const nowMs = Date.now();
         activeTimers.forEach(timer => {
@@ -464,6 +525,20 @@ async function fetchData() {
         if (data.cached_weather && data.cached_weather.temp !== undefined) {
             document.getElementById('current-temp').textContent = Math.round(data.cached_weather.temp) + '°';
             document.getElementById('current-icon').textContent = WEATHER_EMOJIS[data.cached_weather.condition || 0] || '☀️';
+            const sunEl = document.getElementById('sun-times');
+            if (data.cached_weather.sunrise && data.cached_weather.sunset) {
+                sunEl.innerHTML = '<span class="sunrise">☀️ ' + data.cached_weather.sunrise + '</span><br><span class="sunset">🌙 ' + data.cached_weather.sunset + '</span>';
+            }
+        }
+
+        // Travel banner
+        const travelBanner = document.getElementById('travel-banner');
+        if (data.travel_info && data.travel_info.timezone) {
+            currentTravelInfo = data.travel_info;
+            travelBanner.classList.add('active');
+        } else {
+            currentTravelInfo = null;
+            travelBanner.classList.remove('active');
         }
         
         if (data.country_of_day && data.country_of_day.name) {
@@ -539,7 +614,10 @@ async function fetchData() {
             let eventsHtml = dayEvents.map(e => {
                 const emojis = e.calendars.map(c => PERSON_EMOJIS[c] || '❓').join('');
                 const timeStr = e.time || '';
-                return '<div class="event-item"><span class="event-emojis">' + emojis + '</span>' + (timeStr ? '<span class="event-time">' + timeStr + '</span>' : '') + '<span class="event-title">' + e.title + '</span></div>';
+                const isNoSchool = e.title.toLowerCase().includes('no school') || e.title.toLowerCase().includes('schulfrei') || e.title.toLowerCase().includes('ferien');
+                const titleClass = isNoSchool ? 'event-title event-no-school' : 'event-title';
+                const displayTitle = isNoSchool ? '🎉 ' + e.title : e.title;
+                return '<div class="event-item"><span class="event-emojis">' + emojis + '</span>' + (timeStr ? '<span class="event-time">' + timeStr + '</span>' : '') + '<span class="' + titleClass + '">' + displayTitle + '</span></div>';
             }).join('') || '<span class="no-events">—</span>';
             
             let weatherHtml = '';
