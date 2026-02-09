@@ -7,22 +7,23 @@ from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 from threading import Thread, Lock
 import time
-import re
 
 app = Flask(__name__)
 DATA_FILE = '/home/pi/dashboard/data.json'
 BVG_API_URL = 'https://v6.bvg.transport.rest/stops/900110005/departures'
+CREDENTIALS_FILE = '/home/pi/dashboard/obadiah-486121-feddc6056e28.json'
 
 file_lock = Lock()
 
+CALENDAR_IDS = {
+    'family': '9gaocpaifjfdfd809s51vhteos@group.calendar.google.com',
+    'papa': 'joshua@masawa.fund',
+    'wren': '0u0uevnmmhtb295sre9bftof98@group.calendar.google.com',
+    'ellis': 'p906t82tuhrdj60muv22euq3hs@group.calendar.google.com',
+    'daddy': 'scottculley@gmail.com'
+}
+
 config = {
-    'calendars': {
-        'family': 'https://calendar.google.com/calendar/ical/9gaocpaifjfdfd809s51vhteos%40group.calendar.google.com/private-870afa40c37fe857d90e573bc7a94d39/basic.ics',
-        'papa': 'https://calendar.google.com/calendar/ical/joshua%40masawa.fund/private-b9d2d8e3c640cba307bffb8800e1184e/basic.ics',
-        'wren': 'https://calendar.google.com/calendar/ical/0u0uevnmmhtb295sre9bftof98%40group.calendar.google.com/private-00c2f92516c2c794947233ab72ab459f/basic.ics',
-        'ellis': 'https://calendar.google.com/calendar/ical/p906t82tuhrdj60muv22euq3hs%40group.calendar.google.com/private-9f2885f66e05c732531f5e8412afbf1a/basic.ics',
-        'daddy': 'https://calendar.google.com/calendar/ical/scottculley%40gmail.com/private-880cafa3c384dbb901770fbe10917bdb/basic.ics'
-    },
     'weather_lat': 52.5200,
     'weather_lon': 13.4050,
     'bvg_enabled': True
@@ -90,28 +91,25 @@ def save_data(data):
 BERLIN_TZ = ZoneInfo('Europe/Berlin')
 UTC_TZ = ZoneInfo('UTC')
 
-def parse_ics_datetime(dt_str):
+# Google Calendar API auth
+_gcal_service = None
+
+def get_gcal_service():
+    global _gcal_service
+    if _gcal_service is not None:
+        return _gcal_service
     try:
-        # All-day event: YYYYMMDD
-        if len(dt_str) == 8 and 'T' not in dt_str:
-            return datetime.strptime(dt_str, '%Y%m%d'), True
-
-        # UTC datetime: YYYYMMDDTHHMMSSZ
-        if 'Z' in dt_str:
-            dt_clean = dt_str.replace('Z', '')
-            dt_utc = datetime.strptime(dt_clean[:15], '%Y%m%dT%H%M%S').replace(tzinfo=UTC_TZ)
-            dt_berlin = dt_utc.astimezone(BERLIN_TZ)
-            return dt_berlin.replace(tzinfo=None), False
-
-        # Local datetime with TZID (Europe/Berlin): already in local time
-        if 'T' in dt_str:
-            dt = datetime.strptime(dt_str[:15], '%Y%m%dT%H%M%S')
-            return dt, False
-
-        return None, False
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+        creds = service_account.Credentials.from_service_account_file(
+            CREDENTIALS_FILE,
+            scopes=['https://www.googleapis.com/auth/calendar.readonly']
+        )
+        _gcal_service = build('calendar', 'v3', credentials=creds)
+        return _gcal_service
     except Exception as e:
-        print(f'Datetime parse error: {e} for {dt_str}')
-        return None, False
+        print(f'Google Calendar auth error: {e}')
+        return None
 
 def should_show_event(event_title, calendar_name, event_dt, is_all_day):
     if calendar_name == 'papa':
@@ -168,157 +166,104 @@ def fetch_astrology():
     return astrology
 
 def fetch_calendar_events():
+    """Fetch events from Google Calendar API with automatic recurring event expansion."""
+    service = get_gcal_service()
+    if not service:
+        print('Calendar: no Google Calendar service available')
+        return [], None, {}
+
     events = []
     travel_events = []
     today = date.today()
-    window_start = today
-    window_end = today + timedelta(days=6)
+    time_min = datetime.combine(today, datetime.min.time()).strftime('%Y-%m-%dT00:00:00Z')
+    time_max = (datetime.combine(today + timedelta(days=6), datetime.max.time())).strftime('%Y-%m-%dT23:59:59Z')
     school_off_dates = {}
-    
-    for cal_name, cal_url in config["calendars"].items():
-        if not cal_url:
-            continue
+
+    for cal_name, cal_id in CALENDAR_IDS.items():
         try:
-            resp = requests.get(cal_url, timeout=15)
-            if resp.status_code != 200:
-                continue
-            ics_content = resp.text
-            vevents = re.findall(r"BEGIN:VEVENT(.*?)END:VEVENT", ics_content, re.DOTALL)
-            
-            # Limit events processed per calendar for performance
-            vevents = vevents[:100]  # Max 100 events per calendar
-            
-            for vevent in vevents:
-                summary_match = re.search(r"SUMMARY:(.*?)(?:\r?\n[\w-]+:|\r?\nEND:VEVENT)", vevent, re.DOTALL)
-                summary = summary_match.group(1).strip() if summary_match else ""
-                summary = summary.replace("\\,", ",").replace("\\n", " ").strip()
+            result = service.events().list(
+                calendarId=cal_id,
+                timeMin=time_min,
+                timeMax=time_max,
+                singleEvents=True,
+                orderBy='startTime',
+                maxResults=100
+            ).execute()
+
+            for item in result.get('items', []):
+                summary = item.get('summary', '').strip()
                 if not summary:
                     continue
-                
-                loc_match = re.search(r"LOCATION:(.*?)(?:\r?\n[\w-]+:|\r?\nEND:VEVENT)", vevent, re.DOTALL)
-                location = loc_match.group(1).strip() if loc_match else ""
-                
-                dtstart_match = re.search(r"DTSTART(?:;[^:]*)?:([\dTZ]+)", vevent)
-                dtstart = dtstart_match.group(1) if dtstart_match else None
-                if not dtstart:
-                    continue
-                
-                # Check for recurring events
-                rrule_match = re.search(r"RRULE:([^\n]+)", vevent)
-                rrule_str = rrule_match.group(1) if rrule_match else None
-                
-                # Get exception dates
-                exdate_matches = re.findall(r"EXDATE(?:;[^:]*)?:([^\n]+)", vevent)
-                exdates = set()
-                for em in exdate_matches:
-                    em_clean = em.strip().replace("T", "").replace("Z", "")
-                    if len(em_clean) >= 8:
-                        try:
-                            exdates.add(datetime.strptime(em_clean[:8], "%Y%m%d").date())
-                        except:
-                            pass
-                
-                event_dt, is_all_day = parse_ics_datetime(dtstart)
-                if not event_dt:
-                    continue
-                
-                # Generate event instances within the window
-                event_instances = []
-                
-                if rrule_str and isinstance(event_dt, datetime):
-                    # Recurring event - expand instances
-                    try:
-                        # Determine frequency
-                        freq_str = "WEEKLY"
-                        if "DAILY" in rrule_str: freq_str = "DAILY"
-                        if "MONTHLY" in rrule_str: freq_str = "MONTHLY"
-                        delta_map = {"DAILY": timedelta(days=1), "WEEKLY": timedelta(weeks=1), "MONTHLY": timedelta(days=30)}
-                        delta = delta_map[freq_str]
-                        
-                        # Fast forward to window_start
-                        current_dt = event_dt
-                        if current_dt.date() < window_start:
-                            days_diff = (window_start - current_dt.date()).days
-                            if freq_str == "WEEKLY":
-                                weeks = days_diff // 7
-                                current_dt = current_dt + timedelta(weeks=weeks)
-                            elif freq_str == "DAILY":
-                                current_dt = current_dt + timedelta(days=days_diff)
-                            else:
-                                while current_dt.date() < window_start:
-                                    current_dt = current_dt + delta
-                        
-                        # Generate up to 10 occurrences in window
-                        for _ in range(10):
-                            occ_date = current_dt.date()
-                            if occ_date > window_end:
-                                break
-                            if occ_date >= window_start and occ_date not in exdates:
-                                event_instances.append({"dt": current_dt, "date": occ_date, "is_all_day": False})
-                            current_dt = current_dt + delta
-                    except Exception as e:
-                        print(f"RRULE error: {e}")
-                        event_date = event_dt.date()
-                        if window_start <= event_date <= window_end:
-                            event_instances.append({"dt": event_dt, "date": event_date, "is_all_day": False})
+
+                location = item.get('location', '')
+                start = item.get('start', {})
+                is_all_day = 'date' in start and 'dateTime' not in start
+
+                if is_all_day:
+                    event_date = datetime.strptime(start['date'], '%Y-%m-%d').date()
+                    event_dt = None
                 else:
-                    # Single event (or all-day)
-                    event_date = event_dt.date() if isinstance(event_dt, datetime) else event_dt
-                    if window_start <= event_date <= window_end:
-                        event_instances.append({"dt": event_dt, "date": event_date, "is_all_day": is_all_day})
-                
-                # Process each instance
-                for inst in event_instances:
-                    event_dt = inst["dt"]
-                    event_date = inst["date"]
-                    is_all_day = inst["is_all_day"]
-                    
-                    if is_all_day:
-                        travel_info = detect_travel_location(summary, location)
-                        if travel_info:
-                            travel_events.append({"traveler": travel_info["traveler"], "location": travel_info["location"], "timezone": travel_info["timezone"], "date": event_date.isoformat()})
-                    
-                    if not should_show_event(summary, cal_name, event_dt if not is_all_day else None, is_all_day):
+                    dt_str = start.get('dateTime', '')
+                    event_dt = datetime.fromisoformat(dt_str)
+                    if event_dt.tzinfo:
+                        event_dt = event_dt.astimezone(BERLIN_TZ).replace(tzinfo=None)
+                    event_date = event_dt.date()
+
+                # Travel detection for all-day events
+                if is_all_day:
+                    travel_info = detect_travel_location(summary, location)
+                    if travel_info:
+                        travel_events.append({
+                            'traveler': travel_info['traveler'],
+                            'location': travel_info['location'],
+                            'timezone': travel_info['timezone'],
+                            'date': event_date.isoformat()
+                        })
+
+                if not should_show_event(summary, cal_name, event_dt, is_all_day):
+                    continue
+
+                # School off detection
+                if cal_name in ['wren', 'ellis'] and is_all_day:
+                    if any(k in summary.lower() for k in ['schule', 'schulfrei', 'ferien', 'no school', 'holiday', 'vacation']):
+                        if event_date not in school_off_dates:
+                            school_off_dates[event_date] = []
+                        school_off_dates[event_date].append(cal_name)
                         continue
-                    
-                    if cal_name in ["wren", "ellis"] and is_all_day:
-                        if any(k in summary.lower() for k in ["schule", "schulfrei", "ferien", "no school", "holiday", "vacation"]):
-                            if event_date not in school_off_dates:
-                                school_off_dates[event_date] = []
-                            school_off_dates[event_date].append(cal_name)
-                            continue
-                    
-                    events.append({
-                        "title": summary,
-                        "date": event_date.isoformat(),
-                        "time": event_dt.strftime("%H:%M") if isinstance(event_dt, datetime) and not is_all_day else None,
-                        "calendar": cal_name,
-                        "is_all_day": is_all_day,
-                        "sort_key": datetime.combine(event_date, event_dt.time() if isinstance(event_dt, datetime) else datetime.min.time()).isoformat()
-                    })
-                    
+
+                sort_time = event_dt.time() if event_dt else datetime.min.time()
+                events.append({
+                    'title': summary,
+                    'date': event_date.isoformat(),
+                    'time': event_dt.strftime('%H:%M') if event_dt and not is_all_day else None,
+                    'calendar': cal_name,
+                    'is_all_day': is_all_day,
+                    'sort_key': datetime.combine(event_date, sort_time).isoformat()
+                })
+
         except Exception as e:
-            print(f"Calendar error: {e}")
-    
+            print(f'Calendar error ({cal_name}): {e}')
+
+    # Add consolidated school-off entries
     for off_date, kids_list in school_off_dates.items():
         events.append({
-            "title": "No School",
-            "date": off_date.isoformat(),
-            "time": None,
-            "calendar": "family" if len(kids_list) > 1 else kids_list[0],
-            "is_all_day": True,
-            "sort_key": datetime.combine(off_date, datetime.min.time()).isoformat()
+            'title': 'No School',
+            'date': off_date.isoformat(),
+            'time': None,
+            'calendar': 'family' if len(kids_list) > 1 else kids_list[0],
+            'is_all_day': True,
+            'sort_key': datetime.combine(off_date, datetime.min.time()).isoformat()
         })
-    
-    events.sort(key=lambda x: (x["sort_key"], x["calendar"]))
-    
+
+    events.sort(key=lambda x: (x['sort_key'], x['calendar']))
+
     current_travel = None
     today_str = today.isoformat()
     for te in travel_events:
-        if te["date"] == today_str:
+        if te['date'] == today_str:
             current_travel = te
             break
-    
+
     return events, current_travel, school_off_dates
 
 def fetch_weather_and_forecast():
