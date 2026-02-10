@@ -154,8 +154,6 @@ def fetch_astrology():
                 result = resp.json()
                 if result.get('success'):
                     desc = result['data'].get('horoscope_data', '')
-                    if len(desc) > 150:
-                        desc = desc[:147] + '...'
                     astrology[sign.lower()] = desc
         except Exception as e:
             print(f'Astro error for {sign}: {e}')
