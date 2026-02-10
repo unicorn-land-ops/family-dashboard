@@ -575,6 +575,21 @@ def status():
             'cached_astrology_date': data.get('cached_astrology_date')
         }
         save_data(data)
+    # Ensure country and astrology are populated on first request
+    if not data.get('country_of_day') or data.get('country_of_day', {}).get('date') != str(date.today()):
+        try:
+            country = get_country_of_day()
+            if country:
+                data['country_of_day'] = country
+        except:
+            pass
+    if not data.get('astrology') or data.get('cached_astrology_date') != str(date.today()):
+        try:
+            astro = fetch_astrology()
+            if astro:
+                data['astrology'] = astro
+        except:
+            pass
     return jsonify(data)
 
 @app.route('/api/toggle/<kid>/<chore>', methods=['POST'])
