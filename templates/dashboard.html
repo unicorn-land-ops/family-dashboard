@@ -97,51 +97,21 @@ body {
 
 /* ASTROLOGY SECTION */
 .astrology-section {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.1));
-    border-radius: 15px;
-    padding: 20px 25px;
-    border: 2px solid rgba(255, 215, 0, 0.4);
-}
-.astrology-header {
-    font-size: 1.4rem;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    color: #FFD700;
-    margin-bottom: 15px;
+    padding: 10px 20px;
 }
 .astro-list {
     display: flex;
-    flex-direction: row;
-    gap: 15px;
+    flex-direction: column;
+    gap: 6px;
 }
-.astro-item { flex: 1; }
-.astro-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    padding: 15px 20px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-}
-.astro-symbol {
-    font-size: 2.5rem;
-    min-width: 50px;
-    text-align: center;
-}
-.astro-name {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #FFD700;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.astro-reading {
-    font-size: 1.1rem;
-    color: rgba(255,255,255,0.9);
+.astro-line {
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.85);
     line-height: 1.4;
-    flex: 1;
+}
+.astro-line .astro-symbol {
+    font-size: 1.4rem;
+    margin-right: 8px;
 }
 
 .main-content {
@@ -416,31 +386,12 @@ body {
         </div>
     </div>
 
-    <!-- ASTROLOGY SECTION - FULL WIDTH BOTTOM -->
+    <!-- ASTROLOGY - FULL WIDTH BOTTOM -->
     <div class="astrology-section">
-        <div class="astrology-header">✨ Daily Horoscope</div>
         <div class="astro-list">
-            <div class="astro-item">
-                <div class="astro-symbol">♑</div>
-                <div>
-                    <div class="astro-name">Daddy & Wren</div>
-                    <div class="astro-reading" id="astro-capricorn">Loading...</div>
-                </div>
-            </div>
-            <div class="astro-item">
-                <div class="astro-symbol">♒</div>
-                <div>
-                    <div class="astro-name">Ellis</div>
-                    <div class="astro-reading" id="astro-aquarius">Loading...</div>
-                </div>
-            </div>
-            <div class="astro-item">
-                <div class="astro-symbol">♐</div>
-                <div>
-                    <div class="astro-name">Papa</div>
-                    <div class="astro-reading" id="astro-sagittarius">Loading...</div>
-                </div>
-            </div>
+            <div class="astro-line"><span class="astro-symbol">♑</span> <span id="astro-capricorn">Loading...</span></div>
+            <div class="astro-line"><span class="astro-symbol">♒</span> <span id="astro-aquarius">Loading...</span></div>
+            <div class="astro-line"><span class="astro-symbol">♐</span> <span id="astro-sagittarius">Loading...</span></div>
         </div>
     </div>
 </div>
