@@ -1,0 +1,250 @@
+# Wall Display Dashboard
+# Copy this to your Home Assistant Lovelace configuration
+# Settings → Dashboards → Add Dashboard → Edit → Raw Configuration Editor
+
+title: Wall Display
+views:
+  - title: Home
+    path: home
+    type: custom:grid-layout
+    layout:
+      grid-template-columns: 1fr 1fr 1fr
+      grid-template-rows: auto auto auto
+      grid-gap: 16px
+      margin: 16px
+    badges: []
+    cards:
+      # =========================================================================
+      # ROW 1: Clock & Date (spans full width)
+      # =========================================================================
+      - type: custom:mushroom-template-card
+        primary: "{{ states('sensor.display_time') }}"
+        secondary: "{{ states('sensor.display_date') }}"
+        icon: ""
+        layout: vertical
+        card_mod:
+          style: |
+            ha-card {
+              background: transparent !important;
+              border: none !important;
+              box-shadow: none !important;
+            }
+            .primary {
+              font-size: 8rem !important;
+              font-weight: 200 !important;
+              line-height: 1 !important;
+              text-align: center !important;
+            }
+            .secondary {
+              font-size: 2rem !important;
+              font-weight: 300 !important;
+              text-align: center !important;
+              opacity: 0.7;
+            }
+        view_layout:
+          grid-column: 1 / -1
+          grid-row: 1
+
+      # =========================================================================
+      # ROW 2: Calendar, Weather, BVG
+      # =========================================================================
+
+      # Calendar Card
+      - type: calendar
+        entities:
+          - calendar.personal  # Replace with your calendar entity
+          - calendar.family    # Add more calendars as needed
+        initial_view: listWeek
+        card_mod:
+          style: |
+            ha-card {
+              background: rgba(0, 0, 0, 0.3) !important;
+              border-radius: 16px !important;
+            }
+        view_layout:
+          grid-column: 1
+          grid-row: 2
+
+      # Weather Card
+      - type: weather-forecast
+        entity: weather.home  # Replace with your weather entity
+        show_forecast: true
+        forecast_type: daily
+        card_mod:
+          style: |
+            ha-card {
+              background: rgba(0, 0, 0, 0.3) !important;
+              border-radius: 16px !important;
+            }
+        view_layout:
+          grid-column: 2
+          grid-row: 2
+
+      # BVG Departures Card
+      # Requires: lovelace-berlin-transport-card from HACS
+      - type: custom:berlin-transport-card
+        show_stop_name: true
+        entities:
+          - sensor.u_mehringdamm  # Replace with your station sensor
+        card_mod:
+          style: |
+            ha-card {
+              background: rgba(0, 0, 0, 0.3) !important;
+              border-radius: 16px !important;
+            }
+        view_layout:
+          grid-column: 3
+          grid-row: 2
+
+      # =========================================================================
+      # ROW 3: Alexa Timers & Grocery List
+      # =========================================================================
+
+      # Alexa Timers Card
+      # Requires: card-alexa-alarms-timers from HACS
+      - type: custom:alexa-alarms-timers-card
+        entity: sensor.echo_kitchen_next_timer  # Replace with your Echo entity
+        title: Timers
+        show_empty: true
+        empty_message: "No active timers"
+        card_mod:
+          style: |
+            ha-card {
+              background: rgba(0, 0, 0, 0.3) !important;
+              border-radius: 16px !important;
+              min-height: 200px;
+            }
+            .timer-item {
+              font-size: 1.5rem !important;
+            }
+        view_layout:
+          grid-column: 1 / 2
+          grid-row: 3
+
+      # Grocery List Card
+      - type: shopping-list
+        title: Groceries
+        card_mod:
+          style: |
+            ha-card {
+              background: rgba(0, 0, 0, 0.3) !important;
+              border-radius: 16px !important;
+              min-height: 200px;
+            }
+            .editRow {
+              font-size: 1.2rem !important;
+            }
+        view_layout:
+          grid-column: 2 / -1
+          grid-row: 3
+
+# =============================================================================
+# ALTERNATIVE: Simple Grid Layout (if custom:grid-layout not installed)
+# =============================================================================
+# Uncomment below and comment out above if you don't have custom grid layout
+
+# title: Wall Display
+# views:
+#   - title: Home
+#     path: home
+#     type: masonry
+#     badges: []
+#     cards:
+#       # Clock - use markdown card as fallback
+#       - type: markdown
+#         content: |
+#           # {{ states('sensor.display_time') }}
+#           ### {{ states('sensor.display_date') }}
+#         card_mod:
+#           style: |
+#             ha-card {
+#               text-align: center;
+#               background: transparent !important;
+#             }
+#
+#       - type: horizontal-stack
+#         cards:
+#           - type: calendar
+#             entities:
+#               - calendar.personal
+#           - type: weather-forecast
+#             entity: weather.home
+#           - type: custom:berlin-transport-card
+#             entities:
+#               - sensor.u_mehringdamm
+#
+#       - type: horizontal-stack
+#         cards:
+#           - type: custom:alexa-alarms-timers-card
+#             entity: sensor.echo_kitchen_next_timer
+#             title: Timers
+#           - type: shopping-list
+#             title: Groceries
+
+# =============================================================================
+# DARK THEME FOR WALL DISPLAY
+# =============================================================================
+# Add this to your themes folder as wall-display.yaml
+
+# wall_display:
+#   # Background
+#   primary-background-color: "#0d1117"
+#   secondary-background-color: "#161b22"
+#   card-background-color: "rgba(22, 27, 34, 0.8)"
+#
+#   # Text
+#   primary-text-color: "#f0f6fc"
+#   secondary-text-color: "#8b949e"
+#
+#   # Accent
+#   primary-color: "#58a6ff"
+#   accent-color: "#58a6ff"
+#
+#   # Cards
+#   ha-card-border-radius: "16px"
+#   ha-card-box-shadow: "none"
+#
+#   # Large text for wall display
+#   paper-font-headline_-_font-size: "2rem"
+#   paper-font-body1_-_font-size: "1.2rem"
+
+# =============================================================================
+# KIOSK MODE CONFIGURATION
+# =============================================================================
+# Add to your dashboard URL: ?kiosk to hide header and sidebar
+# Or install kiosk-mode from HACS for more control:
+#
+# kiosk_mode:
+#   hide_header: true
+#   hide_sidebar: true
+#   hide_menubutton: true
+#   hide_notifications: true
+#   hide_account: true
+#   hide_search: true
+#   hide_assistant: true
+#   hide_refresh: true
+#   hide_edit_dashboard: true
+#   ignore_entity_settings: true
+#   ignore_mobile_settings: true
+
+# =============================================================================
+# ENTITY ID REFERENCE
+# =============================================================================
+# Replace these placeholder entity IDs with your actual entities:
+#
+# Calendars:
+#   - calendar.personal → your main Google Calendar
+#   - calendar.family → shared family calendar
+#
+# Weather:
+#   - weather.home → your OpenWeatherMap entity
+#
+# Alexa:
+#   - sensor.echo_kitchen_next_timer → your Echo device timer sensor
+#   - media_player.echo_kitchen → your Echo device
+#
+# BVG Transit:
+#   - sensor.u_mehringdamm → your nearest station sensor
+#
+# To find your entity IDs:
+#   Developer Tools → States → Search for entity

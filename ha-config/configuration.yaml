@@ -1,0 +1,168 @@
+# Home Assistant Configuration Snippets
+# Add these to your configuration.yaml as needed
+# Location: /config/configuration.yaml in Home Assistant
+
+# =============================================================================
+# HOMEASSISTANT CORE SETTINGS
+# =============================================================================
+homeassistant:
+  name: Home
+  unit_system: metric
+  currency: EUR
+  country: DE
+  time_zone: Europe/Berlin
+  # Customize entity names and icons
+  customize:
+    sensor.next_alarm:
+      friendly_name: "Next Alexa Alarm"
+      icon: mdi:alarm
+    sensor.next_timer:
+      friendly_name: "Alexa Timer"
+      icon: mdi:timer-sand
+
+# =============================================================================
+# FRONTEND SETTINGS
+# =============================================================================
+frontend:
+  themes: !include_dir_merge_named themes/
+  # Extra modules for custom cards (after installing via HACS)
+  extra_module_url:
+    - /hacsfiles/lovelace-card-mod/card-mod.js
+
+# =============================================================================
+# LOGGER (for debugging integrations)
+# =============================================================================
+logger:
+  default: warning
+  logs:
+    custom_components.alexa_media: debug
+    custom_components.berlin_transport: debug
+    homeassistant.components.ourgroceries: debug
+
+# =============================================================================
+# SENSOR TEMPLATES
+# =============================================================================
+# Template sensors for formatting data nicely
+
+template:
+  - sensor:
+      # Formatted date for display
+      - name: "Display Date"
+        state: "{{ now().strftime('%A, %B %-d') }}"
+        icon: mdi:calendar
+
+      # Formatted time
+      - name: "Display Time"
+        state: "{{ now().strftime('%-I:%M') }}"
+        icon: mdi:clock-outline
+
+      # AM/PM indicator
+      - name: "Display AM PM"
+        state: "{{ now().strftime('%p') }}"
+
+      # Alexa timer countdown (requires Alexa Media Player)
+      # Replace 'media_player.echo_kitchen' with your device entity_id
+      - name: "Active Timer Display"
+        state: >
+          {% set timers = state_attr('sensor.echo_kitchen_next_timer', 'sorted_active') %}
+          {% if timers and timers | length > 0 %}
+            {% set t = timers[0] %}
+            {% set remaining = as_timestamp(t.date_time) - as_timestamp(now()) %}
+            {% if remaining > 0 %}
+              {% set mins = (remaining // 60) | int %}
+              {% set secs = (remaining % 60) | int %}
+              {{ '%02d:%02d' | format(mins, secs) }}
+            {% else %}
+              Done!
+            {% endif %}
+          {% else %}
+            No active timers
+          {% endif %}
+        icon: mdi:timer
+
+# =============================================================================
+# SHOPPING LIST (Native HA - backup option if OurGroceries has issues)
+# =============================================================================
+shopping_list:
+
+# =============================================================================
+# REST COMMANDS (for advanced integrations)
+# =============================================================================
+rest_command:
+  # Example: refresh Alexa data
+  alexa_refresh:
+    url: "http://localhost:8123/api/services/alexa_media/update_last_called"
+    method: POST
+    headers:
+      authorization: !secret ha_long_lived_token
+      content-type: application/json
+
+# =============================================================================
+# AUTOMATIONS (add to automations.yaml or here)
+# =============================================================================
+automation:
+  # Refresh dashboard display data every minute
+  - alias: "Dashboard Data Refresh"
+    trigger:
+      - platform: time_pattern
+        seconds: "/30"
+    action:
+      - service: homeassistant.update_entity
+        target:
+          entity_id:
+            - sensor.display_time
+            - sensor.display_date
+
+  # Notify when Alexa timer finishes (optional)
+  - alias: "Alexa Timer Finished Notification"
+    trigger:
+      - platform: state
+        entity_id: sensor.active_timer_display
+        to: "Done!"
+    action:
+      - service: persistent_notification.create
+        data:
+          title: "Timer Complete!"
+          message: "Your Alexa timer has finished."
+
+# =============================================================================
+# SCRIPTS
+# =============================================================================
+script:
+  # Force refresh all dashboard data
+  refresh_dashboard:
+    alias: "Refresh Dashboard"
+    sequence:
+      - service: homeassistant.update_entity
+        target:
+          entity_id: all
+
+# =============================================================================
+# PANEL IFRAME (optional - embed external pages)
+# =============================================================================
+panel_iframe:
+  weather_radar:
+    title: "Weather Radar"
+    url: "https://www.windy.com/52.520,13.405?52.520,13.405,11"
+    icon: mdi:radar
+
+# =============================================================================
+# NOTES
+# =============================================================================
+#
+# Required integrations (install via UI or HACS):
+# 1. Google Calendar - Settings → Integrations → Google Calendar
+# 2. OpenWeatherMap - Settings → Integrations → OpenWeatherMap
+# 3. OurGroceries - Settings → Integrations → OurGroceries
+# 4. Alexa Media Player - HACS → Integrations → Alexa Media Player
+# 5. Berlin Transport - HACS → Custom repositories → vas3k/home-assistant-berlin-transport
+#
+# Required frontend cards (install via HACS):
+# 1. card-mod - For CSS styling
+# 2. card-alexa-alarms-timers - For Alexa timer display
+# 3. lovelace-berlin-transport-card - For BVG departures
+#
+# secrets.yaml entries needed:
+# ha_long_lived_token: "your_long_lived_access_token"
+# ourgroceries_username: "your_email"
+# ourgroceries_password: "your_password"
