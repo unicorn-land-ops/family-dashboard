@@ -1,64 +1,133 @@
 // Supabase database types for family-dashboard
-// Hand-written for simplicity (only 4 tables, stable schema)
+// Hand-written to match Supabase CLI output format (only 4 tables, stable schema)
 
-export interface Grocery {
-  id: string;
-  name: string;
-  checked: boolean;
-  added_by: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Timer {
-  id: string;
-  label: string;
-  duration_seconds: number;
-  started_at: string;
-  cancelled: boolean;
-  created_by: string | null;
-  created_at: string;
-}
-
-export interface Chore {
-  id: string;
-  title: string;
-  assigned_to: string | null;
-  schedule: 'daily' | 'weekly' | 'once';
-  is_active: boolean;
-  created_at: string;
-}
-
-export interface ChoreCompletion {
-  id: string;
-  chore_id: string;
-  completed_by: string;
-  completed_at: string;
-}
+export type Grocery = Database['public']['Tables']['groceries']['Row'];
+export type Timer = Database['public']['Tables']['timers']['Row'];
+export type Chore = Database['public']['Tables']['chores']['Row'];
+export type ChoreCompletion = Database['public']['Tables']['chore_completions']['Row'];
 
 export interface Database {
   public: {
     Tables: {
       groceries: {
-        Row: Grocery;
-        Insert: Omit<Grocery, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<Grocery, 'id'>>;
+        Row: {
+          id: string;
+          name: string;
+          checked: boolean;
+          added_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          checked?: boolean;
+          added_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          checked?: boolean;
+          added_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       timers: {
-        Row: Timer;
-        Insert: Omit<Timer, 'id' | 'created_at'>;
-        Update: Partial<Omit<Timer, 'id'>>;
+        Row: {
+          id: string;
+          label: string;
+          duration_seconds: number;
+          started_at: string;
+          cancelled: boolean;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          label: string;
+          duration_seconds: number;
+          started_at: string;
+          cancelled?: boolean;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          label?: string;
+          duration_seconds?: number;
+          started_at?: string;
+          cancelled?: boolean;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
       };
       chores: {
-        Row: Chore;
-        Insert: Omit<Chore, 'id' | 'created_at'>;
-        Update: Partial<Omit<Chore, 'id'>>;
+        Row: {
+          id: string;
+          title: string;
+          assigned_to: string | null;
+          schedule: 'daily' | 'weekly' | 'once';
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          assigned_to?: string | null;
+          schedule?: 'daily' | 'weekly' | 'once';
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          assigned_to?: string | null;
+          schedule?: 'daily' | 'weekly' | 'once';
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Relationships: [];
       };
       chore_completions: {
-        Row: ChoreCompletion;
-        Insert: Omit<ChoreCompletion, 'id' | 'completed_at'>;
-        Update: Partial<Omit<ChoreCompletion, 'id'>>;
+        Row: {
+          id: string;
+          chore_id: string;
+          completed_by: string;
+          completed_at: string;
+        };
+        Insert: {
+          id?: string;
+          chore_id: string;
+          completed_by: string;
+          completed_at?: string;
+        };
+        Update: {
+          id?: string;
+          chore_id?: string;
+          completed_by?: string;
+          completed_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'chore_completions_chore_id_fkey';
+            columns: ['chore_id'];
+            isOneToOne: false;
+            referencedRelation: 'chores';
+            referencedColumns: ['id'];
+          },
+        ];
       };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
     };
   };
 }
