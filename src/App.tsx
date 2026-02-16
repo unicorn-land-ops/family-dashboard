@@ -4,6 +4,8 @@ import { StatusBar } from './components/layout/StatusBar';
 import { MobileNav } from './components/layout/MobileNav';
 import { CalendarPanel } from './components/calendar/CalendarPanel';
 import { GroceryPanel } from './components/grocery/GroceryPanel';
+import { TimerPanel } from './components/timer/TimerPanel';
+import { useTimers } from './hooks/useTimers';
 import { ContentRotator } from './components/sidebar/ContentRotator';
 import { TransitPanel } from './components/sidebar/TransitPanel';
 import { HoroscopePanel } from './components/sidebar/HoroscopePanel';
@@ -18,6 +20,7 @@ function App() {
   useAutoRefresh();
   const { activeIndex, goTo, panelCount } = useContentRotation();
   const { uncheckedCount } = useGroceries();
+  const { activeCount: activeTimerCount, completedTimers } = useTimers();
   const { activeView, setActiveView } = useMobileNav();
 
   return (
@@ -28,10 +31,12 @@ function App() {
       <div className="grid-area-main flex flex-col gap-[clamp(10px,1vw,20px)]">
         {activeView === 'calendar' && <CalendarPanel />}
         {activeView === 'groceries' && <GroceryPanel variant="full" />}
+        {activeView === 'timers' && <TimerPanel variant="full" />}
       </div>
 
       {/* Sidebar — rotating content panels (hidden in portrait) */}
       <div className="grid-area-sidebar flex flex-col gap-[clamp(10px,1vw,20px)]">
+        {(activeTimerCount > 0 || completedTimers.length > 0) && <TimerPanel variant="compact" />}
         {uncheckedCount > 0 && <GroceryPanel variant="compact" />}
         <ContentRotator activeIndex={activeIndex}>
           <TransitPanel />
