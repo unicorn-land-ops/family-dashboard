@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { TIMEZONE } from '../../lib/constants';
+import { ConnectionStatus } from './ConnectionStatus';
 
 export function StatusBar() {
   const [lastRefresh] = useState(() =>
@@ -20,6 +21,7 @@ export function StatusBar() {
       style={{ fontSize: 'clamp(0.65rem, 0.8vw, 0.85rem)' }}
     >
       <span>Last refresh: {lastRefresh}</span>
+      <ConnectionStatus />
       <span
         className="transition-opacity duration-500"
         style={{ opacity: mounted ? 1 : 0 }}
