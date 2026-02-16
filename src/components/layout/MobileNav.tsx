@@ -1,4 +1,4 @@
-import { IoCalendarOutline, IoCartOutline } from 'react-icons/io5';
+import { IoCalendarOutline, IoCartOutline, IoTimerOutline } from 'react-icons/io5';
 import type { MobileView } from '../../hooks/useMobileNav';
 
 interface MobileNavProps {
@@ -9,6 +9,7 @@ interface MobileNavProps {
 const tabs: { view: MobileView; label: string; icon: typeof IoCalendarOutline }[] = [
   { view: 'calendar', label: 'Calendar', icon: IoCalendarOutline },
   { view: 'groceries', label: 'Groceries', icon: IoCartOutline },
+  { view: 'timers', label: 'Timers', icon: IoTimerOutline },
 ];
 
 export function MobileNav({ activeView, onNavigate }: MobileNavProps) {
