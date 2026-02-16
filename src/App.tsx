@@ -1,8 +1,11 @@
 import { DashboardShell } from './components/layout/DashboardShell';
 import { Header } from './components/layout/Header';
 import { StatusBar } from './components/layout/StatusBar';
+import { useAutoRefresh } from './hooks/useAutoRefresh';
 
 function App() {
+  useAutoRefresh();
+
   return (
     <DashboardShell>
       <Header />
