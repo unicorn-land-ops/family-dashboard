@@ -106,10 +106,11 @@ Plans:
   5. When offline, writes queue locally and sync when connection restored
   6. WebSocket subscriptions cleanup properly to prevent memory leaks
   7. Reconnection logic handles background tab scenarios on mobile Safari
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD during plan-phase
+- [ ] 05-01-PLAN.md — Supabase client, database types, SQL schema file, and human checkpoint for project setup
+- [ ] 05-02-PLAN.md — Realtime subscription hook, connection status hook, offline queue, ConnectionStatus UI in StatusBar
 
 ### Phase 6: Grocery List
 **Goal**: Shared grocery list manageable from mobile, visible on wall display
@@ -194,7 +195,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -202,7 +203,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 2. Clock & Weather Core | 0/2 | Not started | - |
 | 3. Calendar Integration | 0/3 | Not started | - |
 | 4. Transit & Fun Content | 0/2 | Not started | - |
-| 5. Real-Time Infrastructure | 0/TBD | Not started | - |
+| 5. Real-Time Infrastructure | 0/2 | Not started | - |
 | 6. Grocery List | 0/TBD | Not started | - |
 | 7. Timer System | 0/TBD | Not started | - |
 | 8. Priority Interrupts | 0/TBD | Not started | - |
@@ -211,4 +212,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 ---
 *Roadmap created: 2026-02-16*
-*Last updated: 2026-02-16*
+*Last updated: 2026-02-17*
