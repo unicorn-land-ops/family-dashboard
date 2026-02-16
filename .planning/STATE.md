@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 6 in progress. Grocery UI components complete, App.tsx integration next.
+**Current focus:** Phase 6 complete. Grocery list fully integrated into dashboard (wall sidebar + mobile nav).
 
 ## Current Position
 
-Phase: 6 of 10 (Grocery List)
-Plan: 2 of 3 in current phase
-Status: Plan 02 complete. All 4 grocery UI components ready for integration.
-Last activity: 2026-02-17 -- Completed 06-02 grocery UI components
+Phase: 6 of 10 (Grocery List) -- COMPLETE
+Plan: 3 of 3 in current phase
+Status: Phase 6 complete. All grocery list plans (01-03) finished.
+Last activity: 2026-02-17 -- Completed 06-03 dashboard integration
 
-Progress: [█████████████░] 60%
+Progress: [██████████████░] 65%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
-- Average duration: 2.4 min
-- Total execution time: 0.52 hours
+- Total plans completed: 14
+- Average duration: 2.3 min
+- Total execution time: 0.53 hours
 
 **By Phase:**
 
@@ -32,11 +32,11 @@ Progress: [█████████████░] 60%
 | 03-calendar-integration | 3 | 4min | 1.3min |
 | 04-transit-fun-content | 2 | 3min | 1.5min |
 | 05-realtime-infrastructure | 2 | 3min | 1.5min |
-| 06-grocery-list | 2 | 6min | 3min |
+| 06-grocery-list | 3 | 7min | 2.3min |
 
 **Recent Trend:**
-- Last 5 plans: 04-02 (2min), 05-01 (1min), 05-02 (2min), 06-01 (5min), 06-02 (1min)
-- Trend: Back to normal speed
+- Last 5 plans: 05-01 (1min), 05-02 (2min), 06-01 (5min), 06-02 (1min), 06-03 (1min)
+- Trend: Consistently fast
 
 *Updated after each plan completion*
 
@@ -95,10 +95,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-17 (plan 06-02 execution)
-Stopped at: Completed 06-02-PLAN.md (Grocery UI components: GroceryInput, GroceryItem, GroceryList, GroceryPanel)
+Last session: 2026-02-17 (plan 06-03 execution)
+Stopped at: Completed 06-03-PLAN.md (Dashboard integration: grocery in sidebar + mobile nav)
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-17 (06-02 execution)*
+*Last updated: 2026-02-17 (06-03 execution)*
