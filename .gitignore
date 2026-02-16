@@ -26,6 +26,11 @@ dist-ssr
 # macOS
 Icon?
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
 # Temp drive files
 .tmp.drivedownload
 .tmp.driveupload
