@@ -79,6 +79,25 @@ body {
   grid-area: status;
 }
 
+/* Calendar utilities */
+.event-schulfrei {
+  background: rgba(255, 215, 0, 0.08);
+  border-left: 2px solid var(--color-accent-gold);
+}
+
+.day-today {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 0.5rem;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Glass-morphism card utility */
 .card-glass {
   background: rgba(255, 255, 255, 0.05);
