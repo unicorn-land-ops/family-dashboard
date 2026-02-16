@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 4 - Transit & Fun Content
+**Current focus:** Phase 5 (next phase)
 
 ## Current Position
 
-Phase: 4 of 10 (Transit & Fun Content)
-Plan: 1 of 2 in current phase (04-01 complete)
-Status: Executing Phase 04. Plan 01 complete, Plan 02 remaining.
-Last activity: 2026-02-16 -- Completed 04-01 transit/fun content data layer
+Phase: 4 of 10 (Transit & Fun Content) -- COMPLETE
+Plan: 2 of 2 in current phase (04-02 complete)
+Status: Phase 04 complete. Ready for Phase 05.
+Last activity: 2026-02-16 -- Completed 04-02 content rotation UI
 
-Progress: [████████░░] 40%
+Progress: [█████████░] 45%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 2.5 min
-- Total execution time: 0.35 hours
+- Total plans completed: 9
+- Average duration: 2.3 min
+- Total execution time: 0.38 hours
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [████████░░] 40%
 | 01-foundation-setup | 2 | 12min | 6min |
 | 02-clock-weather-core | 2 | 3min | 1.5min |
 | 03-calendar-integration | 3 | 4min | 1.3min |
-| 04-transit-fun-content | 1 | 1min | 1min |
+| 04-transit-fun-content | 2 | 3min | 1.5min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (1min), 03-01 (1min), 03-02 (1min), 03-03 (2min), 04-01 (1min)
+- Last 5 plans: 03-01 (1min), 03-02 (1min), 03-03 (2min), 04-01 (1min), 04-02 (2min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -69,6 +69,8 @@ Recent decisions affecting current work:
 - [04-01] No BVG transport type filter -- includes bus for U2 replacement services during construction
 - [04-01] Horoscope partial failure tolerance -- one sign failing returns others
 - [04-01] Berlin timezone day seed for deterministic country-of-the-day selection
+- [04-02] All sidebar panels stay mounted (opacity crossfade) to preserve React Query cache
+- [04-02] SEV detection via line.product === 'bus' OR remarks containing 'Ersatzverkehr'
 
 ### Pending Todos
 
@@ -81,10 +83,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-16 (plan 04-01 execution)
-Stopped at: Completed 04-01-PLAN.md (transit/fun content data layer)
+Last session: 2026-02-16 (plan 04-02 execution)
+Stopped at: Completed 04-02-PLAN.md (content rotation UI)
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-16 (04-01 execution)*
+*Last updated: 2026-02-16 (04-02 execution)*
