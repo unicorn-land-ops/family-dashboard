@@ -19,3 +19,17 @@ export const COLORS = {
 
 // Refresh intervals
 export const CLOCK_INTERVAL_MS = 1000; // 1 second
+
+// Content rotation configuration
+export const ROTATION_INTERVAL_MS = 15_000; // 15 seconds per panel
+export const ROTATION_PANELS = ['transit', 'horoscopes', 'country'] as const;
+
+// Transit configuration
+export const TRANSIT_REFRESH_MS = 60_000; // 60 seconds
+export const TRANSIT_STALE_MS = 30_000; // 30 seconds
+
+// Horoscope configuration
+export const HOROSCOPE_REFRESH_MS = 6 * 60 * 60 * 1000; // 6 hours
+
+// Country configuration
+export const COUNTRY_REFRESH_MS = 24 * 60 * 60 * 1000; // 24 hours
