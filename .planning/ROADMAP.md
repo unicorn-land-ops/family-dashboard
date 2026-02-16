@@ -70,10 +70,12 @@ Plans:
   5. When a family member is traveling, dual timezone displays for their location
   6. Papa's work-hours events (9-18 weekdays) are filtered out
   7. "No School/Schulfrei" all-day events display with visual highlight
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during plan-phase
+- [ ] 03-01-PLAN.md — Calendar data layer: types, config, ICS parser (ical-expander), dedup, filters, fetch client
+- [ ] 03-02-PLAN.md — Cloudflare Worker CORS proxy code and human deployment checkpoint
+- [ ] 03-03-PLAN.md — useCalendar hook, calendar UI components (CalendarPanel, DayRow, EventCard, WeatherBadge), wire into App.tsx
 
 ### Phase 4: Transit & Fun Content
 **Goal**: Rotating content area cycling through transit, horoscopes, and country information
@@ -197,7 +199,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 |-------|----------------|--------|-----------|
 | 1. Foundation & Setup | 0/2 | Complete    | 2026-02-16 |
 | 2. Clock & Weather Core | 0/2 | Not started | - |
-| 3. Calendar Integration | 0/TBD | Not started | - |
+| 3. Calendar Integration | 0/3 | Not started | - |
 | 4. Transit & Fun Content | 0/TBD | Not started | - |
 | 5. Real-Time Infrastructure | 0/TBD | Not started | - |
 | 6. Grocery List | 0/TBD | Not started | - |
