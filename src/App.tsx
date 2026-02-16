@@ -13,9 +13,6 @@ function App() {
       {/* Main content area — placeholder cards */}
       <div className="grid-area-main flex flex-col gap-[clamp(10px,1vw,20px)]">
         <div className="card-glass p-[clamp(16px,2vw,32px)] flex-1 flex items-center justify-center">
-          <span className="text-text-secondary text-lg">Weather</span>
-        </div>
-        <div className="card-glass p-[clamp(16px,2vw,32px)] flex-1 flex items-center justify-center">
           <span className="text-text-secondary text-lg">Calendar</span>
         </div>
       </div>
