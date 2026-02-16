@@ -40,9 +40,10 @@ body {
     grid-template-areas:
       'header'
       'main'
-      'status';
+      'status'
+      'nav';
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 1fr auto auto;
   }
 
   .grid-area-sidebar {
@@ -77,6 +78,10 @@ body {
 
 .grid-area-status {
   grid-area: status;
+}
+
+.grid-area-nav {
+  grid-area: nav;
 }
 
 /* Calendar utilities */
