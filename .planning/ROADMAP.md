@@ -123,10 +123,12 @@ Plans:
   4. Grocery list changes sync in real-time across all devices
   5. Wall display shows grocery list when items exist
   6. When multiple users edit simultaneously, changes merge correctly without data loss
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during plan-phase
+- [ ] 06-01-PLAN.md — Grocery CRUD API functions and useGroceries hook with optimistic mutations + realtime sync
+- [ ] 06-02-PLAN.md — Grocery UI components: GroceryInput, GroceryItem, GroceryList, GroceryPanel (full + compact variants)
+- [ ] 06-03-PLAN.md — Wire grocery into App.tsx: wall sidebar card, mobile nav tab bar, view switching
 
 ### Phase 7: Timer System
 **Goal**: Visual countdown timers set from mobile, displayed on wall
@@ -204,7 +206,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 3. Calendar Integration | 0/3 | Not started | - |
 | 4. Transit & Fun Content | 0/2 | Not started | - |
 | 5. Real-Time Infrastructure | 0/2 | Not started | - |
-| 6. Grocery List | 0/TBD | Not started | - |
+| 6. Grocery List | 0/3 | Not started | - |
 | 7. Timer System | 0/TBD | Not started | - |
 | 8. Priority Interrupts | 0/TBD | Not started | - |
 | 9. Chore Tracking | 0/TBD | Not started | - |
