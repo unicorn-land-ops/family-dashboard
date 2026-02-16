@@ -5,33 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 1 - Foundation & Setup
+**Current focus:** Phase 2 - Clock & Weather Core
 
 ## Current Position
 
-Phase: 1 of 10 (Foundation & Setup)
-Plan: 2 of 2 in current phase (PHASE COMPLETE)
-Status: Phase Complete
-Last activity: 2026-02-16 — Completed 01-02 dashboard layout shell
+Phase: 2 of 10 (Clock & Weather Core)
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-02-16 — Completed 02-01 clock/weather data layer
 
-Progress: [██░░░░░░░░] 10%
+Progress: [███░░░░░░░] 15%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 6 min
-- Total execution time: 0.2 hours
+- Total plans completed: 3
+- Average duration: 5 min
+- Total execution time: 0.23 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-setup | 2 | 12min | 6min |
+| 02-clock-weather-core | 1 | 2min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (4min), 01-02 (8min)
-- Trend: Stable
+- Last 5 plans: 01-01 (4min), 01-02 (8min), 02-01 (2min)
+- Trend: Improving
 
 *Updated after each plan completion*
 
@@ -49,6 +50,9 @@ Recent decisions affecting current work:
 - [01-01] Used vite-plugin-pwa v1.2.0 (research referenced non-existent v0.22)
 - [01-02] Used CSS classes in index.css for grid-template-areas instead of Tailwind arbitrary values
 - [01-02] Fluid typography with clamp() for kiosk (2m) and mobile (arm's length) readability
+- [Phase 02]: Used date-fns-tz formatInTimeZone for Berlin timezone (not Intl API)
+- [Phase 02]: QueryClientProvider in main.tsx to survive App re-renders
+- [Phase 02]: tabular-nums CSS on clock prevents layout shifts
 
 ### Pending Todos
 
@@ -60,8 +64,8 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-16 (plan 01-02 execution)
-Stopped at: Completed 01-02-PLAN.md (dashboard layout shell) - Phase 1 complete
+Last session: 2026-02-16 (plan 02-01 execution)
+Stopped at: Completed 02-01-PLAN.md (clock/weather data layer)
 Resume file: None
 
 ---
