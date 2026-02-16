@@ -35,10 +35,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Dashboard renders correctly in portrait on iPhone Safari
   4. Visual design feels modern and polished with clean typography
   5. Auto-refresh mechanism prevents memory leaks during 24/7 operation
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD during plan-phase
+- [ ] 01-01-PLAN.md — Scaffold Vite + React + TypeScript with Tailwind CSS v4, PWA, and GitHub Pages deployment
+- [ ] 01-02-PLAN.md — Responsive layout shell, fluid typography, auto-refresh, and visual verification
 
 ### Phase 2: Clock & Weather Core
 **Goal**: Always-visible panel showing real-time clock, date, and weather conditions
@@ -193,7 +194,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Setup | 0/TBD | Not started | - |
+| 1. Foundation & Setup | 0/2 | Planned | - |
 | 2. Clock & Weather Core | 0/TBD | Not started | - |
 | 3. Calendar Integration | 0/TBD | Not started | - |
 | 4. Transit & Fun Content | 0/TBD | Not started | - |
