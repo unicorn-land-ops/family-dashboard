@@ -358,8 +358,19 @@ body {
 // CONFIGURATION - Edit these values
 // =============================================================================
 const CONFIG = {
-    // Google Apps Script calendar proxy URL (deploy as web app, paste URL here)
-    calendarProxyUrl: '',
+    // CORS proxy prefix (Google iCal feeds don't allow direct browser access)
+    corsProxy: 'https://corsproxy.io/?url=',
+
+    // Secret iCal URLs from Google Calendar settings
+    // (Settings > calendar > Integrate calendar > Secret address in iCal format)
+    calendarFeeds: {
+        papa:   'https://calendar.google.com/calendar/ical/joshuahaynes%40gmail.com/private-2491ce6459c863deb9e8dda218c6f6db/basic.ics',
+        wren:   'https://calendar.google.com/calendar/ical/joshua%40masawa.fund/private-b9d2d8e3c640cba307bffb8800e1184e/basic.ics',
+        ellis:  'https://calendar.google.com/calendar/ical/p906t82tuhrdj60muv22euq3hs%40group.calendar.google.com/private-9f2885f66e05c732531f5e8412afbf1a/basic.ics',
+        family: 'https://calendar.google.com/calendar/ical/p906t82tuhrdj60muv22euq3hs%40group.calendar.google.com/private-9f2885f66e05c732531f5e8412afbf1a/basic.ics',
+        daddy:  'https://calendar.google.com/calendar/ical/9gaocpaifjfdfd809s51vhteos%40group.calendar.google.com/private-870afa40c37fe857d90e573bc7a94d39/basic.ics'
+    },
+    // NOTE: family and ellis currently have the same URL - update family when you have the correct one
 
     // Weather: Berlin coordinates
     weatherLat: 52.5200,
@@ -384,15 +395,6 @@ const CONFIG = {
         'daddy': '\u{1F36A}',
         'wren': '\u{1F338}',
         'ellis': '\u{1F96D}'
-    },
-
-    // Calendar IDs (for the Apps Script proxy)
-    calendarIds: {
-        family: '9gaocpaifjfdfd809s51vhteos@group.calendar.google.com',
-        papa:   'joshua@masawa.fund',
-        wren:   '0u0uevnmmhtb295sre9bftof98@group.calendar.google.com',
-        ellis:  'p906t82tuhrdj60muv22euq3hs@group.calendar.google.com',
-        daddy:  'scottculley@gmail.com'
     },
 
     // Travel detection timezones
@@ -790,46 +792,285 @@ function renderAstrology() {
 }
 
 // =============================================================================
-// CALENDAR (Google Apps Script proxy)
+// CALENDAR (iCal feeds via CORS proxy)
 // =============================================================================
+
+// Minimal iCal parser - extracts VEVENT blocks into event objects
+function parseIcal(icalText, calendarName) {
+    const events = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endWindow = new Date(today);
+    endWindow.setDate(endWindow.getDate() + 7);
+
+    // Unfold continuation lines (lines starting with space/tab are continuations)
+    const unfolded = icalText.replace(/\r\n[ \t]/g, '').replace(/\r/g, '');
+    const lines = unfolded.split('\n');
+
+    let inEvent = false;
+    let evt = {};
+
+    for (const line of lines) {
+        if (line === 'BEGIN:VEVENT') {
+            inEvent = true;
+            evt = {};
+            continue;
+        }
+        if (line === 'END:VEVENT') {
+            inEvent = false;
+            const parsed = processIcalEvent(evt, calendarName, today, endWindow);
+            if (parsed) events.push(parsed);
+            continue;
+        }
+        if (!inEvent) continue;
+
+        const colonIdx = line.indexOf(':');
+        if (colonIdx === -1) continue;
+        const key = line.substring(0, colonIdx);
+        const value = line.substring(colonIdx + 1);
+
+        // Handle properties with parameters (e.g. DTSTART;VALUE=DATE:20260216)
+        const baseProp = key.split(';')[0];
+        if (baseProp === 'SUMMARY') evt.summary = unescapeIcal(value);
+        else if (baseProp === 'DTSTART') { evt.dtstart = value; evt.dtstartFull = key; }
+        else if (baseProp === 'DTEND') { evt.dtend = value; evt.dtendFull = key; }
+        else if (baseProp === 'LOCATION') evt.location = unescapeIcal(value);
+        else if (baseProp === 'RRULE') evt.rrule = value;
+    }
+
+    return events;
+}
+
+function unescapeIcal(str) {
+    return str.replace(/\\n/g, ' ').replace(/\\,/g, ',').replace(/\\\\/g, '\\').replace(/\\;/g, ';');
+}
+
+function parseIcalDate(dateStr, fullKey) {
+    // All-day: VALUE=DATE with format YYYYMMDD
+    if ((fullKey && fullKey.includes('VALUE=DATE')) || dateStr.length === 8) {
+        const y = +dateStr.substring(0, 4);
+        const m = +dateStr.substring(4, 6) - 1;
+        const d = +dateStr.substring(6, 8);
+        return { date: new Date(y, m, d), allDay: true };
+    }
+    // DateTime: YYYYMMDDTHHMMSS or YYYYMMDDTHHMMSSZ
+    const y = +dateStr.substring(0, 4);
+    const m = +dateStr.substring(4, 6) - 1;
+    const d = +dateStr.substring(6, 8);
+    const hh = +dateStr.substring(9, 11);
+    const mm = +dateStr.substring(11, 13);
+    const ss = +dateStr.substring(13, 15) || 0;
+
+    let dt;
+    if (dateStr.endsWith('Z')) {
+        dt = new Date(Date.UTC(y, m, d, hh, mm, ss));
+    } else {
+        // Assume Berlin time for non-UTC
+        dt = new Date(y, m, d, hh, mm, ss);
+    }
+    return { date: dt, allDay: false };
+}
+
+function processIcalEvent(evt, calendarName, today, endWindow) {
+    if (!evt.summary || !evt.dtstart) return null;
+
+    const start = parseIcalDate(evt.dtstart, evt.dtstartFull);
+    const eventDate = start.date;
+
+    // For recurring events, check if any occurrence falls in our window
+    if (evt.rrule) {
+        const occurrences = expandRecurrence(evt, today, endWindow);
+        // Return null here - occurrences are handled by expandRecurrence caller
+        // We'll handle this differently: return all occurrences as separate events
+        if (occurrences.length === 0 && (eventDate < today || eventDate >= endWindow)) return null;
+        if (occurrences.length > 0) {
+            // Return first occurrence; caller will handle the rest via expandRecurrences
+            return null; // handled separately
+        }
+    }
+
+    // Non-recurring: check if in window
+    if (eventDate < today || eventDate >= endWindow) return null;
+
+    // Papa filter: hide work-hours timed events
+    if (calendarName === 'papa' && !start.allDay) {
+        const h = eventDate.getHours();
+        if (h >= 9 && h < 18) return null;
+    }
+
+    const dateStr = eventDate.getFullYear() + '-' +
+        String(eventDate.getMonth() + 1).padStart(2, '0') + '-' +
+        String(eventDate.getDate()).padStart(2, '0');
+
+    return {
+        title: evt.summary,
+        date: dateStr,
+        time: start.allDay ? null : String(eventDate.getHours()).padStart(2, '0') + ':' + String(eventDate.getMinutes()).padStart(2, '0'),
+        calendar: calendarName,
+        is_all_day: start.allDay,
+        sort_key: start.allDay ? dateStr + 'T00:00:00' : dateStr + 'T' + String(eventDate.getHours()).padStart(2, '0') + ':' + String(eventDate.getMinutes()).padStart(2, '0') + ':00',
+        location: evt.location || ''
+    };
+}
+
+// Basic recurring event expansion for common patterns (DAILY, WEEKLY, MONTHLY, YEARLY)
+function expandRecurrence(evt, windowStart, windowEnd) {
+    const results = [];
+    if (!evt.rrule || !evt.dtstart) return results;
+
+    const start = parseIcalDate(evt.dtstart, evt.dtstartFull);
+    const baseDate = start.date;
+
+    // Parse RRULE
+    const rules = {};
+    evt.rrule.split(';').forEach(part => {
+        const [k, v] = part.split('=');
+        rules[k] = v;
+    });
+
+    const freq = rules.FREQ;
+    const until = rules.UNTIL ? parseIcalDate(rules.UNTIL, '').date : null;
+    const count = rules.COUNT ? parseInt(rules.COUNT) : null;
+    const interval = rules.INTERVAL ? parseInt(rules.INTERVAL) : 1;
+
+    if (!freq) return results;
+
+    let current = new Date(baseDate);
+    let iterations = 0;
+    const maxIter = count || 1000;
+
+    while (iterations < maxIter) {
+        if (until && current > until) break;
+        if (current >= windowEnd) break;
+
+        if (current >= windowStart) {
+            const dateStr = current.getFullYear() + '-' +
+                String(current.getMonth() + 1).padStart(2, '0') + '-' +
+                String(current.getDate()).padStart(2, '0');
+
+            // Papa filter
+            if (!(evt._calName === 'papa' && !start.allDay && current.getHours() >= 9 && current.getHours() < 18)) {
+                results.push({
+                    title: evt.summary,
+                    date: dateStr,
+                    time: start.allDay ? null : String(current.getHours()).padStart(2, '0') + ':' + String(current.getMinutes()).padStart(2, '0'),
+                    calendar: evt._calName || 'unknown',
+                    is_all_day: start.allDay,
+                    sort_key: start.allDay ? dateStr + 'T00:00:00' : dateStr + 'T' + String(current.getHours()).padStart(2, '0') + ':' + String(current.getMinutes()).padStart(2, '0') + ':00',
+                    location: evt.location || ''
+                });
+            }
+        }
+
+        // Advance
+        const next = new Date(current);
+        if (freq === 'DAILY') next.setDate(next.getDate() + interval);
+        else if (freq === 'WEEKLY') next.setDate(next.getDate() + 7 * interval);
+        else if (freq === 'MONTHLY') next.setMonth(next.getMonth() + interval);
+        else if (freq === 'YEARLY') next.setFullYear(next.getFullYear() + interval);
+        else break;
+
+        current = next;
+        iterations++;
+    }
+
+    return results;
+}
+
+// Fetch all iCal feeds and merge into a single events array
 async function fetchCalendar() {
-    if (!CONFIG.calendarProxyUrl) {
+    const feeds = CONFIG.calendarFeeds;
+    const feedNames = Object.keys(feeds);
+    if (feedNames.length === 0) {
         renderCalendar([]);
         return;
     }
 
-    try {
-        const resp = await fetch(CONFIG.calendarProxyUrl);
-        if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        const events = await resp.json();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endWindow = new Date(today);
+    endWindow.setDate(endWindow.getDate() + 7);
 
-        // Detect travel from all-day events
-        currentTravelInfo = null;
-        const todayStr = getTodayStr();
-        const travelBanner = document.getElementById('travel-banner');
+    let allEvents = [];
 
-        for (const evt of events) {
-            if (evt.is_all_day) {
-                const travel = detectTravel(evt.title, evt.location || '');
-                if (travel && evt.date === todayStr) {
-                    currentTravelInfo = travel;
-                    travelBanner.classList.add('active');
-                    break;
+    const fetches = feedNames.map(async (calName) => {
+        const url = feeds[calName];
+        if (!url) return;
+        try {
+            const proxyUrl = CONFIG.corsProxy + encodeURIComponent(url);
+            const resp = await fetch(proxyUrl);
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const icalText = await resp.text();
+
+            // Parse non-recurring events
+            const parsed = parseIcal(icalText, calName);
+            allEvents = allEvents.concat(parsed);
+
+            // Also expand recurring events
+            const unfolded = icalText.replace(/\r\n[ \t]/g, '').replace(/\r/g, '');
+            const lines = unfolded.split('\n');
+            let inEvent = false;
+            let evt = {};
+            for (const line of lines) {
+                if (line === 'BEGIN:VEVENT') { inEvent = true; evt = {}; continue; }
+                if (line === 'END:VEVENT') {
+                    inEvent = false;
+                    if (evt.rrule && evt.summary && evt.dtstart) {
+                        evt._calName = calName;
+                        const occurrences = expandRecurrence(evt, today, endWindow);
+                        allEvents = allEvents.concat(occurrences);
+                    }
+                    continue;
                 }
+                if (!inEvent) continue;
+                const colonIdx = line.indexOf(':');
+                if (colonIdx === -1) continue;
+                const key = line.substring(0, colonIdx);
+                const value = line.substring(colonIdx + 1);
+                const baseProp = key.split(';')[0];
+                if (baseProp === 'SUMMARY') evt.summary = unescapeIcal(value);
+                else if (baseProp === 'DTSTART') { evt.dtstart = value; evt.dtstartFull = key; }
+                else if (baseProp === 'DTEND') { evt.dtend = value; evt.dtendFull = key; }
+                else if (baseProp === 'LOCATION') evt.location = unescapeIcal(value);
+                else if (baseProp === 'RRULE') evt.rrule = value;
+            }
+
+            console.log('Calendar ' + calName + ': loaded ' + parsed.length + ' events');
+        } catch (e) {
+            console.error('Calendar error (' + calName + '):', e);
+        }
+    });
+
+    await Promise.allSettled(fetches);
+
+    // Sort and deduplicate
+    allEvents.sort((a, b) => {
+        if (a.sort_key < b.sort_key) return -1;
+        if (a.sort_key > b.sort_key) return 1;
+        return 0;
+    });
+
+    // Detect travel from all-day events
+    currentTravelInfo = null;
+    const todayStr = getTodayStr();
+    const travelBanner = document.getElementById('travel-banner');
+    for (const evt of allEvents) {
+        if (evt.is_all_day) {
+            const travel = detectTravel(evt.title, evt.location || '');
+            if (travel && evt.date === todayStr) {
+                currentTravelInfo = travel;
+                travelBanner.classList.add('active');
+                break;
             }
         }
-        if (!currentTravelInfo) {
-            travelBanner.classList.remove('active');
-        }
-
-        cachedEvents = events;
-        renderCalendar(events);
-        lastRefreshStatus.calendar = 'ok';
-    } catch (e) {
-        console.error('Calendar error:', e);
-        renderCalendar(cachedEvents);
-        lastRefreshStatus.calendar = 'error';
     }
+    if (!currentTravelInfo) {
+        travelBanner.classList.remove('active');
+    }
+
+    cachedEvents = allEvents;
+    renderCalendar(allEvents);
+    lastRefreshStatus.calendar = 'ok';
 }
 
 function detectTravel(title, location) {
