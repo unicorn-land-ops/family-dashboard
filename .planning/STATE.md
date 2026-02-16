@@ -11,8 +11,8 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 
 Phase: 3 of 10 (Calendar Integration)
 Plan: 2 of 3 in current phase
-Status: In Progress (03-02 code complete, deployment pending)
-Last activity: 2026-02-16 — Completed 03-02 CORS proxy worker code
+Status: In Progress (03-01 data layer complete, 03-02 CORS proxy complete, 03-03 pending)
+Last activity: 2026-02-16 — Completed 03-01 calendar data layer
 
 Progress: [██████░░░░] 30%
 
@@ -56,6 +56,9 @@ Recent decisions affecting current work:
 - [Phase 02]: tabular-nums CSS on clock prevents layout shifts
 - [02-02] Weather components wrapped in React.memo to isolate from clock re-renders
 - [02-02] No standalone forecast card -- 7-day data reserved for Phase 3 calendar rows
+- [03-01] Unicode escapes for emoji in config.ts to avoid encoding issues
+- [03-01] Work-hours filter only removes Papa's solo events (shared events kept)
+- [03-01] Pipeline architecture: fetch -> parse -> dedup -> filter
 - [03-02] CORS proxy URL allowlist restricted to calendar.google.com only
 - [03-02] 5-minute edge cache (max-age=300) for calendar proxy responses
 - [03-02] Stateless worker -- no KV or Durable Object bindings needed
@@ -71,10 +74,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-16 (plan 03-02 execution)
-Stopped at: Completed 03-02-PLAN.md (CORS proxy worker code) -- deployment pending
+Last session: 2026-02-16 (plan 03-01 execution)
+Stopped at: Completed 03-01-PLAN.md (calendar data layer)
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-16 (03-02 execution)*
+*Last updated: 2026-02-16 (03-01 execution)*
