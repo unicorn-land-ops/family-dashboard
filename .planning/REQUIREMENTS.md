@@ -102,46 +102,48 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DISP-01 | — | Pending |
-| DISP-02 | — | Pending |
-| DISP-03 | — | Pending |
-| DISP-04 | — | Pending |
-| DISP-05 | — | Pending |
-| DISP-06 | — | Pending |
-| CLKW-01 | — | Pending |
-| CLKW-02 | — | Pending |
-| CLKW-03 | — | Pending |
-| CLKW-04 | — | Pending |
-| CAL-01 | — | Pending |
-| CAL-02 | — | Pending |
-| CAL-03 | — | Pending |
-| CAL-04 | — | Pending |
-| CAL-05 | — | Pending |
-| CAL-06 | — | Pending |
-| CAL-07 | — | Pending |
-| TRNS-01 | — | Pending |
-| FUN-01 | — | Pending |
-| FUN-02 | — | Pending |
-| GROC-01 | — | Pending |
-| GROC-02 | — | Pending |
-| GROC-03 | — | Pending |
-| GROC-04 | — | Pending |
-| TIMR-01 | — | Pending |
-| TIMR-02 | — | Pending |
-| TIMR-03 | — | Pending |
-| TIMR-04 | — | Pending |
-| TIMR-05 | — | Pending |
-| CHOR-01 | — | Pending |
-| CHOR-02 | — | Pending |
-| CHOR-03 | — | Pending |
-| CHOR-04 | — | Pending |
-| CHOR-05 | — | Pending |
+| DISP-01 | Phase 1 | Pending |
+| DISP-02 | Phase 1 | Pending |
+| DISP-03 | Phase 1 | Pending |
+| DISP-04 | Phase 4 | Pending |
+| DISP-05 | Phase 8 | Pending |
+| DISP-06 | Phase 1 | Pending |
+| CLKW-01 | Phase 2 | Pending |
+| CLKW-02 | Phase 2 | Pending |
+| CLKW-03 | Phase 2 | Pending |
+| CLKW-04 | Phase 2 | Pending |
+| CAL-01 | Phase 3 | Pending |
+| CAL-02 | Phase 3 | Pending |
+| CAL-03 | Phase 3 | Pending |
+| CAL-04 | Phase 3 | Pending |
+| CAL-05 | Phase 3 | Pending |
+| CAL-06 | Phase 3 | Pending |
+| CAL-07 | Phase 3 | Pending |
+| TRNS-01 | Phase 4 | Pending |
+| FUN-01 | Phase 4 | Pending |
+| FUN-02 | Phase 4 | Pending |
+| GROC-01 | Phase 6 | Pending |
+| GROC-02 | Phase 6 | Pending |
+| GROC-03 | Phase 6 | Pending |
+| GROC-04 | Phase 6 | Pending |
+| TIMR-01 | Phase 7 | Pending |
+| TIMR-02 | Phase 7 | Pending |
+| TIMR-03 | Phase 7 | Pending |
+| TIMR-04 | Phase 7 | Pending |
+| TIMR-05 | Phase 7 | Pending |
+| CHOR-01 | Phase 9 | Pending |
+| CHOR-02 | Phase 9 | Pending |
+| CHOR-03 | Phase 9 | Pending |
+| CHOR-04 | Phase 9 | Pending |
+| CHOR-05 | Phase 9 | Pending |
 
 **Coverage:**
 - v1 requirements: 34 total
-- Mapped to phases: 0
-- Unmapped: 34
+- Mapped to phases: 34
+- Unmapped: 0
+
+**Note:** Phase 5 (Real-Time Infrastructure) and Phase 10 (Hardening & Polish) enable other requirements rather than mapping to specific requirement IDs.
 
 ---
 *Requirements defined: 2026-02-16*
-*Last updated: 2026-02-16 after initial definition*
+*Last updated: 2026-02-16 after roadmap creation*
