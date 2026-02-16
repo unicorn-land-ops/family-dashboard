@@ -42,26 +42,26 @@ Plans:
 - [ ] 01-02-PLAN.md — Responsive layout shell, fluid typography, auto-refresh, and visual verification
 
 ### Phase 2: Clock & Weather Core
-**Goal**: Always-visible panel showing real-time clock, date, and weather conditions
+**Goal**: Always-visible header showing real-time clock, date, current weather, and sunrise/sunset
 **Depends on**: Phase 1
-**Requirements**: CLKW-01, CLKW-02, CLKW-03, CLKW-04
+**Requirements**: CLKW-01, CLKW-02, CLKW-04
 **Success Criteria** (what must be TRUE):
   1. Real-time clock displays current time in Berlin timezone with auto-update
   2. Current date displays in readable format
-  3. Current weather shows temperature and conditions from Open-Meteo API
-  4. 7-day forecast displays with daily highs and lows
-  5. Sunrise and sunset times display for Berlin
-  6. Weather data refreshes automatically without page reload
+  3. Current weather shows temperature, icon, and conditions in header (Open-Meteo API)
+  4. Sunrise and sunset times display in header for Berlin
+  5. Weather data refreshes automatically without page reload
+  6. 7-day forecast data available via useWeather hook for Phase 3 calendar integration
 **Plans**: 2 plans
 
 Plans:
 - [ ] 02-01-PLAN.md — Clock upgrade with date-fns-tz, weather data layer (hooks, API, WMO codes, React Query)
-- [ ] 02-02-PLAN.md — Weather UI components (current, forecast, sunrise/sunset) wired into dashboard
+- [ ] 02-02-PLAN.md — Current weather + sunrise/sunset in header, remove weather placeholder card
 
 ### Phase 3: Calendar Integration
-**Goal**: Family scheduling visible on wall with intelligent event handling
+**Goal**: Family scheduling visible on wall with intelligent event handling and daily weather forecast
 **Depends on**: Phase 2
-**Requirements**: CAL-01, CAL-02, CAL-03, CAL-04, CAL-05, CAL-06, CAL-07
+**Requirements**: CAL-01, CAL-02, CAL-03, CAL-04, CAL-05, CAL-06, CAL-07, CLKW-03
 **Success Criteria** (what must be TRUE):
   1. Events display from 5 Google Calendar iCal feeds (Papa, Daddy, Wren, Ellis, Family)
   2. Each event shows person emoji badge indicating who it applies to

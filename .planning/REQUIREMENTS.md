@@ -110,7 +110,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DISP-06 | Phase 1 | Pending |
 | CLKW-01 | Phase 2 | Pending |
 | CLKW-02 | Phase 2 | Pending |
-| CLKW-03 | Phase 2 | Pending |
+| CLKW-03 | Phase 3 | Pending |
 | CLKW-04 | Phase 2 | Pending |
 | CAL-01 | Phase 3 | Pending |
 | CAL-02 | Phase 3 | Pending |
