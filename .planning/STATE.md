@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 5 (next phase)
+**Current focus:** Phase 5 (Realtime Infrastructure)
 
 ## Current Position
 
-Phase: 4 of 10 (Transit & Fun Content) -- COMPLETE
-Plan: 2 of 2 in current phase (04-02 complete)
-Status: Phase 04 complete. Ready for Phase 05.
-Last activity: 2026-02-16 -- Completed 04-02 content rotation UI
+Phase: 5 of 10 (Realtime Infrastructure)
+Plan: 1 of 2 in current phase (05-01 complete)
+Status: 05-01 code complete. Supabase project creation pending (user action).
+Last activity: 2026-02-17 -- Completed 05-01 Supabase setup code
 
-Progress: [█████████░] 45%
+Progress: [██████████░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: 2.3 min
-- Total execution time: 0.38 hours
+- Total plans completed: 10
+- Average duration: 2.2 min
+- Total execution time: 0.40 hours
 
 **By Phase:**
 
@@ -31,9 +31,10 @@ Progress: [█████████░] 45%
 | 02-clock-weather-core | 2 | 3min | 1.5min |
 | 03-calendar-integration | 3 | 4min | 1.3min |
 | 04-transit-fun-content | 2 | 3min | 1.5min |
+| 05-realtime-infrastructure | 1 | 1min | 1min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (1min), 03-02 (1min), 03-03 (2min), 04-01 (1min), 04-02 (2min)
+- Last 5 plans: 03-02 (1min), 03-03 (2min), 04-01 (1min), 04-02 (2min), 05-01 (1min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -71,22 +72,28 @@ Recent decisions affecting current work:
 - [04-01] Berlin timezone day seed for deterministic country-of-the-day selection
 - [04-02] All sidebar panels stay mounted (opacity crossfade) to preserve React Query cache
 - [04-02] SEV detection via line.product === 'bus' OR remarks containing 'Ersatzverkehr'
+- [05-01] Hand-written DB types instead of CLI generation (only 4 simple tables)
+- [05-01] Supabase client returns null when env vars missing (graceful degradation)
+- [05-01] Web Worker heartbeats for mobile Safari background tab resilience
 
 ### Pending Todos
 
 - Deploy Cloudflare Worker CORS proxy (user action required, see 03-02-PLAN.md Task 2)
 - Configure .env with VITE_CORS_PROXY_URL and VITE_CAL_* variables
+- Create Supabase project and run supabase/schema.sql (see 05-01-PLAN.md Task 2)
+- Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.local
 
 ### Blockers/Concerns
 
 - CORS proxy must be deployed before calendar data can load in browser (blocks 03-03 live verification)
+- Supabase project must be created before realtime features work (code gracefully degrades without it)
 
 ## Session Continuity
 
-Last session: 2026-02-16 (plan 04-02 execution)
-Stopped at: Completed 04-02-PLAN.md (content rotation UI)
+Last session: 2026-02-17 (plan 05-01 execution)
+Stopped at: Completed 05-01-PLAN.md (Supabase setup code -- user action pending for project creation)
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-16 (04-02 execution)*
+*Last updated: 2026-02-17 (05-01 execution)*
