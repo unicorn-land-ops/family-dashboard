@@ -98,6 +98,17 @@ body {
   display: none;
 }
 
+/* Transit departure status badges */
+.departure-cancelled {
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 2px solid rgb(239, 68, 68);
+}
+
+.departure-sev {
+  background: rgba(59, 130, 246, 0.1);
+  border-left: 2px solid rgb(59, 130, 246);
+}
+
 /* Glass-morphism card utility */
 .card-glass {
   background: rgba(255, 255, 255, 0.05);
