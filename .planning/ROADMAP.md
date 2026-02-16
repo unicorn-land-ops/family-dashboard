@@ -12,7 +12,7 @@ This roadmap transforms the existing static family dashboard into a modern, resp
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & Setup** - Modern stack infrastructure with responsive design
+- [x] **Phase 1: Foundation & Setup** - Modern stack infrastructure with responsive design (completed 2026-02-16)
 - [ ] **Phase 2: Clock & Weather Core** - Always-visible panel with real-time updates
 - [ ] **Phase 3: Calendar Integration** - Family scheduling with 5 iCal feeds
 - [ ] **Phase 4: Transit & Fun Content** - Rotating content system with BVG, horoscopes, country
@@ -194,7 +194,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Setup | 0/2 | Planned | - |
+| 1. Foundation & Setup | 0/2 | Complete    | 2026-02-16 |
 | 2. Clock & Weather Core | 0/TBD | Not started | - |
 | 3. Calendar Integration | 0/TBD | Not started | - |
 | 4. Transit & Fun Content | 0/TBD | Not started | - |
