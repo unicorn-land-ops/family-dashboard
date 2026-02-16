@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 7 in progress. Timer UI components complete (plan 02 of 03).
+**Current focus:** Phase 7 complete. Timer system fully integrated into dashboard.
 
 ## Current Position
 
-Phase: 7 of 10 (Timer System)
-Plan: 2 of 3 in current phase -- COMPLETE
-Status: Timer UI components built. TimerPanel, TimerCard, TimerInput, TimerAlert ready for App.tsx wiring.
-Last activity: 2026-02-17 -- Completed 07-02 timer UI components
+Phase: 7 of 10 (Timer System) -- PHASE COMPLETE
+Plan: 3 of 3 in current phase -- COMPLETE
+Status: Timer system fully integrated. Mobile Timers tab, wall sidebar compact panel, full timer lifecycle working.
+Last activity: 2026-02-17 -- Completed 07-03 timer dashboard integration
 
-Progress: [████████████████░] 72%
+Progress: [██████████████████░] 77%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 2.1 min
-- Total execution time: 0.57 hours
+- Total execution time: 0.59 hours
 
 **By Phase:**
 
@@ -33,10 +33,10 @@ Progress: [████████████████░] 72%
 | 04-transit-fun-content | 2 | 3min | 1.5min |
 | 05-realtime-infrastructure | 2 | 3min | 1.5min |
 | 06-grocery-list | 3 | 7min | 2.3min |
-| 07-timer-system | 2 | 2min | 1min |
+| 07-timer-system | 3 | 3min | 1min |
 
 **Recent Trend:**
-- Last 5 plans: 06-01 (5min), 06-02 (1min), 06-03 (1min), 07-01 (1min), 07-02 (1min)
+- Last 5 plans: 06-02 (1min), 06-03 (1min), 07-01 (1min), 07-02 (1min), 07-03 (1min)
 - Trend: Consistently fast
 
 *Updated after each plan completion*
@@ -86,6 +86,8 @@ Recent decisions affecting current work:
 - [Phase 07-01]: No optimistic update on addTimer -- server generates ID and started_at
 - [Phase 07-02]: Single useInterval tick in TimerPanel drives all countdown re-renders (no per-timer intervals)
 - [Phase 07-02]: Module-level Set in TimerAlert prevents duplicate sound alerts across re-renders
+- [Phase 07-03]: Sidebar order: timers above groceries (timers are more time-sensitive)
+- [Phase 07-03]: Timer sidebar shows when activeCount > 0 OR completedTimers.length > 0 (catches alerting timers)
 
 ### Pending Todos
 
@@ -101,10 +103,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-17 (plan 07-02 execution)
-Stopped at: Completed 07-02-PLAN.md (Timer UI components)
+Last session: 2026-02-17 (plan 07-03 execution)
+Stopped at: Completed 07-03-PLAN.md (Timer dashboard integration) -- Phase 07 complete
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-17 (07-01 execution)*
+*Last updated: 2026-02-17 (07-03 execution)*
