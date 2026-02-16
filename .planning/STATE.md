@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 5 complete. Ready for Phase 6 (Grocery List).
+**Current focus:** Phase 6 in progress. Grocery list data layer complete, UI components next.
 
 ## Current Position
 
-Phase: 5 of 10 (Realtime Infrastructure) -- COMPLETE
-Plan: 2 of 2 in current phase (all plans complete)
-Status: Phase 5 complete. Supabase project creation still pending (user action).
-Last activity: 2026-02-17 -- Completed 05-02 realtime hooks and connection status UI
+Phase: 6 of 10 (Grocery List)
+Plan: 1 of 3 in current phase
+Status: Plan 01 complete. Grocery CRUD functions and useGroceries hook ready.
+Last activity: 2026-02-17 -- Completed 06-01 grocery data layer
 
-Progress: [████████████░] 55%
+Progress: [█████████████░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
-- Average duration: 2.2 min
-- Total execution time: 0.43 hours
+- Total plans completed: 12
+- Average duration: 2.5 min
+- Total execution time: 0.50 hours
 
 **By Phase:**
 
@@ -32,10 +32,11 @@ Progress: [████████████░] 55%
 | 03-calendar-integration | 3 | 4min | 1.3min |
 | 04-transit-fun-content | 2 | 3min | 1.5min |
 | 05-realtime-infrastructure | 2 | 3min | 1.5min |
+| 06-grocery-list | 1 | 5min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 03-03 (2min), 04-01 (1min), 04-02 (2min), 05-01 (1min), 05-02 (2min)
-- Trend: Stable
+- Last 5 plans: 04-01 (1min), 04-02 (2min), 05-01 (1min), 05-02 (2min), 06-01 (5min)
+- Trend: Slight increase (database type fix added time)
 
 *Updated after each plan completion*
 
@@ -78,6 +79,7 @@ Recent decisions affecting current work:
 - [05-02] useSupabaseRealtime uses removeChannel (not unsubscribe) for proper cleanup
 - [05-02] ConnectionStatus auto-hides label after 3s when connected (kiosk noise reduction)
 - [05-02] Offline queue uses any-typed client for dynamic table operations
+- [06-01] Rewrote Database types to match supabase-js v2.95 GenericSchema format (explicit Insert/Update/Relationships)
 
 ### Pending Todos
 
@@ -93,10 +95,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-17 (plan 05-02 execution)
-Stopped at: Completed 05-02-PLAN.md (Realtime hooks and connection status UI)
+Last session: 2026-02-17 (plan 06-01 execution)
+Stopped at: Completed 06-01-PLAN.md (Grocery data layer: CRUD functions + useGroceries hook)
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-17 (05-02 execution)*
+*Last updated: 2026-02-17 (06-01 execution)*
