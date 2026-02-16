@@ -52,10 +52,11 @@ Plans:
   4. 7-day forecast displays with daily highs and lows
   5. Sunrise and sunset times display for Berlin
   6. Weather data refreshes automatically without page reload
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD during plan-phase
+- [ ] 02-01-PLAN.md — Clock upgrade with date-fns-tz, weather data layer (hooks, API, WMO codes, React Query)
+- [ ] 02-02-PLAN.md — Weather UI components (current, forecast, sunrise/sunset) wired into dashboard
 
 ### Phase 3: Calendar Integration
 **Goal**: Family scheduling visible on wall with intelligent event handling
@@ -195,7 +196,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Setup | 0/2 | Complete    | 2026-02-16 |
-| 2. Clock & Weather Core | 0/TBD | Not started | - |
+| 2. Clock & Weather Core | 0/2 | Not started | - |
 | 3. Calendar Integration | 0/TBD | Not started | - |
 | 4. Transit & Fun Content | 0/TBD | Not started | - |
 | 5. Real-Time Infrastructure | 0/TBD | Not started | - |
