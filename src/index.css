@@ -22,3 +22,68 @@ body {
   color: var(--color-text-primary);
   overflow: hidden;
 }
+
+/* Dashboard CSS Grid layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-areas:
+    'header header'
+    'main sidebar'
+    'status status';
+  grid-template-columns: 1fr 380px;
+  grid-template-rows: auto 1fr auto;
+}
+
+/* Portrait / mobile layout */
+@media (max-width: 768px) and (orientation: portrait) {
+  .dashboard-grid {
+    grid-template-areas:
+      'header'
+      'main'
+      'status';
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .grid-area-sidebar {
+    display: none;
+  }
+}
+
+/* Grid area assignments */
+.grid-area-header {
+  grid-area: header;
+}
+
+.grid-area-main {
+  grid-area: main;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.grid-area-main::-webkit-scrollbar {
+  display: none;
+}
+
+.grid-area-sidebar {
+  grid-area: sidebar;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.grid-area-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.grid-area-status {
+  grid-area: status;
+}
+
+/* Glass-morphism card utility */
+.card-glass {
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
