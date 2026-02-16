@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 5 (Realtime Infrastructure)
+**Current focus:** Phase 5 complete. Ready for Phase 6 (Grocery List).
 
 ## Current Position
 
-Phase: 5 of 10 (Realtime Infrastructure)
-Plan: 1 of 2 in current phase (05-01 complete)
-Status: 05-01 code complete. Supabase project creation pending (user action).
-Last activity: 2026-02-17 -- Completed 05-01 Supabase setup code
+Phase: 5 of 10 (Realtime Infrastructure) -- COMPLETE
+Plan: 2 of 2 in current phase (all plans complete)
+Status: Phase 5 complete. Supabase project creation still pending (user action).
+Last activity: 2026-02-17 -- Completed 05-02 realtime hooks and connection status UI
 
-Progress: [██████████░] 50%
+Progress: [████████████░] 55%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: 2.2 min
-- Total execution time: 0.40 hours
+- Total execution time: 0.43 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [██████████░] 50%
 | 02-clock-weather-core | 2 | 3min | 1.5min |
 | 03-calendar-integration | 3 | 4min | 1.3min |
 | 04-transit-fun-content | 2 | 3min | 1.5min |
-| 05-realtime-infrastructure | 1 | 1min | 1min |
+| 05-realtime-infrastructure | 2 | 3min | 1.5min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (1min), 03-03 (2min), 04-01 (1min), 04-02 (2min), 05-01 (1min)
+- Last 5 plans: 03-03 (2min), 04-01 (1min), 04-02 (2min), 05-01 (1min), 05-02 (2min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -75,6 +75,9 @@ Recent decisions affecting current work:
 - [05-01] Hand-written DB types instead of CLI generation (only 4 simple tables)
 - [05-01] Supabase client returns null when env vars missing (graceful degradation)
 - [05-01] Web Worker heartbeats for mobile Safari background tab resilience
+- [05-02] useSupabaseRealtime uses removeChannel (not unsubscribe) for proper cleanup
+- [05-02] ConnectionStatus auto-hides label after 3s when connected (kiosk noise reduction)
+- [05-02] Offline queue uses any-typed client for dynamic table operations
 
 ### Pending Todos
 
@@ -90,10 +93,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-17 (plan 05-01 execution)
-Stopped at: Completed 05-01-PLAN.md (Supabase setup code -- user action pending for project creation)
+Last session: 2026-02-17 (plan 05-02 execution)
+Stopped at: Completed 05-02-PLAN.md (Realtime hooks and connection status UI)
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-17 (05-01 execution)*
+*Last updated: 2026-02-17 (05-02 execution)*
