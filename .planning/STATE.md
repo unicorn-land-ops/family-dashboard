@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 
 ## Current Position
 
-Phase: 3 of 10 (Calendar Integration)
-Plan: 2 of 3 in current phase
-Status: In Progress (03-01 data layer complete, 03-02 CORS proxy complete, 03-03 pending)
-Last activity: 2026-02-16 — Completed 03-01 calendar data layer
+Phase: 3 of 10 (Calendar Integration) -- COMPLETE
+Plan: 3 of 3 in current phase (all complete)
+Status: Phase 03 complete. Ready for Phase 04.
+Last activity: 2026-02-16 -- Completed 03-03 calendar UI components
 
-Progress: [██████░░░░] 30%
+Progress: [███████░░░] 35%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 3 min
-- Total execution time: 0.30 hours
+- Total execution time: 0.33 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [██████░░░░] 30%
 |-------|-------|-------|----------|
 | 01-foundation-setup | 2 | 12min | 6min |
 | 02-clock-weather-core | 2 | 3min | 1.5min |
-| 03-calendar-integration | 2 | 2min | 1min |
+| 03-calendar-integration | 3 | 4min | 1.3min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (8min), 02-01 (2min), 02-02 (1min), 03-01 (1min), 03-02 (1min)
-- Trend: Improving
+- Last 5 plans: 02-01 (2min), 02-02 (1min), 03-01 (1min), 03-02 (1min), 03-03 (2min)
+- Trend: Stable
 
 *Updated after each plan completion*
 
@@ -62,6 +62,9 @@ Recent decisions affecting current work:
 - [03-02] CORS proxy URL allowlist restricted to calendar.google.com only
 - [03-02] 5-minute edge cache (max-age=300) for calendar proxy responses
 - [03-02] Stateless worker -- no KV or Durable Object bindings needed
+- [03-03] useQueries enabled flag skips feeds with missing env vars for graceful degradation
+- [03-03] Partial success model: available feeds display even when others fail
+- [03-03] Schulfrei events get accent-gold left border for visual prominence
 
 ### Pending Todos
 
@@ -74,8 +77,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-16 (plan 03-01 execution)
-Stopped at: Completed 03-01-PLAN.md (calendar data layer)
+Last session: 2026-02-16 (plan 03-03 execution)
+Stopped at: Completed 03-03-PLAN.md (calendar UI components)
 Resume file: None
 
 ---
