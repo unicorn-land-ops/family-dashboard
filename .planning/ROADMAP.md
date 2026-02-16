@@ -88,10 +88,11 @@ Plans:
   4. Content rotates through schedule, transit, horoscopes, country with smooth transitions
   5. Rotation intervals are configurable
   6. User can see which content is currently displayed and what's next
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD during plan-phase
+- [ ] 04-01-PLAN.md — API data layer: BVG transit, horoscope, and country fetch modules + React Query hooks + rotation constants
+- [ ] 04-02-PLAN.md — Content rotation UI: TransitPanel, HoroscopePanel, CountryPanel, ContentRotator with crossfade, RotationIndicator, wire into App.tsx sidebar
 
 ### Phase 5: Real-Time Infrastructure
 **Goal**: Cloud database and WebSocket infrastructure for shared state across devices
@@ -200,7 +201,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 1. Foundation & Setup | 0/2 | Complete    | 2026-02-16 |
 | 2. Clock & Weather Core | 0/2 | Not started | - |
 | 3. Calendar Integration | 0/3 | Not started | - |
-| 4. Transit & Fun Content | 0/TBD | Not started | - |
+| 4. Transit & Fun Content | 0/2 | Not started | - |
 | 5. Real-Time Infrastructure | 0/TBD | Not started | - |
 | 6. Grocery List | 0/TBD | Not started | - |
 | 7. Timer System | 0/TBD | Not started | - |
