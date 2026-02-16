@@ -141,10 +141,12 @@ Plans:
   4. User can cancel or dismiss timer from mobile phone
   5. Multiple timers run concurrently without interference
   6. Timer countdown updates in real-time across all devices
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during plan-phase
+- [ ] 07-01-PLAN.md — Timer CRUD API, useTimers hook with countdown helpers, sound alert utility
+- [ ] 07-02-PLAN.md — Timer UI components: TimerInput, TimerCard, TimerAlert, TimerPanel (full + compact variants)
+- [ ] 07-03-PLAN.md — Wire timers into App.tsx: wall sidebar card, mobile nav Timers tab, view switching
 
 ### Phase 8: Priority Interrupts
 **Goal**: Time-sensitive content (timers, grocery list) takes visual priority over rotating content
@@ -207,7 +209,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 4. Transit & Fun Content | 0/2 | Not started | - |
 | 5. Real-Time Infrastructure | 0/2 | Not started | - |
 | 6. Grocery List | 0/3 | Not started | - |
-| 7. Timer System | 0/TBD | Not started | - |
+| 7. Timer System | 0/3 | Not started | - |
 | 8. Priority Interrupts | 0/TBD | Not started | - |
 | 9. Chore Tracking | 0/TBD | Not started | - |
 | 10. Hardening & Polish | 0/TBD | Not started | - |
