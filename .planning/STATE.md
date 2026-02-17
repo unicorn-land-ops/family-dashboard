@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 10 in progress. Hardening and polish for 24/7 reliability.
+**Current focus:** Phase 10 COMPLETE. All 10 phases delivered. Dashboard production-ready.
 
 ## Current Position
 
-Phase: 10 of 10 (Hardening & Polish) -- IN PROGRESS
-Plan: 2 of 3 in current phase -- COMPLETE
-Status: Plan 10-02 complete. Auto-refresh hardened, memory watchdog added, API caching configured.
-Last activity: 2026-02-17 -- Completed 10-02 reliability and caching
+Phase: 10 of 10 (Hardening & Polish) -- COMPLETE
+Plan: 3 of 3 in current phase -- COMPLETE
+Status: All phases complete. Pi GPU optimization, final build verified. Dashboard production-ready.
+Last activity: 2026-02-17 -- Completed 10-03 Pi GPU optimization
 
-Progress: [████████████████████████] 97%
+Progress: [█████████████████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23
+- Total plans completed: 24
 - Average duration: 1.8 min
-- Total execution time: 0.70 hours
+- Total execution time: 0.73 hours
 
 **By Phase:**
 
@@ -36,10 +36,10 @@ Progress: [███████████████████████
 | 07-timer-system | 3 | 3min | 1min |
 | 08-priority-interrupts | 1 | 1min | 1min |
 | 09-chore-tracking | 3 | 4min | 1.3min |
-| 10-hardening-polish | 2 | 4min | 2min |
+| 10-hardening-polish | 3 | 6min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 09-01 (1min), 09-02 (2min), 09-03 (1min), 10-01 (2min), 10-02 (2min)
+- Last 5 plans: 09-02 (2min), 09-03 (1min), 10-01 (2min), 10-02 (2min), 10-03 (2min)
 - Trend: Consistently fast
 
 *Updated after each plan completion*
@@ -107,6 +107,9 @@ Recent decisions affecting current work:
 - [10-01] error instanceof Error guard in GlobalFallback for type-safe message display
 - [10-02] Transit API uses NetworkFirst with 5s timeout (real-time, cache fallback)
 - [10-02] Countries API uses CacheFirst with 7-day TTL (rarely changes)
+- [10-03] backdrop-filter blur removed from card-glass (5% alpha on dark bg makes blur imperceptible)
+- [10-03] Timer pulse uses opacity animation instead of background-color (compositor thread, no paint)
+- [10-03] prefers-reduced-motion disables all non-essential animations for accessibility
 
 ### Pending Todos
 
@@ -122,10 +125,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-17 (plan 10-01 execution)
-Stopped at: Completed 10-01-PLAN.md (Error resilience and memory management)
+Last session: 2026-02-17 (plan 10-03 execution)
+Stopped at: Completed 10-03-PLAN.md (Pi GPU optimization and build verification) -- ALL PHASES COMPLETE
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-17 (10-02 execution)*
+*Last updated: 2026-02-17 (10-03 execution)*
