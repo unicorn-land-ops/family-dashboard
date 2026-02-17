@@ -13,6 +13,7 @@ import { HoroscopePanel } from './components/sidebar/HoroscopePanel';
 import { CountryPanel } from './components/sidebar/CountryPanel';
 import { RotationIndicator } from './components/sidebar/RotationIndicator';
 import { useAutoRefresh } from './hooks/useAutoRefresh';
+import { useMemoryWatchdog } from './hooks/useMemoryWatchdog';
 import { useContentRotation } from './hooks/useContentRotation';
 import { useGroceries } from './hooks/useGroceries';
 import { useMobileNav } from './hooks/useMobileNav';
@@ -20,6 +21,7 @@ import { usePriorityInterrupt } from './hooks/usePriorityInterrupt';
 
 function App() {
   useAutoRefresh();
+  useMemoryWatchdog();
   const { uncheckedCount } = useGroceries();
   const { activeCount: activeTimerCount, completedTimers } = useTimers();
   const priority = usePriorityInterrupt(activeTimerCount, completedTimers.length, uncheckedCount);
