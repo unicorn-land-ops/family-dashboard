@@ -91,10 +91,10 @@ Plans:
   2. Timer tab is removed from mobile navigation bar
   3. Timers remain visible as priority interrupt on wall display when active
   4. Mobile navigation does not show empty/dead states after timer tab removal
-**Plans**: TBD
+**Plans:** 1 plan
 
 Plans:
-- [ ] 14-01: Remove grocery from priority interrupt logic, remove timer tab from mobile nav
+- [ ] 14-01-PLAN.md — Remove grocery from priority interrupt logic, remove timer tab from mobile nav
 
 ### Phase 15: Siri Voice Integration
 **Goal**: Family can manage groceries and timers hands-free via Siri on their iPhones
@@ -127,4 +127,4 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15
 
 ---
 *Roadmap created: 2026-02-16*
-*Last updated: 2026-02-17 (Phase 12 planned)*
+*Last updated: 2026-02-17 (Phase 14 planned)*
