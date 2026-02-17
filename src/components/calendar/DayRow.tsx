@@ -29,27 +29,29 @@ export function DayRow({ day, dayIndex }: DayRowProps) {
   return (
     <div className={`py-[clamp(6px,0.5vw,12px)] ${today ? 'day-today' : ''}`}>
       {/* Day header */}
-      <div className="flex items-baseline justify-between gap-2 px-1 mb-1">
-        <div className="flex items-baseline gap-2">
-          <span
-            className={`text-[clamp(13px,1vw,16px)] font-semibold ${
-              today ? 'text-accent-gold' : 'text-text-primary'
-            }`}
-          >
-            {dayLabel}
-          </span>
-          <span className="text-[clamp(11px,0.8vw,13px)] text-text-secondary">
-            {dateLabel}
-          </span>
-        </div>
-        {dailyWeather && (
+      <div className="flex items-baseline gap-2 px-1 mb-0.5">
+        <span
+          className={`text-[clamp(13px,1vw,16px)] font-semibold ${
+            today ? 'text-accent-gold' : 'text-text-primary'
+          }`}
+        >
+          {dayLabel}
+        </span>
+        <span className="text-[clamp(11px,0.8vw,13px)] text-text-secondary">
+          {dateLabel}
+        </span>
+      </div>
+
+      {/* Weather */}
+      {dailyWeather && (
+        <div className="px-1 mb-1">
           <WeatherBadge
             high={dailyWeather.high}
             low={dailyWeather.low}
             weatherCode={dailyWeather.weatherCode}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Events */}
       {day.events.length > 0 ? (
