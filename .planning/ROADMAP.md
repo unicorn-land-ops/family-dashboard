@@ -77,10 +77,10 @@ Plans:
   2. Country of the Day displays a representative landscape photo from that country (Unsplash API)
   3. Unsplash attribution displays as required by API terms
   4. Country panel layout accommodates the photo without breaking Pi display or causing memory issues
-**Plans**: TBD
+**Plans:** 1 plan
 
 Plans:
-- [ ] 13-01: Limit BVG departures to 3, add Unsplash country photo with attribution and caching
+- [ ] 13-01-PLAN.md — Limit BVG departures to 3, add Unsplash country photo with attribution
 
 ### Phase 14: Behavior Cleanup
 **Goal**: Priority interrupts and mobile navigation reflect actual usage patterns
@@ -127,4 +127,4 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15
 
 ---
 *Roadmap created: 2026-02-16*
-*Last updated: 2026-02-17 (Phase 14 planned)*
+*Last updated: 2026-02-17 (Phase 13 planned)*
