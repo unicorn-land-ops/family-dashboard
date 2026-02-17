@@ -43,6 +43,7 @@ export function GlobalFallback({ error }: FallbackProps) {
  * Error logger matching react-error-boundary's onError signature.
  * Logs component stack for debugging panel crashes.
  */
-export function logError(error: Error, info: { componentStack?: string }) {
-  console.error('[ErrorBoundary]', error.message, info.componentStack);
+export function logError(error: unknown, info: { componentStack?: string | null }) {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error('[ErrorBoundary]', message, info.componentStack);
 }
