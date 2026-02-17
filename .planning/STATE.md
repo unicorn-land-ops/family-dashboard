@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 9 complete. Chore tracking fully integrated into app. Ready for Phase 10.
+**Current focus:** Phase 10 in progress. Hardening and polish for 24/7 reliability.
 
 ## Current Position
 
-Phase: 9 of 10 (Chore Tracking) -- PHASE COMPLETE
-Plan: 3 of 3 in current phase -- COMPLETE
-Status: Phase 9 complete. Chores wired into mobile nav and wall sidebar.
-Last activity: 2026-02-17 -- Completed 09-03 chore app integration
+Phase: 10 of 10 (Hardening & Polish) -- IN PROGRESS
+Plan: 2 of 3 in current phase -- COMPLETE
+Status: Plan 10-02 complete. Auto-refresh hardened, memory watchdog added, API caching configured.
+Last activity: 2026-02-17 -- Completed 10-02 reliability and caching
 
-Progress: [███████████████████████] 95%
+Progress: [████████████████████████] 97%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
-- Average duration: 1.9 min
-- Total execution time: 0.67 hours
+- Total plans completed: 23
+- Average duration: 1.8 min
+- Total execution time: 0.70 hours
 
 **By Phase:**
 
@@ -36,9 +36,10 @@ Progress: [███████████████████████
 | 07-timer-system | 3 | 3min | 1min |
 | 08-priority-interrupts | 1 | 1min | 1min |
 | 09-chore-tracking | 3 | 4min | 1.3min |
+| 10-hardening-polish | 2 | 4min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 07-03 (1min), 08-01 (1min), 09-01 (1min), 09-02 (2min), 09-03 (1min)
+- Last 5 plans: 09-01 (1min), 09-02 (2min), 09-03 (1min), 10-01 (2min), 10-02 (2min)
 - Trend: Consistently fast
 
 *Updated after each plan completion*
@@ -100,6 +101,10 @@ Recent decisions affecting current work:
 - [Phase 09-02]: Compact variant uses progress bar with accent-gold fill and hides completed chores
 - [09-03] ChorePanel compact placed outside priority/rotation ternary for always-visible ambient status
 - [09-03] Chores tab positioned last in mobile nav (newest feature, least time-urgent)
+- [10-02] Backup interval checks every 15 minutes with <15 minute window to avoid double reload
+- [10-02] Memory watchdog is Chromium-only no-op -- Safari/Firefox gracefully skip
+- [10-02] Transit API uses NetworkFirst with 5s timeout (real-time, cache fallback)
+- [10-02] Countries API uses CacheFirst with 7-day TTL (rarely changes)
 
 ### Pending Todos
 
@@ -115,10 +120,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-17 (plan 09-03 execution)
-Stopped at: Completed 09-03-PLAN.md (Chore app integration)
+Last session: 2026-02-17 (plan 10-02 execution)
+Stopped at: Completed 10-02-PLAN.md (Reliability and caching)
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-17 (09-03 execution)*
+*Last updated: 2026-02-17 (10-02 execution)*
