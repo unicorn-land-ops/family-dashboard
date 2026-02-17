@@ -174,10 +174,12 @@ Plans:
   4. Wall display shows chore progress and current status
   5. Chores reset automatically on schedule (daily/weekly)
   6. Completed chores show who did them and when
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during plan-phase
+- [ ] 09-01-PLAN.md — Chore API module, schedule logic (period boundaries, completion checks), and useChores hook with dual realtime sync
+- [ ] 09-02-PLAN.md — Chore UI components: ChoreItem, ChoreList, ChoreInput, ChorePanel (full + compact with progress bar)
+- [ ] 09-03-PLAN.md — Wire chores into App.tsx: mobile nav Chores tab, wall sidebar persistent progress card
 
 ### Phase 10: Hardening & Polish
 **Goal**: Production-ready system for reliable 24/7 unattended operation
@@ -211,7 +213,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 6. Grocery List | 0/3 | Not started | - |
 | 7. Timer System | 0/3 | Not started | - |
 | 8. Priority Interrupts | 0/1 | Not started | - |
-| 9. Chore Tracking | 0/TBD | Not started | - |
+| 9. Chore Tracking | 0/3 | Not started | - |
 | 10. Hardening & Polish | 0/TBD | Not started | - |
 
 ---
