@@ -2,35 +2,53 @@
 
 ## What This Is
 
-A modern, polished family information center for a household of four in Berlin — two dads (Papa & Daddy) and two kids (Wren, 13, and Ellis, 9). Runs on a wall-mounted Raspberry Pi in kiosk mode AND is fully responsive for mobile phones. Replaces the current static dashboard with a premium-feeling interface that adds household management features (chores, groceries, timers) alongside the existing weather, calendar, transit, and fun content.
+A modern, polished family information center for a household of four in Berlin — two dads (Papa & Daddy) and two kids (Wren, 13, and Ellis, 9). Runs on a wall-mounted Raspberry Pi in kiosk mode AND is fully responsive for mobile phones. Features weather, calendar, transit, horoscopes, country of the day, plus interactive household management (chores, groceries, timers) with Supabase realtime sync.
 
 ## Core Value
 
 The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
 
+## Current Milestone: v1.1 Polish
+
+**Goal:** Fix broken features, refine layout and UX, add Siri voice integration for groceries and timers.
+
+**Target features:**
+- Fix calendar layout (person emojis, weather under day header)
+- Fix horoscopes (currently broken)
+- Limit BVG transit to top 3 departures
+- Country of the day image
+- Remove grocery list as priority interrupt
+- Siri voice integration for groceries and timers
+- Remove timer tab from mobile nav
+
 ## Requirements
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Modern, polished visual design — v1.0
+- ✓ Responsive layout for kiosk + mobile — v1.0
+- ✓ Clock, weather, sunrise/sunset always visible — v1.0
+- ✓ Family calendar integration (5 iCal feeds) — v1.0
+- ✓ BVG transit departures — v1.0
+- ✓ Country of the Day — v1.0
+- ✓ Travel detection with dual timezone — v1.0
+- ✓ Timer system with countdown and alerts — v1.0
+- ✓ Grocery list with realtime sync — v1.0
+- ✓ Chore tracking with daily routines — v1.0
+- ✓ Priority interrupts for timers — v1.0
+- ✓ 24/7 hardening and Pi optimization — v1.0
 
 ### Active
 
-- [ ] Modern, polished visual design — premium look, clean typography, smooth animations
-- [ ] Responsive layout for wall-mounted Pi (landscape kiosk) AND mobile phones (portrait, interactive)
-- [ ] Always-visible: clock, weather (current + forecast), active timers, travel timezone when applicable
-- [ ] Rotating content area: daily schedule, family photos, country of the day cycle through
-- [ ] Family calendar integration (5 Google Calendar iCal feeds for Papa, Daddy, Wren, Ellis, Family)
-- [ ] BVG transit departures for U2 at Senefelderplatz
-- [ ] Daily horoscopes for family members (Capricorn, Aquarius, Sagittarius)
-- [ ] Country of the Day with facts, cuisine, and flag
-- [ ] Travel detection — show dual timezone when a family member is traveling
-- [ ] Timer system — set from phone, countdown visible on wall display, priority interrupt when active
-- [ ] Grocery list — shared list, add/check items from phone, visible on wall display when items exist
-- [ ] Chore tracking — daily routines for kids + household jobs assigned to family members
-- [ ] Family photos — pull from iCloud shared album, display in rotation
-- [ ] Mobile interactive features — set timers, manage chores, manage groceries from phone
-- [ ] Priority interrupts — timers and grocery list take visual priority over rotating content when active
+- [ ] Calendar person emojis: 🥑 Papa, 🍪 Daddy, 🌸 Wren, 🥭 Ellis, 🏠 Family — emoji precedes event name
+- [ ] Calendar layout: weather info (temp, icon) underneath day header, not inline with events
+- [ ] BVG transit: limit to top 3 departures
+- [ ] Fix horoscopes (currently broken)
+- [ ] Country of the Day: add a representative image to fill extra space
+- [ ] Grocery list should NOT be a priority interrupt (only timers)
+- [ ] Remove timer tab from mobile nav (not needed as separate screen)
+- [ ] Siri voice integration for adding grocery items
+- [ ] Siri voice integration for setting timers
 
 ### Out of Scope
 
@@ -39,37 +57,37 @@ The family can glance at the wall and instantly know what's happening today — 
 - Multi-language support — dashboard is in English (Ellis gets help from family)
 - Home Assistant integration — keeping it independent and simple
 - User authentication — family-only, no login needed on home network
+- Family photos — deferred to v2
+- Chore completion → kids' network access — v2
 
 ## Context
 
-- Currently a single-file static site (index.html, ~1200 lines) hosted on GitHub Pages
-- All current APIs are CORS-friendly and free (Open-Meteo, BVG, restcountries, horoscope)
-- Google Calendar feeds proxied through corsproxy.io
-- Raspberry Pi runs Chromium in kiosk mode with autostart scripts
-- The family all uses iPhones — Siri available for timers as alternative input
-- Ellis reads only in German but dashboard will be English (family helps)
-- Wall display is landscape, phones are portrait — needs truly responsive design
-- Existing features (weather, calendar, transit, horoscopes, country) all work and should be preserved
-- Calendar already handles event deduplication, Papa's work filter, travel detection, recurring events
+- v1.0 shipped with 10 phases, all features functional
+- Supabase project is running with realtime enabled
+- Cloudflare Worker CORS proxy deployed for calendar feeds
+- Wall display is NOT touchscreen — all interaction is phone-only
+- Family uses iPhones — Siri Shortcuts can make HTTP requests to Supabase
+- Horoscope API appears to be broken/unreliable — needs investigation
+- Calendar emojis from original dashboard: 🥑 Papa, 🍪 Daddy, 🌸 Wren, 🥭 Ellis, 🏠 Family
 
 ## Constraints
 
-- **Hosting**: GitHub Pages (static site) — any dynamic data needs a cloud service (Firebase/Supabase)
-- **Display**: Must work in Chromium kiosk mode on Raspberry Pi (always-on, no interaction)
-- **Mobile**: Must be responsive and interactive on iPhone Safari
-- **APIs**: Prefer free, CORS-friendly APIs — no API keys to manage if possible
-- **Reliability**: Auto-refresh, memory leak prevention — this runs 24/7 unattended
-- **Photos**: iCloud shared album — need a way to access photos from a static site
+- **Hosting**: GitHub Pages (static) + Supabase (realtime)
+- **Display**: Chromium kiosk on Pi (view-only, no touch)
+- **Mobile**: iPhone Safari (interactive)
+- **APIs**: Free, CORS-friendly preferred
+- **Reliability**: 24/7 unattended operation
+- **Siri**: Apple Shortcuts → HTTP POST to Supabase Edge Function or REST API
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Static site + cloud database | No server to maintain, GitHub Pages hosting, Firebase/Supabase for shared state (chores, groceries, timers) | — Pending |
-| Responsive single codebase | One site for wall + mobile, not separate apps | — Pending |
-| iCloud shared album for photos | Family already uses iCloud, will create dedicated album | — Pending |
-| Phone-based timers (not voice) | Avoids Alexa integration complexity, Siri available on iPhones | — Pending |
-| English only | Household common language, keeps UI simple | — Pending |
+| Static site + Supabase | No server to maintain, GitHub Pages + Supabase realtime | ✓ Good |
+| Responsive single codebase | One site for wall + mobile | ✓ Good |
+| Phone-based interaction only | Wall display is not touchscreen | ✓ Good |
+| English only | Household common language | ✓ Good |
+| Siri via Supabase REST API | Apple Shortcuts can POST directly to Supabase PostgREST | — Pending |
 
 ---
-*Last updated: 2026-02-16 after initialization*
+*Last updated: 2026-02-17 after v1.1 milestone start*
