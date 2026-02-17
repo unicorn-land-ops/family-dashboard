@@ -5,6 +5,7 @@ import { MobileNav } from './components/layout/MobileNav';
 import { CalendarPanel } from './components/calendar/CalendarPanel';
 import { GroceryPanel } from './components/grocery/GroceryPanel';
 import { TimerPanel } from './components/timer/TimerPanel';
+import { ChorePanel } from './components/chore/ChorePanel';
 import { useTimers } from './hooks/useTimers';
 import { ContentRotator } from './components/sidebar/ContentRotator';
 import { TransitPanel } from './components/sidebar/TransitPanel';
@@ -34,6 +35,7 @@ function App() {
         {activeView === 'calendar' && <CalendarPanel />}
         {activeView === 'groceries' && <GroceryPanel variant="full" />}
         {activeView === 'timers' && <TimerPanel variant="full" />}
+        {activeView === 'chores' && <ChorePanel variant="full" />}
       </div>
 
       {/* Sidebar — priority interrupt or rotating content (hidden in portrait) */}
@@ -58,6 +60,7 @@ function App() {
             />
           </div>
         )}
+        <ChorePanel variant="compact" />
       </div>
 
       <StatusBar />
