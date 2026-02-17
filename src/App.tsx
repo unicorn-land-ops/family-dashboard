@@ -47,11 +47,6 @@ function App() {
               <GroceryPanel variant="full" />
             </ErrorBoundary>
           )}
-          {activeView === 'timers' && (
-            <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
-              <TimerPanel variant="full" />
-            </ErrorBoundary>
-          )}
           {activeView === 'chores' && (
             <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
               <ChorePanel variant="full" />
