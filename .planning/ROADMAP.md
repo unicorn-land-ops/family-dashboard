@@ -158,10 +158,10 @@ Plans:
   3. Priority interrupts return to normal rotation when condition clears
   4. Visual hierarchy clearly indicates priority content vs normal rotation
   5. Transitions between priority and normal states are smooth
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] TBD during plan-phase
+- [ ] 08-01-PLAN.md — Priority interrupt hook, content rotation pause, sidebar mode switching with crossfade
 
 ### Phase 9: Chore Tracking
 **Goal**: Household chores and kids' daily routines tracked and visible
@@ -210,7 +210,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 5. Real-Time Infrastructure | 0/2 | Not started | - |
 | 6. Grocery List | 0/3 | Not started | - |
 | 7. Timer System | 0/3 | Not started | - |
-| 8. Priority Interrupts | 0/TBD | Not started | - |
+| 8. Priority Interrupts | 0/1 | Not started | - |
 | 9. Chore Tracking | 0/TBD | Not started | - |
 | 10. Hardening & Polish | 0/TBD | Not started | - |
 
