@@ -33,3 +33,10 @@ export const HOROSCOPE_REFRESH_MS = 6 * 60 * 60 * 1000; // 6 hours
 
 // Country configuration
 export const COUNTRY_REFRESH_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+// Memory watchdog (Chromium-only)
+export const MEMORY_CHECK_INTERVAL_MS = 5 * 60_000; // 5 minutes
+export const MEMORY_THRESHOLD_PERCENT = 80; // Force reload above this
+
+// Auto-refresh backup check
+export const REFRESH_BACKUP_INTERVAL_MS = 15 * 60_000; // 15 minutes
