@@ -15,12 +15,14 @@ import { useAutoRefresh } from './hooks/useAutoRefresh';
 import { useContentRotation } from './hooks/useContentRotation';
 import { useGroceries } from './hooks/useGroceries';
 import { useMobileNav } from './hooks/useMobileNav';
+import { usePriorityInterrupt } from './hooks/usePriorityInterrupt';
 
 function App() {
   useAutoRefresh();
-  const { activeIndex, goTo, panelCount } = useContentRotation();
   const { uncheckedCount } = useGroceries();
   const { activeCount: activeTimerCount, completedTimers } = useTimers();
+  const priority = usePriorityInterrupt(activeTimerCount, completedTimers.length, uncheckedCount);
+  const { activeIndex, goTo, panelCount } = useContentRotation(priority.rotationPaused);
   const { activeView, setActiveView } = useMobileNav();
 
   return (
@@ -34,21 +36,28 @@ function App() {
         {activeView === 'timers' && <TimerPanel variant="full" />}
       </div>
 
-      {/* Sidebar — rotating content panels (hidden in portrait) */}
+      {/* Sidebar — priority interrupt or rotating content (hidden in portrait) */}
       <div className="grid-area-sidebar flex flex-col gap-[clamp(10px,1vw,20px)]">
-        {(activeTimerCount > 0 || completedTimers.length > 0) && <TimerPanel variant="compact" />}
-        {uncheckedCount > 0 && <GroceryPanel variant="compact" />}
-        <ContentRotator activeIndex={activeIndex}>
-          <TransitPanel />
-          <HoroscopePanel />
-          <CountryPanel />
-        </ContentRotator>
-        <RotationIndicator
-          activeIndex={activeIndex}
-          panelCount={panelCount}
-          labels={['Transit', 'Horoscopes', 'Country']}
-          onSelect={goTo}
-        />
+        {priority.mode === 'priority' ? (
+          <div className="sidebar-priority-enter flex flex-col gap-[clamp(10px,1vw,20px)] flex-1">
+            {priority.showTimers && <TimerPanel variant="compact" />}
+            {priority.showGroceries && <GroceryPanel variant="compact" />}
+          </div>
+        ) : (
+          <div className="sidebar-rotation-enter flex flex-col gap-[clamp(10px,1vw,20px)] flex-1">
+            <ContentRotator activeIndex={activeIndex}>
+              <TransitPanel />
+              <HoroscopePanel />
+              <CountryPanel />
+            </ContentRotator>
+            <RotationIndicator
+              activeIndex={activeIndex}
+              panelCount={panelCount}
+              labels={['Transit', 'Horoscopes', 'Country']}
+              onSelect={goTo}
+            />
+          </div>
+        )}
       </div>
 
       <StatusBar />
