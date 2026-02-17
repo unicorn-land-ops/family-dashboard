@@ -55,11 +55,6 @@ export const EventCard = React.memo(function EventCard({ event }: EventCardProps
         )}
       </div>
 
-      {/* Summary */}
-      <div className="flex-1 min-w-0 text-[clamp(12px,0.9vw,15px)] leading-snug truncate">
-        {event.summary}
-      </div>
-
       {/* Person badges */}
       <div className="flex gap-0.5 shrink-0">
         {personConfigs.map(
@@ -74,6 +69,11 @@ export const EventCard = React.memo(function EventCard({ event }: EventCardProps
               </span>
             ),
         )}
+      </div>
+
+      {/* Summary */}
+      <div className="flex-1 min-w-0 text-[clamp(12px,0.9vw,15px)] leading-snug truncate">
+        {event.summary}
       </div>
     </div>
   );

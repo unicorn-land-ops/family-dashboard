@@ -4,32 +4,32 @@ export const CALENDAR_FEEDS: PersonConfig[] = [
   {
     id: 'papa',
     name: 'Papa',
-    emoji: '\u{1F468}',
+    emoji: '\u{1F951}',
     calendarUrl: import.meta.env.VITE_CAL_PAPA ?? '',
     isWorkCalendar: true,
   },
   {
     id: 'daddy',
     name: 'Daddy',
-    emoji: '\u{1F468}\u{200D}\u{1F9B0}',
+    emoji: '\u{1F36A}',
     calendarUrl: import.meta.env.VITE_CAL_DADDY ?? '',
   },
   {
     id: 'wren',
     name: 'Wren',
-    emoji: '\u{1F985}',
+    emoji: '\u{1F338}',
     calendarUrl: import.meta.env.VITE_CAL_WREN ?? '',
   },
   {
     id: 'ellis',
     name: 'Ellis',
-    emoji: '\u{1F31F}',
+    emoji: '\u{1F96D}',
     calendarUrl: import.meta.env.VITE_CAL_ELLIS ?? '',
   },
   {
     id: 'family',
     name: 'Family',
-    emoji: '\u{1F468}\u{200D}\u{1F468}\u{200D}\u{1F467}\u{200D}\u{1F466}',
+    emoji: '\u{1F3E0}',
     calendarUrl: import.meta.env.VITE_CAL_FAMILY ?? '',
   },
 ];
