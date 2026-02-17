@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 7 complete. Timer system fully integrated into dashboard.
+**Current focus:** Phase 8 complete. Priority interrupt system replaces sidebar rotation with timers/groceries when active.
 
 ## Current Position
 
-Phase: 7 of 10 (Timer System) -- PHASE COMPLETE
-Plan: 3 of 3 in current phase -- COMPLETE
-Status: Timer system fully integrated. Mobile Timers tab, wall sidebar compact panel, full timer lifecycle working.
-Last activity: 2026-02-17 -- Completed 07-03 timer dashboard integration
+Phase: 8 of 10 (Priority Interrupts) -- PHASE COMPLETE
+Plan: 1 of 1 in current phase -- COMPLETE
+Status: Priority interrupt system live. Sidebar shows timers/groceries when active, content rotation when clear.
+Last activity: 2026-02-17 -- Completed 08-01 priority interrupts
 
-Progress: [██████████████████░] 77%
+Progress: [████████████████████░] 82%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
-- Average duration: 2.1 min
-- Total execution time: 0.59 hours
+- Total plans completed: 18
+- Average duration: 2.0 min
+- Total execution time: 0.61 hours
 
 **By Phase:**
 
@@ -34,9 +34,10 @@ Progress: [██████████████████░] 77%
 | 05-realtime-infrastructure | 2 | 3min | 1.5min |
 | 06-grocery-list | 3 | 7min | 2.3min |
 | 07-timer-system | 3 | 3min | 1min |
+| 08-priority-interrupts | 1 | 1min | 1min |
 
 **Recent Trend:**
-- Last 5 plans: 06-02 (1min), 06-03 (1min), 07-01 (1min), 07-02 (1min), 07-03 (1min)
+- Last 5 plans: 06-03 (1min), 07-01 (1min), 07-02 (1min), 07-03 (1min), 08-01 (1min)
 - Trend: Consistently fast
 
 *Updated after each plan completion*
@@ -88,6 +89,8 @@ Recent decisions affecting current work:
 - [Phase 07-02]: Module-level Set in TimerAlert prevents duplicate sound alerts across re-renders
 - [Phase 07-03]: Sidebar order: timers above groceries (timers are more time-sensitive)
 - [Phase 07-03]: Timer sidebar shows when activeCount > 0 OR completedTimers.length > 0 (catches alerting timers)
+- [Phase 08-01]: Conditional render (not dual-mount crossfade) for priority vs rotation to handle different panel heights
+- [Phase 08-01]: 500ms debounce only on priority-to-rotation exit to prevent flicker
 
 ### Pending Todos
 
@@ -103,10 +106,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-17 (plan 07-03 execution)
-Stopped at: Completed 07-03-PLAN.md (Timer dashboard integration) -- Phase 07 complete
+Last session: 2026-02-17 (plan 08-01 execution)
+Stopped at: Completed 08-01-PLAN.md (Priority interrupts) -- Phase 08 complete
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-17 (07-03 execution)*
+*Last updated: 2026-02-17 (08-01 execution)*
