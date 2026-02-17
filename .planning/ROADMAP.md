@@ -105,10 +105,10 @@ Plans:
   2. User says "Hey Siri, set a timer for pasta, 10 minutes" and a 10-minute pasta timer starts on the wall display
   3. Siri Shortcuts use the Supabase anon key (not service_role key) for secure external writes
   4. New items added via Siri propagate to all connected devices via existing realtime subscriptions
-**Plans**: TBD
+**Plans:** 1 plan
 
 Plans:
-- [ ] 15-01: Supabase PostgREST endpoint verification, Apple Shortcuts configuration for grocery and timer commands
+- [ ] 15-01-PLAN.md — Verify PostgREST endpoints, create Apple Shortcut step-by-step guides for grocery and timer voice commands
 
 ## Progress
 
