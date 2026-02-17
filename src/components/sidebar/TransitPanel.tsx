@@ -25,7 +25,7 @@ function TransitPanelInner() {
           <div className="w-5 h-5 rounded bg-white/10 animate-pulse" />
           <div className="h-5 w-36 rounded bg-white/10 animate-pulse" />
         </div>
-        {Array.from({ length: 5 }).map((_, i) => (
+        {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="h-8 rounded bg-white/10 animate-pulse" />
         ))}
       </div>

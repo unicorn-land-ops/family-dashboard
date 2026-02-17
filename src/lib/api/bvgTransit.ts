@@ -18,7 +18,7 @@ interface DeparturesResponse {
 }
 
 export async function fetchDepartures(): Promise<Departure[]> {
-  const url = `${BVG_BASE}/stops/${SENEFELDERPLATZ_ID}/departures?duration=30&results=10`;
+  const url = `${BVG_BASE}/stops/${SENEFELDERPLATZ_ID}/departures?duration=30&results=3`;
 
   const response = await fetch(url);
 
