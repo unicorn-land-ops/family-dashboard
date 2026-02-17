@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 12 complete -- ready for Phase 13
+**Current focus:** Phase 13 complete -- ready for Phase 14
 
 ## Current Position
 
-Phase: 12 of 15 (Calendar Polish)
+Phase: 13 of 15 (Content Enhancements)
 Plan: 1 of 1 in current phase (COMPLETE)
 Status: Phase complete
-Last activity: 2026-02-17 — 12-01 Calendar emoji + weather layout polish completed
+Last activity: 2026-02-17 — 13-01 BVG departure limit + Unsplash country photos completed
 
-Progress: [██████████████████████████████████░░░░░░] 84% (v1.0 complete, v1.1 2/5 plans)
+Progress: [████████████████████████████████████░░░░] 88% (v1.0 complete, v1.1 3/5 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 26 (24 v1.0 + 2 v1.1)
+- Total plans completed: 27 (24 v1.0 + 3 v1.1)
 - Average duration: ~1.8 min (code tasks), variable with deployment checkpoints
 - Total execution time: ~44 min (v1.0) + ~15min code (v1.1 plan 1)
 
@@ -31,6 +31,7 @@ Progress: [███████████████████████
 |-------|------|----------|-------|-------|
 | 11-01 | horoscope-rls | ~15min (code) | 2 | 6 |
 | 12-01 | calendar-polish | 1min | 2 | 3 |
+| 13-01 | content-enhancements | 2min | 2 | 5 |
 
 ## Accumulated Context
 
@@ -61,9 +62,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 12-01-PLAN.md
-Resume file: .planning/phases/12-calendar-polish/12-01-SUMMARY.md
+Stopped at: Completed 13-01-PLAN.md
+Resume file: .planning/phases/13-content-enhancements/13-01-SUMMARY.md
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-17 (Phase 12 plan 01 complete)*
+*Last updated: 2026-02-17 (Phase 13 plan 01 complete)*
