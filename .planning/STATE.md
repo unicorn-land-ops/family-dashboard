@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 9 in progress. Chore tracking data layer complete (API, schedule logic, hook).
+**Current focus:** Phase 9 in progress. Chore UI components complete (ChorePanel, ChoreList, ChoreItem, ChoreInput).
 
 ## Current Position
 
 Phase: 9 of 10 (Chore Tracking)
-Plan: 1 of 3 in current phase -- COMPLETE
-Status: Chore data layer complete. API CRUD, Berlin-timezone schedule logic, useChores hook with realtime.
-Last activity: 2026-02-17 -- Completed 09-01 chore data layer
+Plan: 2 of 3 in current phase -- COMPLETE
+Status: Chore UI components built. Four components ready for App.tsx wiring in 09-03.
+Last activity: 2026-02-17 -- Completed 09-02 chore UI components
 
-Progress: [█████████████████████░] 86%
+Progress: [██████████████████████░] 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
+- Total plans completed: 20
 - Average duration: 1.9 min
-- Total execution time: 0.63 hours
+- Total execution time: 0.66 hours
 
 **By Phase:**
 
@@ -35,10 +35,10 @@ Progress: [█████████████████████░] 8
 | 06-grocery-list | 3 | 7min | 2.3min |
 | 07-timer-system | 3 | 3min | 1min |
 | 08-priority-interrupts | 1 | 1min | 1min |
-| 09-chore-tracking | 1 | 1min | 1min |
+| 09-chore-tracking | 2 | 3min | 1.5min |
 
 **Recent Trend:**
-- Last 5 plans: 07-01 (1min), 07-02 (1min), 07-03 (1min), 08-01 (1min), 09-01 (1min)
+- Last 5 plans: 07-02 (1min), 07-03 (1min), 08-01 (1min), 09-01 (1min), 09-02 (2min)
 - Trend: Consistently fast
 
 *Updated after each plan completion*
@@ -95,6 +95,9 @@ Recent decisions affecting current work:
 - [09-01] 8-day completion fetch window covers weekly boundary with margin
 - [09-01] Period start uses toZonedTime before startOfDay/startOfWeek for Berlin-correct boundaries
 - [09-01] No optimistic update on addChore (server generates ID); optimistic on complete/uncomplete/deactivate
+- [Phase 09-02]: localStorage default person reduces tap count for repeat completions
+- [Phase 09-02]: Kids-first sort order in grouped list (wren, ellis, papa, daddy, unassigned)
+- [Phase 09-02]: Compact variant uses progress bar with accent-gold fill and hides completed chores
 
 ### Pending Todos
 
@@ -110,10 +113,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-17 (plan 09-01 execution)
-Stopped at: Completed 09-01-PLAN.md (Chore data layer)
+Last session: 2026-02-17 (plan 09-02 execution)
+Stopped at: Completed 09-02-PLAN.md (Chore UI components)
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-17 (09-01 execution)*
+*Last updated: 2026-02-17 (09-02 execution)*
