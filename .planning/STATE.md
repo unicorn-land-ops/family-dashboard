@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 9 in progress. Chore UI components complete (ChorePanel, ChoreList, ChoreItem, ChoreInput).
+**Current focus:** Phase 9 complete. Chore tracking fully integrated into app. Ready for Phase 10.
 
 ## Current Position
 
-Phase: 9 of 10 (Chore Tracking)
-Plan: 2 of 3 in current phase -- COMPLETE
-Status: Chore UI components built. Four components ready for App.tsx wiring in 09-03.
-Last activity: 2026-02-17 -- Completed 09-02 chore UI components
+Phase: 9 of 10 (Chore Tracking) -- PHASE COMPLETE
+Plan: 3 of 3 in current phase -- COMPLETE
+Status: Phase 9 complete. Chores wired into mobile nav and wall sidebar.
+Last activity: 2026-02-17 -- Completed 09-03 chore app integration
 
-Progress: [██████████████████████░] 90%
+Progress: [███████████████████████] 95%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
+- Total plans completed: 21
 - Average duration: 1.9 min
-- Total execution time: 0.66 hours
+- Total execution time: 0.67 hours
 
 **By Phase:**
 
@@ -35,10 +35,10 @@ Progress: [██████████████████████░
 | 06-grocery-list | 3 | 7min | 2.3min |
 | 07-timer-system | 3 | 3min | 1min |
 | 08-priority-interrupts | 1 | 1min | 1min |
-| 09-chore-tracking | 2 | 3min | 1.5min |
+| 09-chore-tracking | 3 | 4min | 1.3min |
 
 **Recent Trend:**
-- Last 5 plans: 07-02 (1min), 07-03 (1min), 08-01 (1min), 09-01 (1min), 09-02 (2min)
+- Last 5 plans: 07-03 (1min), 08-01 (1min), 09-01 (1min), 09-02 (2min), 09-03 (1min)
 - Trend: Consistently fast
 
 *Updated after each plan completion*
@@ -98,6 +98,8 @@ Recent decisions affecting current work:
 - [Phase 09-02]: localStorage default person reduces tap count for repeat completions
 - [Phase 09-02]: Kids-first sort order in grouped list (wren, ellis, papa, daddy, unassigned)
 - [Phase 09-02]: Compact variant uses progress bar with accent-gold fill and hides completed chores
+- [09-03] ChorePanel compact placed outside priority/rotation ternary for always-visible ambient status
+- [09-03] Chores tab positioned last in mobile nav (newest feature, least time-urgent)
 
 ### Pending Todos
 
@@ -113,10 +115,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-17 (plan 09-02 execution)
-Stopped at: Completed 09-02-PLAN.md (Chore UI components)
+Last session: 2026-02-17 (plan 09-03 execution)
+Stopped at: Completed 09-03-PLAN.md (Chore app integration)
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-17 (09-02 execution)*
+*Last updated: 2026-02-17 (09-03 execution)*
