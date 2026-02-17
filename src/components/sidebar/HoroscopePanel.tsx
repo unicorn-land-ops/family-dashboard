@@ -3,10 +3,20 @@ import { useHoroscope } from '../../hooks/useHoroscope';
 import type { ZodiacSign } from '../../lib/api/horoscope';
 
 const ZODIAC_EMOJI: Record<ZodiacSign, string> = {
-  capricorn: '\u2651',
-  aquarius: '\u2652',
-  sagittarius: '\u2650',
+  capricorn: '♑',
+  aquarius: '♒',
+  sagittarius: '♐',
 };
+
+/** Strip leading "Today, Capricorn, " / "Aquarius, " etc. from API text */
+function stripLeadingSign(text: string, sign: string): string {
+  const pattern = new RegExp(
+    `^(today,?\\s+)?${sign},?\\s*`,
+    'i',
+  );
+  const stripped = text.replace(pattern, '');
+  return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+}
 
 function HoroscopePanelInner() {
   const { data: horoscopes, isLoading, error } = useHoroscope();
@@ -30,7 +40,7 @@ function HoroscopePanelInner() {
   }
 
   return (
-    <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex-1 flex flex-col overflow-hidden">
+    <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex flex-col overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg" role="img" aria-label="Horoscopes">
@@ -46,17 +56,16 @@ function HoroscopePanelInner() {
         {horoscopes.map((h) => {
           const sign = h.sign.toLowerCase() as ZodiacSign;
           const emoji = ZODIAC_EMOJI[sign] ?? '';
+          const text = stripLeadingSign(h.horoscope, h.sign);
 
           return (
             <div
               key={h.sign}
               className="bg-white/5 rounded-lg p-2.5"
             >
-              <div className="flex items-center gap-1.5 mb-1">
-                <span className="text-base">{emoji}</span>
-              </div>
-              <p className="text-text-secondary text-[clamp(11px,0.9vw,13px)] leading-snug line-clamp-4">
-                {h.horoscope}
+              <p className="text-text-secondary text-[clamp(11px,0.9vw,13px)] leading-snug">
+                <span className="text-sm mr-1.5 not-italic">{emoji}</span>
+                {text}
               </p>
             </div>
           );
