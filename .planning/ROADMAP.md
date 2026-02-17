@@ -1,8 +1,9 @@
 # Roadmap: Family Dashboard
 
-## Overview
+## Milestones
 
-This roadmap transforms the existing static family dashboard into a modern, responsive web application that runs on a wall-mounted Raspberry Pi kiosk AND mobile phones. The journey begins by establishing infrastructure and migrating existing features (clock, weather, calendar, transit, fun content) to a modern React stack, then adds new interactive household management features (grocery list, timers, chores) with real-time sync across devices. The final phases implement priority interrupts (time-sensitive content takes precedence) and harden the system for reliable 24/7 unattended operation.
+- ✅ **v1.0 Core Dashboard** - Phases 1-10 (shipped 2026-02-17)
+- 🚧 **v1.1 Polish** - Phases 11-15 (in progress)
 
 ## Phases
 
@@ -12,212 +13,118 @@ This roadmap transforms the existing static family dashboard into a modern, resp
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [x] **Phase 1: Foundation & Setup** - Modern stack infrastructure with responsive design (completed 2026-02-16)
-- [ ] **Phase 2: Clock & Weather Core** - Always-visible panel with real-time updates
-- [ ] **Phase 3: Calendar Integration** - Family scheduling with 5 iCal feeds
-- [ ] **Phase 4: Transit & Fun Content** - Rotating content system with BVG, horoscopes, country
-- [ ] **Phase 5: Real-Time Infrastructure** - Shared state database for interactive features
-- [ ] **Phase 6: Grocery List** - First interactive household coordination feature
-- [ ] **Phase 7: Timer System** - Visual countdown timers with mobile control
-- [ ] **Phase 8: Priority Interrupts** - Time-sensitive content visual hierarchy
-- [ ] **Phase 9: Chore Tracking** - Household jobs and daily routines
-- [x] **Phase 10: Hardening & Polish** - 24/7 production reliability (completed 2026-02-17)
+<details>
+<summary>v1.0 Core Dashboard (Phases 1-10) - SHIPPED 2026-02-17</summary>
+
+- [x] **Phase 1: Foundation & Setup** - Modern stack infrastructure with responsive design
+- [x] **Phase 2: Clock & Weather Core** - Always-visible panel with real-time updates
+- [x] **Phase 3: Calendar Integration** - Family scheduling with 5 iCal feeds
+- [x] **Phase 4: Transit & Fun Content** - Rotating content system with BVG, horoscopes, country
+- [x] **Phase 5: Real-Time Infrastructure** - Shared state database for interactive features
+- [x] **Phase 6: Grocery List** - First interactive household coordination feature
+- [x] **Phase 7: Timer System** - Visual countdown timers with mobile control
+- [x] **Phase 8: Priority Interrupts** - Time-sensitive content visual hierarchy
+- [x] **Phase 9: Chore Tracking** - Household jobs and daily routines
+- [x] **Phase 10: Hardening & Polish** - 24/7 production reliability
+
+</details>
+
+### v1.1 Polish (In Progress)
+
+**Milestone Goal:** Fix broken features, refine layout and UX, add Siri voice integration for groceries and timers.
+
+- [ ] **Phase 11: Horoscope Fix & RLS Prep** - Replace broken horoscope API and verify Supabase RLS for Siri
+- [ ] **Phase 12: Calendar Polish** - Person emoji badges and weather-under-header layout
+- [ ] **Phase 13: Content Enhancements** - Country landscape photos and BVG departure limit
+- [ ] **Phase 14: Behavior Cleanup** - Remove grocery priority interrupt and timer mobile tab
+- [ ] **Phase 15: Siri Voice Integration** - Voice commands for groceries and timers via Apple Shortcuts
 
 ## Phase Details
 
-### Phase 1: Foundation & Setup
-**Goal**: Modern web application infrastructure that runs on Raspberry Pi kiosk and mobile phones with responsive design
-**Depends on**: Nothing (first phase)
-**Requirements**: DISP-01, DISP-02, DISP-03, DISP-06
+### Phase 11: Horoscope Fix & RLS Prep
+**Goal**: Family sees daily horoscope readings again, and Supabase is ready for external writes
+**Depends on**: Phase 10 (v1.0 complete)
+**Requirements**: FIX-01
 **Success Criteria** (what must be TRUE):
-  1. Vite + React + TypeScript project builds and deploys to GitHub Pages
-  2. Dashboard renders correctly in landscape on Raspberry Pi Chromium kiosk
-  3. Dashboard renders correctly in portrait on iPhone Safari
-  4. Visual design feels modern and polished with clean typography
-  5. Auto-refresh mechanism prevents memory leaks during 24/7 operation
-**Plans**: 2 plans
+  1. Horoscope panel displays daily readings for Capricorn, Aquarius, and Sagittarius using API Ninjas
+  2. Horoscope content rotates in the sidebar without errors or blank states
+  3. Supabase RLS policies on groceries and timers tables allow anon INSERT (verified, ready for Phase 15)
+**Plans**: TBD
 
 Plans:
-- [ ] 01-01-PLAN.md — Scaffold Vite + React + TypeScript with Tailwind CSS v4, PWA, and GitHub Pages deployment
-- [ ] 01-02-PLAN.md — Responsive layout shell, fluid typography, auto-refresh, and visual verification
+- [ ] 11-01: Replace ohmanda.com horoscope API with API Ninjas, add ErrorBoundary per panel, verify RLS policies
 
-### Phase 2: Clock & Weather Core
-**Goal**: Always-visible header showing real-time clock, date, current weather, and sunrise/sunset
-**Depends on**: Phase 1
-**Requirements**: CLKW-01, CLKW-02, CLKW-04
+### Phase 12: Calendar Polish
+**Goal**: Calendar events show who they belong to and weather sits cleanly under the day header
+**Depends on**: Phase 11
+**Requirements**: FIX-02, CALL-01, CALL-02
 **Success Criteria** (what must be TRUE):
-  1. Real-time clock displays current time in Berlin timezone with auto-update
-  2. Current date displays in readable format
-  3. Current weather shows temperature, icon, and conditions in header (Open-Meteo API)
-  4. Sunrise and sunset times display in header for Berlin
-  5. Weather data refreshes automatically without page reload
-  6. 7-day forecast data available via useWeather hook for Phase 3 calendar integration
-**Plans**: 2 plans
+  1. Each calendar event displays the correct person emoji before the event name (🥑 Papa, 🍪 Daddy, 🌸 Wren, 🥭 Ellis, 🏠 Family)
+  2. Person emoji is determined by matching calendar feed source to family member
+  3. Weather info (temperature, icon) displays underneath the day header row, not inline with events
+  4. Calendar layout remains readable on both wall kiosk and mobile views
+**Plans**: TBD
 
 Plans:
-- [ ] 02-01-PLAN.md — Clock upgrade with date-fns-tz, weather data layer (hooks, API, WMO codes, React Query)
-- [ ] 02-02-PLAN.md — Current weather + sunrise/sunset in header, remove weather placeholder card
+- [ ] 12-01: Calendar feed-to-person mapping, emoji badge component, weather row relocation
 
-### Phase 3: Calendar Integration
-**Goal**: Family scheduling visible on wall with intelligent event handling and daily weather forecast
-**Depends on**: Phase 2
-**Requirements**: CAL-01, CAL-02, CAL-03, CAL-04, CAL-05, CAL-06, CAL-07, CLKW-03
+### Phase 13: Content Enhancements
+**Goal**: Sidebar content panels show richer information without clutter
+**Depends on**: Phase 11
+**Requirements**: TRNS-01, CTRY-01
 **Success Criteria** (what must be TRUE):
-  1. Events display from 5 Google Calendar iCal feeds (Papa, Daddy, Wren, Ellis, Family)
-  2. Each event shows person emoji badge indicating who it applies to
-  3. Recurring events expand correctly based on RRULE patterns
-  4. Duplicate events across calendars display only once
-  5. When a family member is traveling, dual timezone displays for their location
-  6. Papa's work-hours events (9-18 weekdays) are filtered out
-  7. "No School/Schulfrei" all-day events display with visual highlight
-**Plans**: 3 plans
+  1. BVG departures panel shows only the top 3 upcoming departures (not the full list)
+  2. Country of the Day displays a representative landscape photo from that country (Unsplash API)
+  3. Unsplash attribution displays as required by API terms
+  4. Country panel layout accommodates the photo without breaking Pi display or causing memory issues
+**Plans**: TBD
 
 Plans:
-- [ ] 03-01-PLAN.md — Calendar data layer: types, config, ICS parser (ical-expander), dedup, filters, fetch client
-- [ ] 03-02-PLAN.md — Cloudflare Worker CORS proxy code and human deployment checkpoint
-- [ ] 03-03-PLAN.md — useCalendar hook, calendar UI components (CalendarPanel, DayRow, EventCard, WeatherBadge), wire into App.tsx
+- [ ] 13-01: Limit BVG departures to 3, add Unsplash country photo with attribution and caching
 
-### Phase 4: Transit & Fun Content
-**Goal**: Rotating content area cycling through transit, horoscopes, and country information
-**Depends on**: Phase 3
-**Requirements**: TRNS-01, FUN-01, FUN-02, DISP-04
+### Phase 14: Behavior Cleanup
+**Goal**: Priority interrupts and mobile navigation reflect actual usage patterns
+**Depends on**: Phase 11
+**Requirements**: BEHV-01, BEHV-02
 **Success Criteria** (what must be TRUE):
-  1. BVG U2 departures at Senefelderplatz display with real-time updates
-  2. Daily horoscopes display for family members (Capricorn, Aquarius, Sagittarius)
-  3. Country of the Day displays with flag, facts, cuisine, population, language
-  4. Content rotates through schedule, transit, horoscopes, country with smooth transitions
-  5. Rotation intervals are configurable
-  6. User can see which content is currently displayed and what's next
-**Plans**: 2 plans
+  1. Grocery list items do not trigger priority interrupt on the wall display (only active timers do)
+  2. Timer tab is removed from mobile navigation bar
+  3. Timers remain visible as priority interrupt on wall display when active
+  4. Mobile navigation does not show empty/dead states after timer tab removal
+**Plans**: TBD
 
 Plans:
-- [ ] 04-01-PLAN.md — API data layer: BVG transit, horoscope, and country fetch modules + React Query hooks + rotation constants
-- [ ] 04-02-PLAN.md — Content rotation UI: TransitPanel, HoroscopePanel, CountryPanel, ContentRotator with crossfade, RotationIndicator, wire into App.tsx sidebar
+- [ ] 14-01: Remove grocery from priority interrupt logic, remove timer tab from mobile nav
 
-### Phase 5: Real-Time Infrastructure
-**Goal**: Cloud database and WebSocket infrastructure for shared state across devices
-**Depends on**: Phase 4
-**Requirements**: (Enables GROC, TIMR, CHOR - no direct requirements)
+### Phase 15: Siri Voice Integration
+**Goal**: Family can manage groceries and timers hands-free via Siri on their iPhones
+**Depends on**: Phase 11 (RLS policies verified)
+**Requirements**: SIRI-01, SIRI-02
 **Success Criteria** (what must be TRUE):
-  1. Supabase project is configured with database tables for timers, groceries, chores
-  2. WebSocket connection establishes between client and database
-  3. Real-time updates sync across wall display and mobile devices within 1 second
-  4. Connection status indicator shows connected/reconnecting/offline state
-  5. When offline, writes queue locally and sync when connection restored
-  6. WebSocket subscriptions cleanup properly to prevent memory leaks
-  7. Reconnection logic handles background tab scenarios on mobile Safari
-**Plans**: 2 plans
+  1. User says "Hey Siri, add milk to the list" and milk appears on the grocery list within 2 seconds
+  2. User says "Hey Siri, set a timer for pasta, 10 minutes" and a 10-minute pasta timer starts on the wall display
+  3. Siri Shortcuts use the Supabase anon key (not service_role key) for secure external writes
+  4. New items added via Siri propagate to all connected devices via existing realtime subscriptions
+**Plans**: TBD
 
 Plans:
-- [ ] 05-01-PLAN.md — Supabase client, database types, SQL schema file, and human checkpoint for project setup
-- [ ] 05-02-PLAN.md — Realtime subscription hook, connection status hook, offline queue, ConnectionStatus UI in StatusBar
-
-### Phase 6: Grocery List
-**Goal**: Shared grocery list manageable from mobile, visible on wall display
-**Depends on**: Phase 5
-**Requirements**: GROC-01, GROC-02, GROC-03, GROC-04
-**Success Criteria** (what must be TRUE):
-  1. User can add grocery items from mobile phone with touch-friendly interface
-  2. User can check off items from mobile phone
-  3. User can remove items from mobile phone
-  4. Grocery list changes sync in real-time across all devices
-  5. Wall display shows grocery list when items exist
-  6. When multiple users edit simultaneously, changes merge correctly without data loss
-**Plans**: 3 plans
-
-Plans:
-- [ ] 06-01-PLAN.md — Grocery CRUD API functions and useGroceries hook with optimistic mutations + realtime sync
-- [ ] 06-02-PLAN.md — Grocery UI components: GroceryInput, GroceryItem, GroceryList, GroceryPanel (full + compact variants)
-- [ ] 06-03-PLAN.md — Wire grocery into App.tsx: wall sidebar card, mobile nav tab bar, view switching
-
-### Phase 7: Timer System
-**Goal**: Visual countdown timers set from mobile, displayed on wall
-**Depends on**: Phase 6
-**Requirements**: TIMR-01, TIMR-02, TIMR-03, TIMR-04, TIMR-05
-**Success Criteria** (what must be TRUE):
-  1. User can set timer from mobile with label and duration
-  2. Countdown displays on wall in minutes:seconds format with visual prominence
-  3. When timer completes, visual and sound alert activates
-  4. User can cancel or dismiss timer from mobile phone
-  5. Multiple timers run concurrently without interference
-  6. Timer countdown updates in real-time across all devices
-**Plans**: 3 plans
-
-Plans:
-- [ ] 07-01-PLAN.md — Timer CRUD API, useTimers hook with countdown helpers, sound alert utility
-- [ ] 07-02-PLAN.md — Timer UI components: TimerInput, TimerCard, TimerAlert, TimerPanel (full + compact variants)
-- [ ] 07-03-PLAN.md — Wire timers into App.tsx: wall sidebar card, mobile nav Timers tab, view switching
-
-### Phase 8: Priority Interrupts
-**Goal**: Time-sensitive content (timers, grocery list) takes visual priority over rotating content
-**Depends on**: Phase 7
-**Requirements**: DISP-05
-**Success Criteria** (what must be TRUE):
-  1. When a timer is active, it interrupts content rotation and displays prominently
-  2. When grocery list has items, it interrupts content rotation
-  3. Priority interrupts return to normal rotation when condition clears
-  4. Visual hierarchy clearly indicates priority content vs normal rotation
-  5. Transitions between priority and normal states are smooth
-**Plans**: 1 plan
-
-Plans:
-- [ ] 08-01-PLAN.md — Priority interrupt hook, content rotation pause, sidebar mode switching with crossfade
-
-### Phase 9: Chore Tracking
-**Goal**: Household chores and kids' daily routines tracked and visible
-**Depends on**: Phase 8
-**Requirements**: CHOR-01, CHOR-02, CHOR-03, CHOR-04, CHOR-05
-**Success Criteria** (what must be TRUE):
-  1. User can define daily routines for kids (recurring tasks)
-  2. User can define household jobs assignable to family members
-  3. Family members can mark chores complete from mobile phone
-  4. Wall display shows chore progress and current status
-  5. Chores reset automatically on schedule (daily/weekly)
-  6. Completed chores show who did them and when
-**Plans**: 3 plans
-
-Plans:
-- [ ] 09-01-PLAN.md — Chore API module, schedule logic (period boundaries, completion checks), and useChores hook with dual realtime sync
-- [ ] 09-02-PLAN.md — Chore UI components: ChoreItem, ChoreList, ChoreInput, ChorePanel (full + compact with progress bar)
-- [ ] 09-03-PLAN.md — Wire chores into App.tsx: mobile nav Chores tab, wall sidebar persistent progress card
-
-### Phase 10: Hardening & Polish
-**Goal**: Production-ready system for reliable 24/7 unattended operation
-**Depends on**: Phase 9
-**Requirements**: DISP-06, DISP-03, DISP-01
-**Success Criteria** (what must be TRUE):
-  1. Dashboard runs continuously for 48+ hours without crashes or memory issues
-  2. Automatic page reload at 3am prevents memory accumulation
-  3. Service worker caches static assets for offline reliability
-  4. Error tracking captures and logs production issues
-  5. Performance metrics confirm responsive load times (<3s on Pi, <1s on mobile)
-  6. All animations and transitions perform smoothly on Raspberry Pi hardware
-  7. Family confirms system feels polished and reliable for daily use
-**Plans**: 3 plans
-
-Plans:
-- [ ] 10-01-PLAN.md — Error boundaries (react-error-boundary), global error handlers, React Query GC tuning
-- [ ] 10-02-PLAN.md — Enhanced auto-refresh with backup timer, memory watchdog, workbox runtime caching
-- [ ] 10-03-PLAN.md — Pi CSS performance optimization (remove backdrop-filter, optimize animations), final build verification
+- [ ] 15-01: Supabase PostgREST endpoint verification, Apple Shortcuts configuration for grocery and timer commands
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
+Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15
+(Phases 12, 13, 14 are independent and could run in any order after 11)
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Foundation & Setup | 0/2 | Complete    | 2026-02-16 |
-| 2. Clock & Weather Core | 0/2 | Not started | - |
-| 3. Calendar Integration | 0/3 | Not started | - |
-| 4. Transit & Fun Content | 0/2 | Not started | - |
-| 5. Real-Time Infrastructure | 0/2 | Not started | - |
-| 6. Grocery List | 0/3 | Not started | - |
-| 7. Timer System | 0/3 | Not started | - |
-| 8. Priority Interrupts | 0/1 | Not started | - |
-| 9. Chore Tracking | 0/3 | Not started | - |
-| 10. Hardening & Polish | 0/3 | Complete    | 2026-02-17 |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1-10 | v1.0 | 24/24 | Complete | 2026-02-17 |
+| 11. Horoscope Fix & RLS Prep | v1.1 | 0/1 | Not started | - |
+| 12. Calendar Polish | v1.1 | 0/1 | Not started | - |
+| 13. Content Enhancements | v1.1 | 0/1 | Not started | - |
+| 14. Behavior Cleanup | v1.1 | 0/1 | Not started | - |
+| 15. Siri Voice Integration | v1.1 | 0/1 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-16*
-*Last updated: 2026-02-17*
+*Last updated: 2026-02-17 (v1.1 milestone roadmap)*

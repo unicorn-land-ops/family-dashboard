@@ -80,22 +80,22 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FIX-01 | — | Pending |
-| FIX-02 | — | Pending |
-| CALL-01 | — | Pending |
-| CALL-02 | — | Pending |
-| TRNS-01 | — | Pending |
-| CTRY-01 | — | Pending |
-| BEHV-01 | — | Pending |
-| BEHV-02 | — | Pending |
-| SIRI-01 | — | Pending |
-| SIRI-02 | — | Pending |
+| FIX-01 | Phase 11 | Pending |
+| FIX-02 | Phase 12 | Pending |
+| CALL-01 | Phase 12 | Pending |
+| CALL-02 | Phase 12 | Pending |
+| TRNS-01 | Phase 13 | Pending |
+| CTRY-01 | Phase 13 | Pending |
+| BEHV-01 | Phase 14 | Pending |
+| BEHV-02 | Phase 14 | Pending |
+| SIRI-01 | Phase 15 | Pending |
+| SIRI-02 | Phase 15 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 10 total
-- Mapped to phases: 0
-- Unmapped: 10 (pending roadmap creation)
+- Mapped to phases: 10
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-17*
-*Last updated: 2026-02-17 after initial definition*
+*Last updated: 2026-02-17 (traceability updated with phase mappings)*
