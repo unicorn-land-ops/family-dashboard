@@ -32,6 +32,15 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+        env:
+          VITE_CAL_PAPA: ${{ secrets.VITE_CAL_PAPA }}
+          VITE_CAL_DADDY: ${{ secrets.VITE_CAL_DADDY }}
+          VITE_CAL_WREN: ${{ secrets.VITE_CAL_WREN }}
+          VITE_CAL_ELLIS: ${{ secrets.VITE_CAL_ELLIS }}
+          VITE_CAL_FAMILY: ${{ secrets.VITE_CAL_FAMILY }}
+          VITE_CORS_PROXY_URL: ${{ secrets.VITE_CORS_PROXY_URL }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
