@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 Core Dashboard** - Phases 1-10 (shipped 2026-02-17)
-- 🚧 **v1.1 Polish** - Phases 11-15 (in progress)
+- ✅ **v1.1 Polish** - Phases 11-15 (completed 2026-02-17)
 
 ## Phases
 
@@ -52,7 +52,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 11-01-PLAN.md — Horoscope API migration (Worker proxy + frontend) and Supabase RLS policies
+- [x] 11-01-PLAN.md — Horoscope API migration (Worker proxy + frontend) and Supabase RLS policies
 
 ### Phase 12: Calendar Polish
 **Goal**: Calendar events show who they belong to and weather sits cleanly under the day header
@@ -63,10 +63,10 @@ Plans:
   2. Person emoji is determined by matching calendar feed source to family member
   3. Weather info (temperature, icon) displays underneath the day header row, not inline with events
   4. Calendar layout remains readable on both wall kiosk and mobile views
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 12-01-PLAN.md — Update person emojis, move badge before event name, relocate weather below header
+- [x] 12-01-PLAN.md — Update person emojis, move badge before event name, relocate weather below header
 
 ### Phase 13: Content Enhancements
 **Goal**: Sidebar content panels show richer information without clutter
@@ -77,10 +77,10 @@ Plans:
   2. Country of the Day displays a representative landscape photo from that country (Unsplash API)
   3. Unsplash attribution displays as required by API terms
   4. Country panel layout accommodates the photo without breaking Pi display or causing memory issues
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 13-01-PLAN.md — Limit BVG departures to 3, add Unsplash country photo with attribution
+- [x] 13-01-PLAN.md — Limit BVG departures to 3, add Unsplash country photo with attribution
 
 ### Phase 14: Behavior Cleanup
 **Goal**: Priority interrupts and mobile navigation reflect actual usage patterns
@@ -91,10 +91,10 @@ Plans:
   2. Timer tab is removed from mobile navigation bar
   3. Timers remain visible as priority interrupt on wall display when active
   4. Mobile navigation does not show empty/dead states after timer tab removal
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 14-01-PLAN.md — Remove grocery from priority interrupt logic, remove timer tab from mobile nav
+- [x] 14-01-PLAN.md — Remove grocery from priority interrupt logic, remove timer tab from mobile nav
 
 ### Phase 15: Siri Voice Integration
 **Goal**: Family can manage groceries and timers hands-free via Siri on their iPhones
@@ -105,10 +105,10 @@ Plans:
   2. User says "Hey Siri, set a timer for pasta, 10 minutes" and a 10-minute pasta timer starts on the wall display
   3. Siri Shortcuts use the Supabase anon key (not service_role key) for secure external writes
   4. New items added via Siri propagate to all connected devices via existing realtime subscriptions
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 15-01-PLAN.md — Verify PostgREST endpoints, create Apple Shortcut step-by-step guides for grocery and timer voice commands
+- [x] 15-01-PLAN.md — Verify PostgREST endpoints, create Apple Shortcut step-by-step guides for grocery and timer voice commands
 
 ## Progress
 
@@ -120,11 +120,11 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15
 |-------|-----------|----------------|--------|-----------|
 | 1-10 | v1.0 | 24/24 | Complete | 2026-02-17 |
 | 11. Horoscope Fix & RLS Prep | v1.1 | Complete    | 2026-02-17 | - |
-| 12. Calendar Polish | v1.1 | 0/1 | Not started | - |
-| 13. Content Enhancements | v1.1 | 0/1 | Not started | - |
-| 14. Behavior Cleanup | v1.1 | 0/1 | Not started | - |
-| 15. Siri Voice Integration | v1.1 | 0/1 | Not started | - |
+| 12. Calendar Polish | v1.1 | 1/1 | Complete | 2026-02-17 |
+| 13. Content Enhancements | v1.1 | 1/1 | Complete | 2026-02-17 |
+| 14. Behavior Cleanup | v1.1 | 1/1 | Complete | 2026-02-17 |
+| 15. Siri Voice Integration | v1.1 | 1/1 | Complete | 2026-02-17 |
 
 ---
 *Roadmap created: 2026-02-16*
-*Last updated: 2026-02-17 (Phase 13 planned)*
+*Last updated: 2026-02-17 (Phase 15 complete -- v1.1 shipped)*
