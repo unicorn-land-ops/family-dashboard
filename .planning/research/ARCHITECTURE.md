@@ -1,603 +1,467 @@
-# Architecture Research
+# Architecture Research: v1.1 Polish Features Integration
 
-**Domain:** Family dashboard with real-time shared state
-**Researched:** 2026-02-16
+**Domain:** Siri voice integration, UI refinements, image caching for existing family dashboard
+**Researched:** 2026-02-17
 **Confidence:** HIGH
 
-## Standard Architecture
+## Integration Overview
 
-### System Overview
+This research covers three distinct integration points into the existing React + Supabase + Vite dashboard:
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                       PRESENTATION LAYER                             │
-│  (Responsive Components - Wall Kiosk + Mobile Interactive)           │
-├──────────────┬──────────────┬──────────────┬──────────────┬─────────┤
-│  Always      │  Rotating    │  Priority    │  Mobile      │  Status │
-│  Visible     │  Content     │  Interrupt   │  Controls    │  Bar    │
-│              │              │              │              │         │
-│  • Clock     │  • Calendar  │  • Timers    │  • Timer     │ Last    │
-│  • Weather   │  • Photos    │  • Grocery   │    Manager   │ Refresh │
-│  • Transit   │  • Country   │    List      │  • Chore     │ Icons   │
-│              │              │              │    Manager   │         │
-│              │              │              │  • Grocery   │         │
-│              │              │              │    List      │         │
-└──────────────┴──────────────┴──────────────┴──────────────┴─────────┘
-         ↓              ↓              ↓              ↓
-┌─────────────────────────────────────────────────────────────────────┐
-│                         STATE LAYER                                  │
-│  (Local State + Real-time Sync)                                      │
-├──────────────────────────────────────────────────────────────────────┤
-│  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐         │
-│  │ Display State  │  │  Shared State  │  │  Cache State   │         │
-│  │                │  │                │  │                │         │
-│  │ • Rotation idx │  │ • Timers       │  │ • Weather data │         │
-│  │ • View mode    │  │ • Groceries    │  │ • Calendar     │         │
-│  │ • Last refresh │  │ • Chores       │  │ • Transit      │         │
-│  │                │  │                │  │ • Country      │         │
-│  │                │  │ • Photos URLs  │  │                │         │
-│  └────────────────┘  └────────────────┘  └────────────────┘         │
-│         ↓                   ↓                     ↓                  │
-│    localStorage      Realtime Sync          sessionStorage          │
-└─────────────────────────────────────────────────────────────────────┘
-         ↓                   ↓                     ↓
-┌─────────────────────────────────────────────────────────────────────┐
-│                       DATA SOURCE LAYER                              │
-├──────────────────────────────────────────────────────────────────────┤
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐            │
-│  │   External   │   │   Real-time  │   │    Static    │            │
-│  │     APIs     │   │   Database   │   │    Assets    │            │
-│  │              │   │              │   │              │            │
-│  │ • Weather    │   │ Supabase/    │   │ • HTML/CSS   │            │
-│  │ • BVG        │   │ Firebase:    │   │ • App logic  │            │
-│  │ • Calendar   │   │  - Timers    │   │ • Images     │            │
-│  │ • Country    │   │  - Groceries │   │              │            │
-│  │ • Horoscope  │   │  - Chores    │   │              │            │
-│  │ • iCloud     │   │  - Photos    │   │              │            │
-│  └──────────────┘   └──────────────┘   └──────────────┘            │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
-### Component Responsibilities
-
-| Component | Responsibility | Typical Implementation |
-|-----------|----------------|------------------------|
-| **Always Visible Panel** | Clock, weather header, transit departures - never rotates | CSS Grid fixed top/left sections, auto-refresh every 5-15 min |
-| **Rotating Content Area** | Cycles through calendar, photos, country - main content focus | JavaScript interval rotation (30-60s), fade transitions |
-| **Priority Interrupt Layer** | Timers & grocery list take over rotating area when active | Conditional rendering, higher z-index, pulse/notification animations |
-| **Mobile Control Interface** | Form inputs for managing shared state (add timer, grocery item, assign chore) | Media queries show/hide, touch-optimized buttons (44px min) |
-| **Status Bar** | Last refresh indicators, connection status | Small icons, minimal UI, debug info hidden by default |
-| **State Manager** | Synchronizes local and remote state, handles offline queue | Service Worker for offline, WebSocket/polling for real-time |
-| **API Coordinator** | Fetches external data, caches responses, handles rate limits | Fetch API with error handling, exponential backoff, stale-while-revalidate |
-| **Memory Monitor** | Prevents memory leaks in 24/7 kiosk mode | Periodic page reload (every 6-12 hours), cleanup event listeners |
-
-## Recommended Project Structure
+1. **Siri Shortcuts -> Supabase** (new external data path)
+2. **Country flag/image caching on Pi** (service worker enhancement)
+3. **Calendar emoji configurability** (component tree modification)
 
 ```
-family-dashboard/
-├── index.html                 # Single-file entry point (GitHub Pages root)
-├── src/
-│   ├── components/           # UI component modules
-│   │   ├── always-visible/   # Non-rotating sections
-│   │   │   ├── clock.js      # Time/date display with auto-update
-│   │   │   ├── weather.js    # Current weather + forecast
-│   │   │   └── transit.js    # BVG departures
-│   │   ├── rotating/         # Content carousel
-│   │   │   ├── calendar.js   # Daily schedule from iCal
-│   │   │   ├── photos.js     # iCloud shared album display
-│   │   │   └── country.js    # Country of the day facts
-│   │   ├── interrupts/       # Priority overlays
-│   │   │   ├── timers.js     # Active countdown timers
-│   │   │   └── groceries.js  # Shopping list display
-│   │   └── controls/         # Mobile-only interactive forms
-│   │       ├── timer-form.js      # Add/delete timers
-│   │       ├── grocery-form.js    # Manage shopping list
-│   │       └── chore-manager.js   # Assign/complete chores
-│   ├── state/               # State management
-│   │   ├── sync.js          # Real-time database sync (Supabase client)
-│   │   ├── local.js         # localStorage wrapper for display state
-│   │   └── cache.js         # API response caching (sessionStorage)
-│   ├── api/                 # External data fetchers
-│   │   ├── weather.js       # Open-Meteo integration
-│   │   ├── transit.js       # BVG REST API
-│   │   ├── calendar.js      # iCal parser (CORS proxy)
-│   │   ├── country.js       # restcountries.com
-│   │   ├── horoscope.js     # Horoscope API
-│   │   └── photos.js        # iCloud shared album (TBD method)
-│   ├── utils/               # Shared utilities
-│   │   ├── rotation.js      # Content carousel logic
-│   │   ├── refresh.js       # Memory leak prevention (periodic reload)
-│   │   └── responsive.js    # Breakpoint detection, orientation changes
-│   └── styles/              # CSS modules (or inline in HTML initially)
-│       ├── layout.css       # Grid system, responsive breakpoints
-│       ├── components.css   # Component-specific styles
-│       └── animations.css   # Transitions, pulse effects
-├── service-worker.js        # Offline-first caching, background sync
-└── manifest.json            # PWA manifest (optional for mobile install)
+                       EXISTING ARCHITECTURE
+                       =====================
+
+iPhone                    GitHub Pages              Raspberry Pi
+┌──────────────┐         ┌──────────────┐          ┌──────────────┐
+│ Siri Voice   │         │ Static Site  │          │ Chromium     │
+│  "Add milk"  │         │ (React+Vite) │          │ Kiosk Mode   │
+│      │       │         │              │          │              │
+│      v       │         │  React Query │◄────────►│  React Query │
+│  Shortcuts   │         │  + Realtime  │          │  + Realtime  │
+│  App         │         │  Subscripts  │          │  Subscripts  │
+│      │       │         └──────┬───────┘          └──────┬───────┘
+│      v       │                │                         │
+│ HTTP POST ───┼────┐          │                         │
+└──────────────┘    │   ┌──────▼─────────────────────────▼──────┐
+                    └──►│           Supabase                     │
+                        │  PostgREST API  ←── NEW: direct POST  │
+                        │  Realtime WS    ←── existing           │
+                        │  RLS Policies   ←── NEW: anon INSERT   │
+                        └───────────────────────────────────────┘
 ```
 
-### Structure Rationale
+---
 
-- **Single HTML entry point:** GitHub Pages static hosting - keep initial load simple, bundle JS/CSS later if needed
-- **Component modularity:** Each feature (weather, timer, etc.) is self-contained for easier testing and refactoring
-- **State separation:** Display state (rotation index) vs. shared state (timers) vs. cached data (weather) have different lifecycles
-- **API isolation:** External services wrapped in modules for easy mocking and error handling
-- **Mobile-first controls:** Touch-optimized forms hidden on desktop, shown on mobile via media queries
+## Integration 1: Siri Shortcuts -> Supabase (Direct PostgREST)
 
-## Architectural Patterns
+### Verdict: No Edge Function needed. POST directly to PostgREST.
 
-### Pattern 1: Static Site + Real-time Database Hybrid
+**Confidence:** HIGH (verified against Supabase REST API docs and Apple Shortcuts documentation)
 
-**What:** Serve static HTML/CSS/JS from GitHub Pages CDN, connect to cloud database (Supabase/Firebase) for shared state only
+### Why Direct PostgREST Works
 
-**When to use:** Need real-time sync across devices but want zero-cost hosting and no server maintenance
+The existing codebase already uses PostgREST under the hood -- the `supabase-js` client in `src/lib/supabase.ts` wraps PostgREST calls. Apple Shortcuts can replicate these same HTTP calls natively using the "Get Contents of URL" action.
 
-**Trade-offs:**
-- ✅ Free hosting (GitHub Pages) + generous free tier (Supabase: 500MB, Firebase: Spark plan)
-- ✅ Global CDN for fast static asset delivery
-- ✅ Real-time WebSocket updates for timers, groceries, chores
-- ✅ No server to maintain or deploy
-- ⚠️ Cold start latency on Supabase free tier (acceptable for family use)
-- ⚠️ Must design for offline-first (static site continues working if database unavailable)
-
-**Example:**
-```javascript
-// src/state/sync.js - Real-time sync with Supabase
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
-// Subscribe to timer changes across all devices
-export function subscribeToTimers(callback) {
-  return supabase
-    .channel('timers')
-    .on('postgres_changes',
-      { event: '*', schema: 'public', table: 'timers' },
-      (payload) => callback(payload.new)
-    )
-    .subscribe()
-}
-
-// Add timer from mobile device
-export async function addTimer(label, durationMinutes) {
-  const { data, error } = await supabase
-    .from('timers')
-    .insert([{ label, duration_minutes: durationMinutes, started_at: new Date() }])
-
-  if (error) throw error
-  return data
-}
+**What the Shortcut does:**
+```
+POST https://<project-ref>.supabase.co/rest/v1/groceries
+Headers:
+  apikey: <SUPABASE_ANON_KEY>
+  Authorization: Bearer <SUPABASE_ANON_KEY>
+  Content-Type: application/json
+  Prefer: return=minimal
+Body:
+  {"name": "milk", "checked": false, "added_by": "siri"}
 ```
 
-### Pattern 2: Rotating Content with Priority Interrupts
+**What the Shortcut does NOT need:**
+- No Edge Function (no business logic beyond INSERT)
+- No authentication flow (anon key + RLS is sufficient for a family app)
+- No CORS handling (Shortcuts makes native HTTP calls, not browser requests)
 
-**What:** Main display area cycles through calendar → photos → country, but timers/groceries take over when active
+### Why NOT an Edge Function
 
-**When to use:** Limited screen space, need to show multiple content types but prioritize time-sensitive information
+Edge Functions add value when you need:
+- Multi-step transactions (not needed -- single INSERT)
+- Complex validation (not needed -- RLS + column defaults handle it)
+- Third-party API orchestration (not needed -- direct to DB)
+- Secret management beyond anon key (not needed for family-only use)
 
-**Trade-offs:**
-- ✅ Makes efficient use of wall display real estate
-- ✅ Family always sees important info (timers) even if they don't interact
-- ✅ Prevents "banner blindness" by rotating engaging content
-- ⚠️ Can miss content if rotation too fast (30-60s minimum per screen)
-- ⚠️ Need smooth transitions to avoid jarring experience
+The current `addGrocery()` in `src/lib/api/groceries.ts` is a single `.insert()` call. The Shortcut replicates this exact operation via raw HTTP.
 
-**Example:**
-```javascript
-// src/utils/rotation.js - Content carousel with priority override
-const ROTATION_ORDER = ['calendar', 'photos', 'country']
-const ROTATION_INTERVAL_MS = 45000 // 45 seconds
+### Required: RLS INSERT Policy for anon Role
 
-export class ContentRotator {
-  constructor() {
-    this.currentIndex = 0
-    this.intervalId = null
-  }
+The existing Supabase setup likely has RLS enabled. A new policy is needed to allow the `anon` role to INSERT into tables that Siri will write to.
 
-  start() {
-    this.show(ROTATION_ORDER[this.currentIndex])
-    this.intervalId = setInterval(() => {
-      if (!hasPriorityInterrupt()) { // Check if timers or groceries active
-        this.currentIndex = (this.currentIndex + 1) % ROTATION_ORDER.length
-        this.show(ROTATION_ORDER[this.currentIndex])
-      }
-    }, ROTATION_INTERVAL_MS)
-  }
+```sql
+-- Allow anonymous inserts to groceries (for Siri Shortcuts)
+CREATE POLICY "anon_insert_groceries" ON public.groceries
+  FOR INSERT
+  TO anon
+  WITH CHECK (true);
 
-  show(contentType) {
-    // Hide all sections, show target section with fade transition
-    document.querySelectorAll('.rotating-content').forEach(el => el.classList.remove('active'))
-    document.getElementById(`${contentType}-section`).classList.add('active')
-  }
-}
+-- Allow anonymous inserts to timers (for Siri Shortcuts)
+CREATE POLICY "anon_insert_timers" ON public.timers
+  FOR INSERT
+  TO anon
+  WITH CHECK (true);
+```
 
-function hasPriorityInterrupt() {
-  const activeTimers = document.querySelectorAll('.timer.active').length
-  const groceryItems = document.querySelectorAll('.grocery-item.unchecked').length
-  return activeTimers > 0 || groceryItems > 5 // Show groceries if list > 5 items
+**Security note:** The anon key is already exposed in the client-side JS bundle (`VITE_SUPABASE_ANON_KEY`). This is a family dashboard, not a multi-tenant SaaS. The RLS policy scope is INSERT-only; reads and deletes remain protected by existing policies.
+
+### Siri Shortcut Architecture (per command type)
+
+**Shortcut: "Add to grocery list"**
+```
+1. Siri triggers shortcut by name ("Hey Siri, add to grocery list")
+2. "Ask for Input" action -> Siri reads prompt, user dictates item name
+3. "Get Contents of URL" action:
+   - Method: POST
+   - URL: https://<ref>.supabase.co/rest/v1/groceries
+   - Headers: apikey, Authorization, Content-Type, Prefer
+   - Body (JSON): {"name": [Dictated Text], "checked": false, "added_by": "siri"}
+4. "Show Result" or "Speak Text" -> confirms "Added [item] to grocery list"
+```
+
+**Shortcut: "Set a timer"**
+```
+1. Siri triggers shortcut
+2. "Ask for Input" -> "What timer?" (e.g., "pizza 12 minutes")
+3. Text parsing step to extract label and duration
+   - "Choose from Menu" for preset durations OR
+   - Parse with "Replace Text" regex to extract number + unit
+4. "Get Contents of URL":
+   - POST to /rest/v1/timers
+   - Body: {"label": [parsed label], "duration_seconds": [parsed seconds],
+            "started_at": [Current Date ISO8601]}
+5. Speak confirmation
+```
+
+**Timer parsing is the tricky part.** Apple Shortcuts has limited text parsing. Two approaches:
+- **Preset menu (recommended):** "Choose from Menu" with options like "5 min", "10 min", "15 min", "30 min", "45 min", "1 hour" -- simpler and more reliable than free-form parsing
+- **Free-form:** Use "Ask for Input" with type Number for duration, then a second ask for label
+
+### Data Flow After Siri INSERT
+
+The existing realtime architecture handles propagation automatically:
+
+```
+Siri POST → Supabase INSERT → postgres_changes broadcast
+                                      │
+                                      ▼
+                         useSupabaseRealtime hook fires
+                         (src/hooks/useSupabaseRealtime.ts)
+                                      │
+                                      ▼
+                         queryClient.invalidateQueries()
+                         (in useGroceries.ts / useTimers.ts)
+                                      │
+                                      ▼
+                         React Query refetches → UI updates
+                                      │
+                                      ▼
+                         usePriorityInterrupt detects new items
+                         → sidebar switches to priority mode
+                         → wall display shows grocery/timer
+```
+
+**No new React code needed for the data flow.** The existing `useSupabaseRealtime` hook in `useGroceries.ts` and `useTimers.ts` already invalidates React Query cache on any postgres_changes event, regardless of where the INSERT originated. The `added_by: "siri"` field is already supported in the `groceries` table schema (`added_by: string | null`).
+
+### New Components: None for Core Flow
+
+The only frontend change is optional: showing a "via Siri" badge on items where `added_by === 'siri'`. This is a minor modification to `GroceryItem.tsx` or `TimerCard.tsx`, not a new component.
+
+### Files Modified
+
+| File | Change | Type |
+|------|--------|------|
+| Supabase dashboard (SQL editor) | Add RLS INSERT policies for `anon` role | New policy |
+| Apple Shortcuts app | Create 2-3 shortcuts | New (not in repo) |
+| `src/components/grocery/GroceryItem.tsx` | Optional "via Siri" badge | Modify |
+| `src/components/timer/TimerCard.tsx` | Optional "via Siri" badge | Modify |
+
+---
+
+## Integration 2: Country Image Caching on Pi
+
+### Current Behavior
+
+`CountryPanel.tsx` renders flags via:
+```tsx
+<img src={country.flags.svg} ... />
+```
+
+The `flags.svg` URL comes from `restcountries.com` API response (e.g., `https://flagcdn.com/ch.svg`). Each day's country loads a new flag image.
+
+### Existing Caching Already in Place
+
+The `vite.config.ts` already configures a service worker via `vite-plugin-pwa` with Workbox runtime caching. The `restcountries.com` API response is cached with `CacheFirst` strategy for 7 days:
+
+```typescript
+// Already in vite.config.ts
+{
+  urlPattern: /^https:\/\/restcountries\.com\/.*/i,
+  handler: 'CacheFirst',
+  options: {
+    cacheName: 'countries-api',
+    expiration: { maxEntries: 250, maxAgeSeconds: 60 * 60 * 24 * 7 },
+  },
 }
 ```
 
-### Pattern 3: Responsive Single Codebase (Adaptive Components)
+**But the flag images are NOT cached.** They come from `flagcdn.com`, not `restcountries.com`. The service worker has no rule matching `flagcdn.com`.
 
-**What:** Same HTML/CSS serves wall kiosk (landscape, no interaction) and mobile phones (portrait, touch controls)
+### Recommended Fix: Add Workbox Rule for Flag Images
 
-**When to use:** Avoid maintaining separate codebases, users access from different form factors
+Add a new runtime caching entry to `vite.config.ts`:
 
-**Trade-offs:**
-- ✅ One codebase to maintain
-- ✅ Consistent data/state across devices
-- ✅ Easier to add features (write once, works everywhere)
-- ⚠️ CSS complexity increases (many breakpoints, conditional visibility)
-- ⚠️ Must test on both landscape tablets and portrait phones
-
-**Example:**
-```css
-/* src/styles/layout.css - Responsive grid system */
-
-/* Desktop/Wall Display (landscape, 1024px+ width) */
-.container {
-  display: grid;
-  grid-template-areas:
-    "clock    weather  weather"
-    "transit  content  content"
-    "transit  content  content";
-  grid-template-columns: 300px 1fr 1fr;
-  grid-template-rows: auto 1fr 1fr;
-  gap: 20px;
-  padding: 20px;
-}
-
-.mobile-controls { display: none; } /* Hidden on wall display */
-
-/* Mobile (portrait, <768px width) */
-@media (max-width: 768px) and (orientation: portrait) {
-  .container {
-    grid-template-areas:
-      "clock"
-      "weather"
-      "content"
-      "controls";
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto 1fr auto;
-  }
-
-  .transit-section { display: none; } /* Too detailed for small screen */
-  .mobile-controls { display: block; } /* Show add timer/grocery buttons */
-}
-
-/* Tablet (landscape, 768-1024px) */
-@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
-  .container {
-    grid-template-areas:
-      "clock   weather content"
-      "transit content content";
-    grid-template-columns: 250px 300px 1fr;
-  }
+```typescript
+{
+  urlPattern: /^https:\/\/flagcdn\.com\/.*/i,
+  handler: 'CacheFirst',
+  options: {
+    cacheName: 'country-flags',
+    expiration: {
+      maxEntries: 300,  // ~250 countries, SVGs are tiny (~1-5KB each)
+      maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+    },
+    cacheableResponse: {
+      statuses: [0, 200],
+    },
+  },
 }
 ```
 
-### Pattern 4: Memory Leak Prevention (24/7 Kiosk Hardening)
+**Why CacheFirst:** Flags do not change. Once cached, serve from cache forever (within 30-day window). On Pi with limited bandwidth, this prevents re-downloading.
 
-**What:** Periodic full page reload + event listener cleanup to prevent browser memory accumulation
+**Why NOT a different approach:**
+- **Local flag assets:** Would add ~1-2MB to bundle for 250 SVGs. Not worth it when service worker caching achieves the same result with zero bundle impact.
+- **Supabase Storage:** Unnecessary indirection. flagcdn.com is a free CDN, already reliable.
+- **Pi filesystem cache:** Chromium's service worker cache IS the filesystem cache. No need for a custom layer.
 
-**When to use:** Dashboard runs continuously in kiosk mode for days/weeks without manual intervention
+### Broader Image Caching Strategy for "Country of the Day" Enhancement
 
-**Trade-offs:**
-- ✅ Prevents out-of-memory crashes on resource-constrained devices (Raspberry Pi)
-- ✅ Forces fresh API data fetches, clears stale connections
-- ✅ Simple to implement (reload every 6-12 hours)
-- ⚠️ Brief interruption during reload (choose off-peak time, e.g., 3am)
-- ⚠️ Loses any in-memory state not persisted to localStorage
+If the v1.1 feature includes showing a country photo (not just flag), consider caching those too. Potential sources:
+- Unsplash API (free, high-quality, but needs API key)
+- Wikimedia Commons (free, no key, but inconsistent quality)
 
-**Example:**
-```javascript
-// src/utils/refresh.js - Memory leak prevention
-const RELOAD_INTERVAL_MS = 6 * 60 * 60 * 1000 // 6 hours
+For any external image source, add a matching Workbox rule with `CacheFirst` and generous expiration.
 
-export function schedulePeriodicReload() {
-  // Reload at 3am and 3pm local time to minimize disruption
-  const now = new Date()
-  const next3am = new Date(now)
-  next3am.setHours(3, 0, 0, 0)
-  if (next3am < now) next3am.setDate(next3am.getDate() + 1)
+### Files Modified
 
-  const msUntil3am = next3am - now
+| File | Change | Type |
+|------|--------|------|
+| `vite.config.ts` | Add `flagcdn.com` runtime caching rule | Modify |
 
-  setTimeout(() => {
-    console.log('Scheduled reload to prevent memory leaks')
-    location.reload()
-  }, msUntil3am)
+---
+
+## Integration 3: Calendar Emoji Changes
+
+### Current Emoji Architecture
+
+Emojis are defined statically in `src/lib/calendar/config.ts`:
+
+```typescript
+export const CALENDAR_FEEDS: PersonConfig[] = [
+  { id: 'papa', name: 'Papa', emoji: '\u{1F468}', ... },
+  { id: 'daddy', name: 'Daddy', emoji: '\u{1F468}\u{200D}\u{1F9B0}', ... },
+  { id: 'wren', name: 'Wren', emoji: '\u{1F985}', ... },
+  { id: 'ellis', name: 'Ellis', emoji: '\u{1F31F}', ... },
+  { id: 'family', name: 'Family', emoji: '\u{1F468}\u{200D}\u{1F468}\u{200D}\u{1F467}\u{200D}\u{1F466}', ... },
+];
+```
+
+These emojis flow through the component tree as follows:
+
+```
+config.ts (CALENDAR_FEEDS)
+    │
+    ▼
+EventCard.tsx
+    │ event.persons -> CALENDAR_FEEDS.find(f => f.id === id)
+    │ renders: p.emoji as <span>
+    ▼
+DayRow.tsx
+    │ renders EventCard for each event
+    ▼
+CalendarPanel.tsx
+    │ renders DayRow for each day
+    ▼
+App.tsx (grid-area-main)
+```
+
+Emojis also appear in:
+- `ChoreItem.tsx` / `ChorePanel.tsx` (assigned_to field maps to person config)
+- `GroceryItem.tsx` (added_by field could map to person)
+- Any component that references `CALENDAR_FEEDS` for person lookup
+
+### Where Emoji Changes Should Go
+
+**Option A: Keep in config.ts (recommended for v1.1)**
+
+If "emoji changes" means letting family members pick different emojis, the simplest approach is a Supabase `family_members` table that overrides `config.ts` defaults:
+
+```typescript
+// New: src/lib/api/familyMembers.ts
+export async function fetchFamilyMembers(): Promise<PersonConfig[]> {
+  if (!supabase) return CALENDAR_FEEDS; // fallback to static config
+  const { data } = await supabase.from('family_members').select('*');
+  if (!data?.length) return CALENDAR_FEEDS;
+  // Merge DB overrides with static config
+  return CALENDAR_FEEDS.map(feed => {
+    const override = data.find(m => m.id === feed.id);
+    return override ? { ...feed, emoji: override.emoji, name: override.name } : feed;
+  });
 }
-
-// Clean up event listeners before unmount (if using framework)
-export function cleanupEventListeners() {
-  // Remove all custom event listeners to prevent leaks
-  document.querySelectorAll('.interactive').forEach(el => {
-    el.replaceWith(el.cloneNode(true)) // Nuclear option: replace node
-  })
-}
 ```
 
-### Pattern 5: Offline-First with Service Worker
+**Option B: Move to React Context (recommended if emojis become dynamic)**
 
-**What:** Cache static assets and API responses locally, queue writes when offline, sync when connection restored
-
-**When to use:** Want dashboard to work even if internet drops, or during cloud database maintenance
-
-**Trade-offs:**
-- ✅ Dashboard stays functional during Wi-Fi outages
-- ✅ Faster load times (serve from cache)
-- ✅ Can add timers offline, sync when online
-- ⚠️ Service worker complexity (caching strategies, version management)
-- ⚠️ Potential for stale data if cache invalidation not handled properly
-
-**Example:**
-```javascript
-// service-worker.js - Offline-first caching
-const CACHE_NAME = 'family-dashboard-v1'
-const STATIC_ASSETS = ['/index.html', '/styles.css', '/app.js']
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
-  )
-})
-
-// Network-first for API calls, cache-first for static assets
-self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url)
-
-  if (url.pathname.startsWith('/api/')) {
-    // Network-first with 3-second timeout fallback to cache
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          const clone = response.clone()
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone))
-          return response
-        })
-        .catch(() => caches.match(event.request)) // Offline fallback
-    )
-  } else {
-    // Cache-first for static assets
-    event.respondWith(
-      caches.match(event.request).then(cached => cached || fetch(event.request))
-    )
-  }
-})
-```
-
-## Data Flow
-
-### Request Flow (External APIs)
+If emojis can change at runtime (e.g., via a settings panel), wrap the app in a `FamilyMembersProvider`:
 
 ```
-[User views dashboard]
-    ↓
-[Clock updates every second] → [Display layer re-renders time]
-    ↓
-[Weather component checks cache]
-    ↓
-[If cache expired (>15 min old)]
-    ↓
-[Fetch Open-Meteo API] → [Parse JSON response] → [Update cache] → [Render weather]
-    ↓
-[If cache valid]
-    ↓
-[Render from cache immediately]
+App.tsx
+└── FamilyMembersProvider  ← NEW context
+    ├── Header.tsx
+    ├── CalendarPanel.tsx
+    │   └── EventCard.tsx  ← reads from context instead of config.ts
+    ├── ChorePanel.tsx
+    │   └── ChoreItem.tsx  ← reads from context
+    └── GroceryPanel.tsx
+        └── GroceryItem.tsx ← reads from context
 ```
 
-### State Management (Shared State)
+### Recommended Approach for v1.1
+
+**Use Option A (Supabase table + merge with config.ts).** Rationale:
+- The existing `config.ts` already works as the source of truth
+- A `family_members` table adds the ability to override emojis without redeploying
+- No React Context needed -- just add a `useFamilyMembers()` hook that returns the merged config
+- Components that currently import from `config.ts` would import from the hook instead
+- React Query caches the result; staleTime can be long (1 hour) since emojis rarely change
+
+### Component Tree Changes
 
 ```
-[Mobile device: User adds timer "Pizza - 12 minutes"]
-    ↓
-[Timer form submits] → [API call to Supabase INSERT]
-    ↓
-[Supabase broadcasts change via WebSocket]
-    ↓
-[All connected clients receive update]
-    ↓
-[Wall display: Timer appears in interrupt layer]
-[Mobile display: Confirmation + updated list]
-    ↓
-[Every second: Timer component decrements countdown]
-    ↓
-[When timer reaches 0:00]
-    ↓
-[Visual alert: Pulse animation, sound notification]
-[Mark timer complete in database]
+BEFORE:
+  EventCard imports CALENDAR_FEEDS from config.ts
+  ChoreItem imports CALENDAR_FEEDS from config.ts
+
+AFTER:
+  EventCard receives personConfigs from useFamilyMembers() hook
+  ChoreItem receives personConfigs from useFamilyMembers() hook
+  (OR: CalendarPanel/ChorePanel fetch and pass down as props)
 ```
 
-### Key Data Flows
+### New Table Schema
 
-1. **Cold start flow:** Page load → Check localStorage for display state → Restore rotation index → Fetch all API data in parallel → Subscribe to Supabase real-time → Render initial view
-2. **Rotation flow:** Every 45s → Check for priority interrupts (timers/groceries) → If none, advance rotation index → Save to localStorage → Fade transition to next content screen
-3. **Real-time sync flow:** Device A adds grocery item → Supabase INSERT → WebSocket broadcast → Device B receives event → Update local grocery list state → Re-render grocery UI
-4. **Offline queue flow:** No internet → User adds chore on mobile → Queue write in IndexedDB → Show optimistic UI update → When connection restored → Replay queued writes → Sync database
-5. **Memory cleanup flow:** Every 6 hours → Save current state to localStorage → window.location.reload() → Restore state from localStorage → Resume normal operation
+```sql
+CREATE TABLE public.family_members (
+  id TEXT PRIMARY KEY,           -- matches config.ts id: 'papa', 'daddy', etc.
+  name TEXT NOT NULL,
+  emoji TEXT NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
 
-## Scaling Considerations
+-- Seed with current values
+INSERT INTO public.family_members (id, name, emoji) VALUES
+  ('papa', 'Papa', '👨'),
+  ('daddy', 'Daddy', '👨‍🦰'),
+  ('wren', 'Wren', '🦅'),
+  ('ellis', 'Ellis', '🌟'),
+  ('family', 'Family', '👨‍👨‍👧‍👦');
 
-| Scale | Architecture Adjustments |
-|-------|--------------------------|
-| **1 family (4 devices)** | Current architecture is perfect - Supabase free tier (500MB, 50K monthly active users), GitHub Pages free hosting, no optimization needed |
-| **10 families (~40 devices)** | Still on free tier, but consider adding analytics (PostHog/Plausible) to monitor usage patterns, may need CDN caching for iCloud photos |
-| **100+ families** | Supabase Pro tier ($25/mo for 8GB, 100K users), implement rate limiting on API endpoints, consider batching real-time updates instead of per-item broadcasts |
+-- RLS: anyone can read, only authenticated can update
+CREATE POLICY "anon_read_members" ON public.family_members FOR SELECT TO anon USING (true);
+CREATE POLICY "anon_update_members" ON public.family_members FOR UPDATE TO anon USING (true);
+```
 
-### Scaling Priorities
+### Files Modified / Created
 
-1. **First bottleneck: iCloud photo fetching** — If using a server proxy for iCloud photos, this will hit rate limits first. Mitigation: Cache photos in Supabase Storage, only refresh daily, serve via CDN.
-2. **Second bottleneck: Real-time connection limits** — Supabase free tier has connection limits. Mitigation: Use long polling fallback instead of persistent WebSocket if >50 concurrent devices.
+| File | Change | Type |
+|------|--------|------|
+| Supabase SQL | Create `family_members` table + seed data | New |
+| `src/types/database.ts` | Add `family_members` table type | Modify |
+| `src/lib/api/familyMembers.ts` | Fetch + merge with config fallback | New |
+| `src/hooks/useFamilyMembers.ts` | React Query hook | New |
+| `src/components/calendar/EventCard.tsx` | Use hook instead of direct config import | Modify |
+| `src/components/chore/ChoreItem.tsx` | Use hook instead of direct config import | Modify |
+| `src/lib/calendar/config.ts` | Keep as fallback defaults (no change needed) | Unchanged |
 
-## Anti-Patterns
+---
 
-### Anti-Pattern 1: Polling Instead of Real-Time Subscriptions
+## Suggested Build Order
 
-**What people do:** Check database every 5 seconds for timer updates: `setInterval(() => fetchTimers(), 5000)`
+Based on dependency analysis:
 
-**Why it's wrong:**
-- Wastes bandwidth (most polls return no changes)
-- Adds 5-second lag to updates (user adds timer on phone, wall display takes 0-5s to show it)
-- Hits API rate limits unnecessarily
+### Phase 1: Siri Shortcuts Integration
+**Why first:** Zero frontend changes needed. Pure backend (RLS policy) + external (Shortcuts app) work. Validates the most architecturally risky piece (can Shortcuts reliably POST to PostgREST?). Existing realtime hooks handle propagation automatically.
 
-**Do this instead:** Use WebSocket subscriptions (Supabase Realtime, Firebase onSnapshot) so updates push instantly to all devices. Only fall back to polling if connection drops.
+1. Add RLS INSERT policies for `anon` role on `groceries` and `timers` tables
+2. Test with `curl` from terminal to verify direct PostgREST INSERT works
+3. Build "Add Grocery" Shortcut in iOS Shortcuts app
+4. Build "Set Timer" Shortcut with preset duration menu
+5. Verify wall display updates via existing realtime subscriptions
+6. Optional: Add "via Siri" badge to GroceryItem/TimerCard
 
-### Anti-Pattern 2: Storing Large Data in Real-Time Database
+### Phase 2: Country Flag Caching
+**Why second:** Single-line config change. Low risk, immediate benefit for Pi performance.
 
-**What people do:** Store full-resolution family photos (5MB each) directly in Supabase/Firebase database
+1. Add `flagcdn.com` Workbox rule to `vite.config.ts`
+2. Deploy and verify flags are cached in service worker storage on Pi
 
-**Why it's wrong:**
-- Blows through free tier storage limits (500MB on Supabase)
-- Slow to sync large binary blobs over WebSocket
-- Expensive bandwidth costs if photos change frequently
+### Phase 3: Calendar Emoji Configuration
+**Why third:** Requires new Supabase table, new hook, and modifications to multiple components. Most files touched, most testing surface area.
 
-**Do this instead:** Store photos in object storage (Supabase Storage, Firebase Storage, Cloudinary) and only store URLs in the real-time database. Database holds small metadata (`{id: 1, url: 'https://cdn.../photo.jpg', uploaded_at: '...'}`).
+1. Create `family_members` table in Supabase
+2. Add TypeScript types to `database.ts`
+3. Create `fetchFamilyMembers()` API function
+4. Create `useFamilyMembers()` React Query hook
+5. Update `EventCard.tsx` to use hook
+6. Update `ChoreItem.tsx` to use hook
+7. Optional: Build emoji picker settings panel (could be a Siri Shortcut too -- POST to update emoji)
 
-### Anti-Pattern 3: No Offline Handling
+---
 
-**What people do:** Assume internet is always available, show error message if API fails
+## Anti-Patterns to Avoid
 
-**Why it's wrong:**
-- Dashboard becomes useless during Wi-Fi outages
-- Lost user actions (add timer → internet drops → data lost)
-- Poor user experience on unreliable connections
+### Anti-Pattern: Edge Function for Simple INSERTs
+**What people do:** Create a Supabase Edge Function that validates input and inserts a row.
+**Why wrong here:** Adds cold-start latency (Deno runtime boot), deployment complexity, and another codebase to maintain. PostgREST does the same job with zero latency overhead. Edge Functions are for orchestration, not proxying single INSERTs.
 
-**Do this instead:** Implement offline-first with service worker caching for static assets, IndexedDB queue for write operations, graceful degradation (show last cached data + "offline" indicator).
+### Anti-Pattern: Storing Shortcut Config in the App
+**What people do:** Build a "Shortcut generator" UI in the dashboard that creates Shortcuts programmatically.
+**Why wrong:** Apple Shortcuts cannot be programmatically created via web API. The Shortcuts must be manually built in the iOS Shortcuts app. Document the setup steps instead.
 
-### Anti-Pattern 4: Framework Overkill for Simple Dashboard
+### Anti-Pattern: Custom Image Download Script for Pi
+**What people do:** Write a cron job on the Pi that pre-downloads tomorrow's country flag.
+**Why wrong:** The service worker already handles this. Adding a Pi-side script creates a parallel caching layer that can go stale or conflict with the browser cache. Let Workbox handle it.
 
-**What people do:** "Let's use React + Redux + TypeScript + Webpack + Next.js for a family dashboard"
+### Anti-Pattern: React Context for Rarely-Changing Config
+**What people do:** Wrap the entire app in `<FamilyConfigContext>` for emoji overrides.
+**Why wrong for v1.1:** Context re-renders all consumers when any value changes. Emojis change maybe once a month. React Query with a long staleTime is more efficient and already established in the codebase pattern. Only add Context if emoji changes need to be instant across all components (they do not -- a refetch on next query invalidation is fine).
 
-**Why it's wrong:**
-- Massive bundle size (React 42KB gzipped + framework overhead)
-- Complexity doesn't match problem (displaying timers and weather isn't complex state management)
-- Build step required for every change (slows iteration)
-- Memory overhead in kiosk mode (framework abstractions accumulate)
+---
 
-**Do this instead:** Start with vanilla JavaScript modules, HTML, CSS. If state management gets complex (>500 lines of state logic), upgrade to lightweight library (Preact 3KB, Alpine.js 15KB, Lit 5KB). Only use React/Vue if building many interactive components.
+## Scalability Considerations
 
-### Anti-Pattern 5: Ignoring Memory Leaks in Kiosk Mode
+| Concern | Current (v1.0) | After v1.1 |
+|---------|-----------------|------------|
+| Supabase API calls | Browser clients only | +Siri Shortcuts (adds ~5-20 inserts/day) |
+| RLS policy surface | SELECT + UPDATE + DELETE for anon | +INSERT for anon on groceries, timers |
+| Service worker cache size | ~5MB (fonts, API responses) | +~500KB (flag SVGs accumulate over time) |
+| Component re-renders | Config.ts is static import | useFamilyMembers hook adds 1 query per mount |
 
-**What people do:** Deploy dashboard, leave it running 24/7, wonder why Raspberry Pi crashes after 3 days
+All well within Supabase free tier limits. No architectural concerns at family scale.
 
-**Why it's wrong:**
-- Event listeners accumulate (each rotation/timer creates listeners that aren't cleaned up)
-- DOM nodes held in memory even after removal
-- WebSocket connections leak memory over time
-- Browser heap grows until out-of-memory crash
-
-**Do this instead:** Implement periodic page reload (every 6-12 hours), use weak references for event listeners where possible, monitor memory usage in development (Chrome DevTools Memory Profiler), clean up timers/intervals on component unmount.
-
-## Integration Points
-
-### External Services
-
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| **Open-Meteo (Weather)** | REST API, fetch every 15 minutes, cache in sessionStorage | Free, no API key, CORS-friendly, includes sunrise/sunset |
-| **BVG (Transit)** | REST API, fetch every 2 minutes, use v6.bvg.transport.rest | Free, no API key, returns real-time departures for stop ID |
-| **Google Calendar** | iCal feed via CORS proxy (corsproxy.io or allorigins.win) | Parse iCal text format (VEVENT blocks), cache daily |
-| **restcountries.com** | REST API, fetch once daily, deterministic country selection by date | Free, comprehensive country data, no API key |
-| **Horoscope API** | REST API, fetch once daily for each family member's sign | Free, simple JSON response |
-| **iCloud Shared Album** | TBD - requires Apple ID authentication or public shared link scraping | Research needed: icloud-shared-album npm package or manual parsing |
-| **Supabase (Database)** | WebSocket subscription for real-time, REST for CRUD operations | Free tier: 500MB, 50K MAU, 2GB bandwidth/day |
-
-### Internal Boundaries
-
-| Boundary | Communication | Notes |
-|----------|---------------|-------|
-| **Component ↔ State Manager** | Event-driven (CustomEvent) + direct function calls | Components dispatch events (`timer-added`), state manager updates database + local state |
-| **State Manager ↔ Supabase** | WebSocket (real-time subscriptions) + REST (CRUD) | Subscribe to table changes, INSERT/UPDATE/DELETE via Supabase client |
-| **API Module ↔ Cache** | Direct function calls (check cache → fetch → update cache) | Cache layer wraps all API calls with stale-while-revalidate logic |
-| **Rotating Content ↔ Priority Interrupt** | Conditional rendering based on state | Check `hasActiveTimers()` before showing next rotation screen |
-| **Wall Display ↔ Mobile Controls** | Shared Supabase state (no direct communication) | Mobile writes to DB → Wall subscribes to changes |
-
-## Build Order Implications
-
-### Phase 1: Foundation (Static Display)
-**What to build:** Single HTML file with clock, weather, transit, calendar - all read-only, no database yet
-
-**Dependencies:** None - pure frontend, existing APIs work
-
-**Validates:** Basic layout responsive design, API integrations, content rotation logic
-
-### Phase 2: Real-Time Infrastructure
-**What to build:** Supabase setup, database schema (timers, groceries, chores tables), WebSocket subscription logic
-
-**Dependencies:** Phase 1 complete (need UI to display real-time data)
-
-**Validates:** Real-time sync across devices, offline queue, connection error handling
-
-### Phase 3: Mobile Controls
-**What to build:** Interactive forms for adding timers, managing groceries, assigning chores - mobile-only UI
-
-**Dependencies:** Phase 2 complete (need database backend to write to)
-
-**Validates:** Touch UX, form validation, optimistic UI updates
-
-### Phase 4: Priority Interrupts + Photos
-**What to build:** Timer countdown display, grocery list interrupt, iCloud photo carousel
-
-**Dependencies:** Phase 3 complete (need timers/groceries in database to trigger interrupts)
-
-**Validates:** Visual priority system, photo fetching/caching, smooth transitions
-
-### Phase 5: Hardening for 24/7 Operation
-**What to build:** Service worker, memory leak prevention, offline mode, analytics/monitoring
-
-**Dependencies:** Phases 1-4 complete (need stable feature set before optimizing)
-
-**Validates:** Multi-day uptime, graceful degradation, performance on Raspberry Pi
-
-**Critical path:** Phase 1 → Phase 2 (can't add real-time controls without database) → Phase 3 (can't test priority interrupts without data) → Phase 4 → Phase 5
-
-**Parallelizable:** API integrations in Phase 1 can be built independently, iCloud photo research can happen during Phase 2
+---
 
 ## Sources
 
-### Architecture Patterns
-- [GitHub: PicoPixl/family-dashboard](https://github.com/PicoPixl/family-dashboard) - Real-time family dashboard example with Vite + React + Express
-- [GitHub: stefanthurnherr/family-dashboard](https://github.com/stefanthurnherr/family-dashboard) - Self-hosted dashboard with shared events and calendar
-- [Quora: Real-time web app architecture](https://www.quora.com/What-is-an-appropriate-architecture-for-real-time-web-applications-where-the-user-s-state-will-be-shared-in-real-time-across-mobile-devices-and-web) - CQRS-ES pattern for shared state
-- [Medium: Shared State in Micro Frontends](https://medium.com/front-end-weekly/essential-considerations-for-shared-state-in-micro-frontends-8848b768877a) - State isolation and tenant-specific data patterns
+### Supabase PostgREST Direct API
+- [REST API | Supabase Docs](https://supabase.com/docs/guides/api) - AUTO confidence: HIGH
+- [Creating API Routes | Supabase Docs](https://supabase.com/docs/guides/api/creating-routes) - confidence: HIGH
+- [Securing your API | Supabase Docs](https://supabase.com/docs/guides/api/securing-your-api) - confidence: HIGH
+- [Row Level Security | Supabase Docs](https://supabase.com/docs/guides/database/postgres/row-level-security) - confidence: HIGH
 
-### Real-Time Database Architecture
-- [Supabase Architecture Docs](https://supabase.com/docs/guides/getting-started/architecture) - PostgreSQL-based real-time with WebSocket engine
-- [UI Bakery: Firebase vs Supabase](https://uibakery.io/blog/firebase-vs-supabase) - NoSQL vs SQL comparison for real-time apps
-- [Medium: Supabase or Firebase for Modern Web Apps](https://medium.com/@adorablepaty/supabase-or-firebase-which-fits-modern-web-apps-fa87e95a2d34) - Real-time capabilities comparison
+### Apple Shortcuts HTTP Capabilities
+- [Request your first API in Shortcuts | Apple Support](https://support.apple.com/guide/shortcuts/request-your-first-api-apd58d46713f/ios) - confidence: HIGH
+- [Send POST request with "Get Contents of URL" | Automators Talk](https://talk.automators.fm/t/send-post-request-with-get-contents-of-url/15943) - confidence: MEDIUM
+- [How to Send a POST Request With Apple Shortcuts | RoutineHub](https://blog.routinehub.co/how-to-send-a-post-request-with-apple-shortcuts/) - confidence: MEDIUM
+- [Creating Shortcuts That Accept Voice Input | MacMost](https://macmost.com/creating-shortcuts-that-accept-voice-input.html) - confidence: MEDIUM
 
-### Kiosk Mode & Raspberry Pi
-- [Raspberry Pi Kiosk Mode Guide](https://www.raspberrypi.com/tutorials/how-to-use-a-raspberry-pi-in-kiosk-mode/) - Official kiosk setup documentation
-- [Core Electronics: Raspberry Pi Kiosk Setup](https://core-electronics.com.au/guides/raspberry-pi-kiosk-mode-setup/) - Chromium kiosk with systemd service
-- [Rebecca DePrey: Raspberry Pi Home Assistant Dashboard](https://rebeccamdeprey.com/blog/raspberry-pi-kiosk-mode) - Full-screen dashboard on Pi
+### Supabase Edge Functions vs Direct PostgREST
+- [Supabase Database vs Edge Functions | CloseFuture](https://www.closefuture.io/blogs/supabase-database-vs-edge-functions) - confidence: MEDIUM
+- [Edge Functions | Supabase Docs](https://supabase.com/docs/guides/functions) - confidence: HIGH
 
-### Modern Web Architecture
-- [HQ Software Lab: Web Application Architecture 2026](https://hqsoftwarelab.com/blog/web-application-architecture/) - Current trends in web app structure
-- [ClickIT: Web Application Architecture 2026](https://www.clickittech.com/software-development/web-application-architecture/) - AI-native and edge computing patterns
-- [DasRoot: Hugo + Web Components](https://dasroot.net/posts/2026/01/hugo-web-components-interactive-static-sites/) - Static sites with interactive components
-
-### Responsive Dashboard Design
-- [Justinmind: Dashboard Design Best Practices](https://www.justinmind.com/ui-design/dashboard-design-best-practices-ux) - UX principles for dashboards
-- [Reintech: Creating Responsive Dashboard with CSS](https://reintech.io/blog/creating-responsive-dashboard-with-css) - CSS Grid and Flexbox patterns
-- [Toptal: Mobile Dashboard UI Best Practices](https://www.toptal.com/designers/dashboard-design/mobile-dashboard-ui) - Touch interface design, button sizing
-
-### State Management
-- [Medium: State Management in Vanilla JS 2026](https://medium.com/@chirag.dave/state-management-in-vanilla-js-2026-trends-f9baed7599de) - Modern patterns without frameworks
-- [Patterns.dev: React Stack Patterns 2026](https://www.patterns.dev/react/react-2026/) - Hybrid state approach (React Query + Zustand)
-- [Syncfusion: Top 5 React State Management Tools](https://www.syncfusion.com/blogs/post/react-state-management-libraries) - Zustand, Jotai, Redux Toolkit comparison
-
-### Progressive Web Apps (Offline-First)
-- [Alex Lockhart: Building Spinder - Offline First PWA](https://www.alexlockhart.me/2026/01/building-spinder-progressive-web-app.html) - Local-first web app architecture
-- [Medium: PWAs with Offline-First Architecture](https://medium.com/@pranshu1902/building-progressive-web-apps-pwas-with-offline-first-architecture-a-beginners-guide-138c4bbb69f1) - Service worker and cache-first patterns
-- [LogRocket: Offline-First Frontend Apps 2025](https://blog.logrocket.com/offline-first-frontend-apps-2025-indexeddb-sqlite/) - IndexedDB and SQLite in browser
-
-### Memory Leak Prevention
-- [GitHub: Home Assistant Memory Leak Issue](https://github.com/home-assistant/frontend/issues/16952) - Memory leak when keeping dashboard open on tablet 24/7
-- [GitHub: Grafana Chrome OOM in Kiosk Mode](https://github.com/grafana/grafana/issues/50820) - Out-of-memory after 8+ hours in kiosk
-- [Nolan Lawson: Fixing Memory Leaks in Web Applications](https://nolanlawson.com/2020/02/19/fixing-memory-leaks-in-web-applications/) - Prevention and detection strategies
+### Service Worker / Workbox Caching
+- [Chromium kiosk mode on Raspberry Pi | GitHub Gist](https://gist.github.com/lellky/673d84260dfa26fa9b57287e0f67d09e) - confidence: MEDIUM
 
 ---
-*Architecture research for: Family dashboard with real-time shared state across wall kiosk and mobile devices*
-*Researched: 2026-02-16*
+*Architecture research for: v1.1 polish features (Siri, caching, emoji config)*
+*Researched: 2026-02-17*

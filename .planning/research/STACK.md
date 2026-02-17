@@ -1,238 +1,362 @@
-# Technology Stack Research
+# Technology Stack: v1.1 Polish Additions
 
-**Project:** Family Dashboard
-**Domain:** Real-time responsive family dashboard web app
-**Researched:** 2026-02-16
+**Project:** Family Dashboard v1.1
+**Domain:** Stack additions for Siri Shortcuts integration, horoscope API replacement, country images
+**Researched:** 2026-02-17
 **Overall Confidence:** HIGH
 
-## Recommended Stack
+## Context: Existing Stack (DO NOT CHANGE)
 
-### Core Technologies
-
-| Technology | Version | Purpose | Why Recommended |
-|------------|---------|---------|-----------------|
-| **React** | 19.2+ | UI framework | Industry standard (2026), excellent mobile Safari support, stable v19 with performance improvements, massive ecosystem. Familiar for brownfield migration from vanilla JS. |
-| **Vite** | 7.3+ | Build tool & dev server | Fast HMR, zero-config PWA support via plugins, excellent GitHub Pages deployment story, replaces need for complex build setup. Official React recommendation over CRA. |
-| **Tailwind CSS** | 4.1+ | Styling | v4 brings performance gains with new Oxide engine, responsive design built-in (critical for Pi kiosk + mobile), minimal runtime overhead, eliminates CSS file management. |
-| **Zustand** | 5.0+ | Client state management | Lightweight (1KB), simple API, no boilerplate, perfect for local UI state (theme, view toggles). Does NOT handle real-time sync - that's separate. |
-
-**Confidence: HIGH** - All versions verified via official documentation (React blog, Vite blog, Tailwind blog). Stack is production-proven for static sites in 2026.
-
-### Real-Time Shared State
-
-| Technology | Version | Purpose | Why Recommended |
-|------------|---------|---------|-----------------|
-| **PartyKit** | Latest | Real-time state sync | Free tier available, runs on Cloudflare edge (low latency globally), handles WebSocket connection management automatically, perfect for family-scale usage (4 users). Acquired by Cloudflare (2024) - strong longevity signal. |
-
-**Alternative: Server-Sent Events (SSE)** - If PartyKit proves overkill, use native SSE for one-way server→client updates. Simpler than WebSockets, works well for live dashboards where clients mostly consume data. No third-party service required.
-
-**What NOT to use:**
-- **Supabase Realtime** - Overkill for this use case, requires Postgres backend, more complex than needed
-- **Yjs + y-websocket** - Excellent for collaborative editing (CRDT-based), but too heavyweight for simple shared state (timers, chores)
-- **Redux Toolkit** - Unnecessary complexity for 4-user family dashboard
-
-**Confidence: MEDIUM** - PartyKit free tier details not fully verified. SSE fallback has HIGH confidence (native web standard).
-
-### Supporting Libraries
-
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| **@tanstack/react-query** | 5.0+ | Server state (API data) | Fetching weather, transit, horoscope APIs. Handles caching, refetching, stale-while-revalidate automatically. Separates server state from UI state (best practice 2026). |
-| **date-fns** | 3.0+ | Date/time handling | Timezone-aware date formatting (Berlin timezone), calendar parsing. Smaller than Moment.js, tree-shakeable. |
-| **vite-plugin-pwa** | 0.20+ | PWA/offline support | Makes dashboard work offline on Pi during network blips. Pre-caches static assets, provides service worker without manual configuration. |
-| **react-icons** | 5.0+ | Icon library | Weather icons, UI icons. Tree-shakeable, includes multiple icon sets. |
-
-**Confidence: HIGH** - All libraries are mature, actively maintained, and have GitHub Pages + static site usage patterns documented.
-
-### Development Tools
-
-| Tool | Purpose | Notes |
-|------|---------|-------|
-| **TypeScript** | Type safety | Prevents API shape mismatches, especially valuable when migrating 1200-line HTML file to components. Use strict mode. |
-| **ESLint** | Code quality | Use `@typescript-eslint` + React plugin. Catches common React mistakes. |
-| **Prettier** | Formatting | Eliminates style debates, auto-format on save. Use `.prettierrc` for consistency. |
-| **Vitest** | Testing | Vite-native test runner. Use for critical logic (timer calculations, chore rotation). |
-
-## Installation
-
-```bash
-# Initialize Vite + React + TypeScript
-npm create vite@latest family-dashboard -- --template react-ts
-cd family-dashboard
-
-# Core dependencies
-npm install zustand @tanstack/react-query date-fns react-icons
-
-# Tailwind CSS v4 (Vite plugin method)
-npm install -D tailwindcss @tailwindcss/vite
-
-# PWA support
-npm install -D vite-plugin-pwa
-
-# Real-time (PartyKit)
-npm install partykit partysocket
-
-# Dev dependencies
-npm install -D @types/node prettier eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-react eslint-plugin-react-hooks vitest
-
-# GitHub Pages deployment
-npm install -D gh-pages
-```
-
-## Alternatives Considered
-
-| Category | Recommended | Alternative | When to Use Alternative |
-|----------|-------------|-------------|-------------------------|
-| **Framework** | React 19 | Preact | If bundle size becomes critical (Preact is 3KB vs React's ~45KB). Preact has same API, drop-in replacement. Consider if Pi Chromium struggles. |
-| **Framework** | React 19 | SolidJS | If performance becomes critical. SolidJS uses fine-grained reactivity (no vDOM), faster than React. Steeper learning curve, smaller ecosystem. |
-| **Build Tool** | Vite | Astro 6 | If most content is static. Astro excels at content-heavy sites with islands of interactivity. Overkill for dashboard with live updates. |
-| **State Management** | Zustand | Jotai | If you prefer atom-based state. Jotai has smaller bundle (4KB) but slightly more verbose API. Both excellent choices. |
-| **Real-Time** | PartyKit | DIY WebSocket server (Node.js + ws) | If you want full control and already have a server. Requires managing WebSocket lifecycle, reconnection logic manually. More work but zero vendor lock-in. |
-| **Real-Time** | PartyKit | Server-Sent Events (SSE) | If state updates are mostly server→client. SSE is simpler than WebSockets, native browser support, auto-reconnect. No bi-directional communication needed for timers/chores. |
-| **Styling** | Tailwind CSS | CSS Modules | If team prefers traditional CSS. CSS Modules give scoped styles without utility classes. More verbose, but familiar. |
-
-## What NOT to Use
-
-| Avoid | Why | Use Instead |
-|-------|-----|-------------|
-| **Create React App (CRA)** | Deprecated in 2023, no longer maintained. Slow dev server, outdated tooling. | Vite (official React recommendation) |
-| **Webpack** | Complex configuration, slower HMR than Vite. Overkill for static site. | Vite |
-| **Supabase Realtime** | Requires Postgres backend, overkill for 4-user family dashboard. Adds infrastructure complexity. | PartyKit or SSE |
-| **Redux (classic)** | Too much boilerplate for small app. Modern alternatives (Zustand, Jotai) are simpler. | Zustand |
-| **Moment.js** | Deprecated, large bundle size (67KB). Not tree-shakeable. | date-fns (13KB, tree-shakeable) |
-| **Socket.IO** | Adds abstraction layer over WebSockets, larger bundle. Not needed for modern browsers (Safari supports WebSocket). | Native WebSocket or PartyKit |
-| **Liveblocks** | Expensive ($939 for 10K MAUs). Designed for collaborative editing (CRDT). Overkill and overpriced for family dashboard. | PartyKit (free tier) |
-
-## Stack Patterns by Scenario
-
-### If reliability on Raspberry Pi is paramount:
-- Use **Preact** instead of React (3KB, less memory pressure)
-- Enable **vite-plugin-pwa** with aggressive caching (app works offline)
-- Use **SSE** instead of PartyKit (one less dependency, native browser reconnection)
-- Implement **local-first**: cache all API data in IndexedDB, sync in background
-
-### If you need offline-first functionality:
-- Use **vite-plugin-pwa** with `registerType: 'autoUpdate'`
-- Store shared state in **IndexedDB** (up to GB of storage vs localStorage's 5MB)
-- Use **@tanstack/react-query** with `staleTime: Infinity` for API data caching
-- Implement **background sync** via Service Worker for chore completions
-
-### If mobile performance is critical:
-- Use **Preact** (3KB vs React's 45KB - faster parse/eval on mobile Safari)
-- Lazy load routes with `React.lazy()` and `Suspense`
-- Use **Tailwind CSS purge** to remove unused styles (~90% reduction)
-- Compress images with **vite-plugin-imagetools**
-
-### If you want zero external dependencies for real-time:
-- **DIY WebSocket Server**: Node.js + `ws` library (30 lines of code)
-- Deploy on **Cloudflare Workers** (free tier, global edge)
-- Use **BroadcastChannel API** for same-device multi-tab sync (zero server needed)
-
-## Version Compatibility
-
-| Package | Compatible With | Notes |
-|---------|-----------------|-------|
-| React 19.2 | Vite 7.3 | No known issues. Vite 6+ supports React 19 out of the box. |
-| Tailwind CSS 4.1 | Vite 7.3 | Use `@tailwindcss/vite` plugin (NOT PostCSS method). Config is now CSS-based. |
-| TypeScript 5.7+ | Vite 7.3 | Vite uses esbuild for TS (no tsc), fast transpilation. |
-| vite-plugin-pwa 0.20+ | Vite 7.3 | No issues. Use Workbox strategy for offline support. |
-| PartyKit | All above | Framework-agnostic, works with any static site. Uses native WebSocket. |
-
-**Known Incompatibility:** Tailwind CSS 4.x + PostCSS method causes issues with React 19. Solution: Use Vite plugin method (`@tailwindcss/vite`) as documented in official Tailwind v4 migration guide.
-
-## GitHub Pages Deployment Configuration
-
-```javascript
-// vite.config.ts
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import { VitePWA } from 'vite-plugin-pwa'
-
-export default defineConfig({
-  base: '/family-dashboard/', // CRITICAL: Must match repo name
-  plugins: [
-    react(),
-    tailwindcss(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
-      }
-    })
-  ],
-  build: {
-    outDir: 'dist', // Default, but explicit for clarity
-    sourcemap: false, // Disable for production
-  }
-})
-```
-
-```json
-// package.json scripts
-{
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "deploy": "npm run build && gh-pages -d dist"
-  }
-}
-```
-
-**GitHub Actions Alternative:** Use `.github/workflows/deploy.yml` for automated deployment on push to main. Template available in official Vite docs.
-
-## Sources
-
-### Official Documentation (HIGH Confidence)
-- [React 19.2 Release](https://react.dev/blog) - Verified current stable version
-- [Vite 7.3 Documentation](https://vite.dev/blog) - Verified current stable version
-- [Tailwind CSS 4.1 Release](https://tailwindcss.com/blog) - Verified v4 stable + Vite plugin method
-- [Vite Static Deploy Guide](https://vite.dev/guide/static-deploy) - Official GitHub Pages setup
-- [PartyKit Documentation](https://docs.partykit.io/) - Real-time collaboration platform
-
-### Technology Comparisons (MEDIUM-HIGH Confidence)
-- [Top 5 React State Management Tools in 2026](https://www.syncfusion.com/blogs/post/react-state-management-libraries) - Zustand vs Redux vs Jotai
-- [State Management in 2026: Modern Frontend Guide](https://www.elearningsolutions.co.in/state-management-in-2026-2/) - Treat server data differently from UI state
-- [Zustand vs Redux vs Jotai Comparison](https://betterstack.com/community/guides/scaling-nodejs/zustand-vs-redux-toolkit-vs-jotai/) - Feature comparison
-- [npm trends: jotai vs nanostores vs zustand](https://npmtrends.com/jotai-vs-nanostores-vs-recoil-vs-redux-vs-valtio-vs-zustand) - Download statistics
-
-### Real-Time Technologies (MEDIUM Confidence)
-- [PartyKit: Building Real-Time Apps in 2026](https://latestfromtechguy.com/article/partykit-realtime-collaboration-2026) - PartyKit overview
-- [Liveblocks vs Supabase Realtime Comparison](https://ably.com/compare/liveblocks-broadcast-vs-supabase) - Pricing comparison (7x difference)
-- [Server-Sent Events vs WebSockets Guide 2026](https://www.nimbleway.com/blog/server-sent-events-vs-websockets-what-is-the-difference-2026-guide) - Use case comparison
-- [WebSockets vs SSE vs Polling](https://rxdb.info/articles/websockets-sse-polling-webrtc-webtransport.html) - Technical comparison
-
-### Framework Alternatives (MEDIUM Confidence)
-- [React vs Preact vs SolidJS 2026 Comparison](https://www.index.dev/skill-vs-skill/frontend-react-vs-preact-vs-solidjs) - Performance benchmarks
-- [Preact Signals vs SolidJS Signals](https://medium.com/@prathameshpolsane/a-detailed-comparison-react-js-vs-preact-vs-solid-js-546b7add27df) - Reactivity comparison
-- [Astro 6 Beta Features](https://www.infoq.com/news/2026/02/astro-v6-beta-cloudflare/) - Content-focused alternative
-
-### Raspberry Pi Kiosk (MEDIUM Confidence)
-- [Family Dashboard on Raspberry Pi](https://github.com/stefanthurnherr/family-dashboard) - Real-world implementation
-- [Scott Hanselman: Wall-Mounted Family Calendar](https://www.hanselman.com/blog/how-to-build-a-wall-mounted-family-calendar-and-dashboard-with-a-raspberry-pi-and-cheap-monitor) - Pi kiosk setup
-- [Raspberry Pi Kiosk Mode Setup](https://core-electronics.com.au/guides/raspberry-pi-kiosk-mode-setup/) - Chromium configuration
-
-### PWA & Offline Support (HIGH Confidence)
-- [Vite PWA Plugin](https://vite-pwa-org.netlify.app/) - Official documentation
-- [Making Offline-First PWAs with Vite + React](https://adueck.github.io/blog/caching-everything-for-totally-offline-pwa-vite-react/) - Implementation guide
-- [localStorage vs IndexedDB Comparison](https://rxdb.info/articles/localstorage-indexeddb-cookies-opfs-sqlite-wasm.html) - Storage comparison
-
-### WebSocket Implementation (HIGH Confidence)
-- [ws Library - Node.js WebSockets](https://github.com/websockets/ws) - 900+ GitHub stars, de facto standard
-- [Getting Started with Express WebSockets](https://betterstack.com/community/guides/scaling-nodejs/express-websockets/) - Tutorial
-- [Yjs CRDT Documentation](https://docs.yjs.dev/) - 900K weekly downloads
+The dashboard already runs React 19 + Vite 7 + TypeScript + Tailwind CSS v4 + Supabase (realtime) + React Query + Cloudflare Worker CORS proxy. This document covers ONLY new additions for v1.1 features.
 
 ---
 
-**Recommendation:** Start with React 19 + Vite 7 + Tailwind 4 + Zustand for client state. Add PartyKit for real-time state sync (timers, chores). If PartyKit free tier is insufficient, fall back to Server-Sent Events (SSE) with a lightweight Node.js server or Cloudflare Worker.
+## Feature 1: Siri Shortcuts to Supabase
 
-**Migration Path from Current HTML:**
-1. Set up Vite + React project
-2. Extract CSS into Tailwind classes (incrementally)
-3. Convert HTML sections to React components (header, weather, calendar, etc.)
-4. Replace `fetch()` calls with React Query
-5. Add Zustand for UI state (view toggles, settings)
-6. Add PartyKit/SSE for shared state last (timers, chores, groceries)
+### What's Needed: NOTHING on the frontend
 
-**Risk Mitigation:** Since this runs 24/7 unattended on a Raspberry Pi, prioritize PWA offline support (vite-plugin-pwa) and error boundaries. Consider Preact if memory pressure becomes an issue (Pi has limited RAM).
+Apple Shortcuts uses the built-in "Get Contents of URL" action to make HTTP requests. Supabase already exposes a PostgREST API at `https://<project>.supabase.co/rest/v1/<table>`. The dashboard already subscribes to realtime changes on `groceries` and `timers` tables. When a Shortcut inserts a row, the dashboard picks it up automatically.
+
+**This is a configuration task, not a code task.**
+
+### Shortcut Architecture
+
+| Component | Technology | Already Exists? |
+|-----------|-----------|-----------------|
+| Shortcut HTTP POST | Apple Shortcuts "Get Contents of URL" | No - create shortcut |
+| REST endpoint | Supabase PostgREST auto-generated API | YES - already running |
+| Realtime subscription | `useSupabaseRealtime` hook | YES - already running |
+| RLS policies | Supabase Row Level Security | VERIFY - need INSERT for anon |
+
+### Required Headers for Shortcuts
+
+```
+apikey: <SUPABASE_ANON_KEY>
+Authorization: Bearer <SUPABASE_ANON_KEY>
+Content-Type: application/json
+Prefer: return=minimal
+```
+
+### RLS Policy Requirement
+
+The `groceries` and `timers` tables need an INSERT policy for the `anon` role. The current RLS policies likely allow this (the web dashboard uses the anon key), but this MUST be verified before building Shortcuts.
+
+```sql
+-- Example: allow anonymous inserts on groceries
+CREATE POLICY "Allow anon insert" ON groceries
+  FOR INSERT TO anon
+  WITH CHECK (true);
+```
+
+**Confidence: HIGH** - Supabase REST API is standard PostgREST. Apple Shortcuts' "Get Contents of URL" supports POST with custom headers and JSON body. This is well-documented on both sides.
+
+### What NOT to Build
+
+| Avoid | Why |
+|-------|-----|
+| Custom API proxy for Shortcuts | Supabase REST API is the proxy. Adding another layer adds latency and a failure point. |
+| Siri Intents / App Intents framework | Requires building a native iOS app. Apple Shortcuts with HTTP requests is zero-code. |
+| Authentication flow in Shortcuts | Use the anon key directly. This is a family dashboard, not a bank. RLS + anon key is sufficient. |
+| n8n or Zapier middleware | Unnecessary indirection. Shortcuts can POST directly to Supabase. |
+
+### Shortcut Design (for groceries)
+
+```
+Shortcut: "Add to grocery list"
+1. Ask for input: "What do you need?" -> variable: item_name
+2. Get Contents of URL:
+   - URL: https://<project>.supabase.co/rest/v1/groceries
+   - Method: POST
+   - Headers:
+     - apikey: <ANON_KEY>
+     - Authorization: Bearer <ANON_KEY>
+     - Content-Type: application/json
+     - Prefer: return=minimal
+   - Body (JSON):
+     - name: [item_name]
+     - checked: false
+     - added_by: "Siri"
+3. Show notification: "Added [item_name] to grocery list"
+```
+
+### Shortcut Design (for timers)
+
+```
+Shortcut: "Set kitchen timer"
+1. Ask for input: "Timer name?" -> variable: timer_label
+2. Ask for input: "How many minutes?" -> variable: minutes
+3. Calculate: minutes * 60 -> variable: duration_seconds
+4. Get current date (ISO 8601) -> variable: started_at
+5. Get Contents of URL:
+   - URL: https://<project>.supabase.co/rest/v1/timers
+   - Method: POST
+   - Headers: (same as above)
+   - Body (JSON):
+     - label: [timer_label]
+     - duration_seconds: [duration_seconds]
+     - started_at: [started_at]
+     - created_by: "Siri"
+6. Show notification: "Timer '[timer_label]' started for [minutes] minutes"
+```
+
+### Sources
+
+- [Supabase REST API Docs](https://supabase.com/docs/guides/api) - PostgREST auto-generated endpoints
+- [Apple Shortcuts HTTP Requests](https://support.apple.com/guide/shortcuts/request-your-first-api-apd58d46713f/ios) - Official Apple guide
+- [Custom JSON in Shortcuts](https://blog.alexwendland.com/2020-07-01-custom-json-payload-for-get-contents-of-url-in-ios-shortcuts/) - Workaround for complex JSON payloads
+
+---
+
+## Feature 2: Horoscope API Replacement
+
+### Current State
+
+The dashboard uses `ohmanda.com/api/horoscope` which is broken/unreliable. The existing code fetches daily horoscopes for three signs (capricorn, aquarius, sagittarius) and displays them in a sidebar panel.
+
+### Recommendation: API Ninjas Horoscope API
+
+| Property | Value |
+|----------|-------|
+| **Endpoint** | `GET https://api.api-ninjas.com/v1/horoscope?sign=capricorn` |
+| **Auth** | `X-Api-Key` header with free API key |
+| **Free tier** | 100,000 requests/month |
+| **Rate limit** | Not explicitly stated; paid plans say "no rate limiting" |
+| **Response format** | `{ "date": "YYYY-MM-DD", "zodiac": "capricorn", "horoscope": "text..." }` |
+| **CORS** | Likely restricted - route through existing Cloudflare Worker CORS proxy |
+
+**Why API Ninjas:**
+- 100K requests/month is massive overkill (dashboard needs ~3 requests/day)
+- Clean REST API with GET requests (simpler than aztro's POST requirement)
+- Response format maps nearly 1:1 to the existing `HoroscopeData` interface
+- Stable commercial service (not a hobby project on Heroku that goes down)
+
+**Confidence: MEDIUM-HIGH** - API Ninjas is a commercial service with paid tiers, indicating stability. Free tier is generous. Response format verified from their docs page. CORS behavior needs testing.
+
+### Migration: Minimal Code Change
+
+The existing `HoroscopeData` interface is:
+```typescript
+interface HoroscopeData {
+  sign: string;
+  date: string;
+  horoscope: string;
+}
+```
+
+API Ninjas returns `zodiac` instead of `sign`. The migration is a field rename in `fetchHoroscopes()`:
+
+```typescript
+// New fetch function
+const API_NINJAS_BASE = 'https://api.api-ninjas.com/v1/horoscope';
+const API_KEY = import.meta.env.VITE_API_NINJAS_KEY;
+
+// Per sign:
+const response = await fetch(`${API_NINJAS_BASE}?sign=${sign}`, {
+  headers: { 'X-Api-Key': API_KEY },
+});
+const data = await response.json();
+return { sign: data.zodiac, date: data.date, horoscope: data.horoscope };
+```
+
+### CORS Consideration
+
+API Ninjas may not include permissive CORS headers. If so, route requests through the existing Cloudflare Worker CORS proxy that already handles calendar fetches. This is a one-line URL change, not new infrastructure.
+
+### Alternatives Considered
+
+| API | Why Not |
+|-----|---------|
+| **ohmanda.com** (current) | Broken/unreliable, no status page, hobby project |
+| **aztro** (aztro.sameerkumar.website) | Uses POST for reads (unusual), hosted on uncertain infrastructure, no commercial backing |
+| **horoscope-free-api.herokuapp.com** | Heroku hobby dynos have cold start delays, scrapes AskGanesh (fragile), low maintenance activity |
+| **Prokerala / AstrologyAPI** | Paid-only for horoscope endpoints, overkill for daily readings |
+| **DivineAPI** | Paid service ($29+/month), unnecessary for simple daily horoscopes |
+| **Self-hosted scraper** | Fragile, maintenance burden, legal gray area |
+
+### Environment Variable Addition
+
+```bash
+# .env
+VITE_API_NINJAS_KEY=your_api_ninjas_key_here
+```
+
+### Sources
+
+- [API Ninjas Horoscope API](https://www.api-ninjas.com/api/horoscope) - Endpoint docs, response format
+- [API Ninjas Pricing](https://api-ninjas.com/pricing) - Free tier exists, 100K calls/month on paid ($39/mo)
+
+---
+
+## Feature 3: Country-of-the-Day Images
+
+### Current State
+
+The `CountryPanel` displays flag, name, capital, population, languages, region, and currency from the restcountries API. There is NO photo/image of the country. The feature request is to add a landscape/landmark photo.
+
+### Recommendation: Unsplash API
+
+| Property | Value |
+|----------|-------|
+| **Endpoint** | `GET https://api.unsplash.com/search/photos?query=Germany+landmark&per_page=1&orientation=landscape` |
+| **Auth** | `Authorization: Client-ID YOUR_ACCESS_KEY` header |
+| **Free tier** | 50 requests/hour (Demo), 5000/hour (Production after approval) |
+| **Image URLs** | `urls.regular` (1080px wide), `urls.small` (400px), `urls.thumb` (200px) |
+| **Attribution** | REQUIRED - must credit photographer and link to Unsplash |
+| **CORS** | Yes - API responses include CORS headers. Image CDN (images.unsplash.com) also CORS-enabled. |
+
+**Why Unsplash:**
+- 50 requests/hour is plenty (dashboard needs 1 request/day, cached by React Query)
+- Highest quality free images of any service
+- Search by country name returns relevant landmark/landscape photos
+- Image CDN requests do NOT count against rate limit (only API calls do)
+- Well-documented, stable API used by thousands of apps
+
+**Confidence: HIGH** - Unsplash API docs verified directly. Rate limits, response format, and attribution requirements confirmed.
+
+### Integration Pattern
+
+```typescript
+const UNSPLASH_BASE = 'https://api.unsplash.com/search/photos';
+const ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
+
+export async function fetchCountryImage(countryName: string): Promise<{
+  url: string;
+  photographer: string;
+  photographerUrl: string;
+  unsplashUrl: string;
+} | null> {
+  const query = encodeURIComponent(`${countryName} landmark landscape`);
+  const response = await fetch(
+    `${UNSPLASH_BASE}?query=${query}&per_page=1&orientation=landscape`,
+    { headers: { Authorization: `Client-ID ${ACCESS_KEY}` } }
+  );
+
+  if (!response.ok) return null;
+
+  const data = await response.json();
+  if (!data.results?.length) return null;
+
+  const photo = data.results[0];
+  return {
+    url: photo.urls.regular,         // 1080px wide
+    photographer: photo.user.name,
+    photographerUrl: photo.user.links.html,
+    unsplashUrl: photo.links.html,
+  };
+}
+```
+
+### Attribution Requirement (Mandatory)
+
+Unsplash API guidelines REQUIRE visible attribution. Add a small credit line below the image:
+
+```
+Photo by [Photographer Name] on Unsplash
+```
+
+Both "Photographer Name" and "Unsplash" must be links. This is non-negotiable per Unsplash API Terms of Service.
+
+### Caching Strategy
+
+- Use React Query with `staleTime: 24 * 60 * 60 * 1000` (24 hours) - country changes daily
+- The country pick is deterministic (seeded by date), so the image query is also deterministic per day
+- This means exactly 1 Unsplash API call per day, well within the 50/hour limit
+- Consider caching the image URL in localStorage as a fallback
+
+### Pi Display Optimization
+
+- Use `urls.regular` (1080px) for Pi kiosk display
+- Use `urls.small` (400px) for mobile view
+- Add `loading="lazy"` to the img tag
+- Set explicit `width` and `height` to prevent layout shift
+
+### Alternatives Considered
+
+| Service | Free Tier | Why Not |
+|---------|-----------|---------|
+| **Pexels API** | 200 req/hour, 20K/month | Good alternative. Slightly lower image quality than Unsplash. No attribution required (but encouraged). Use as fallback if Unsplash rate limits become an issue. |
+| **Pixabay API** | 100 req/min | Lower image quality, more stock-photo feel. Less relevant results for country searches. |
+| **Wikipedia/Wikimedia Commons** | Unlimited | Complex API, inconsistent image quality, harder to find landscape photos by country name |
+| **Google Places Photos** | Requires billing account | Not free, requires Google Cloud billing even for free tier |
+| **Static curated images** | N/A | 250 countries x manual curation = massive effort. Images become stale. |
+
+### Environment Variable Addition
+
+```bash
+# .env
+VITE_UNSPLASH_ACCESS_KEY=your_unsplash_access_key_here
+```
+
+### Sources
+
+- [Unsplash API Documentation](https://unsplash.com/documentation) - Endpoints, auth, rate limits
+- [Unsplash API Guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines) - Attribution requirements
+- [Pexels API Documentation](https://www.pexels.com/api/) - Alternative option
+
+---
+
+## Summary: New Dependencies
+
+### NPM Packages to Install
+
+**NONE.** All three features use standard `fetch()` calls to REST APIs. No new npm packages needed.
+
+### New Environment Variables
+
+| Variable | Service | Where to Get |
+|----------|---------|-------------|
+| `VITE_API_NINJAS_KEY` | API Ninjas (horoscope) | https://api-ninjas.com/register (free) |
+| `VITE_UNSPLASH_ACCESS_KEY` | Unsplash (country images) | https://unsplash.com/developers (free, instant) |
+
+### External Service Accounts Needed
+
+| Service | Account Type | Cost | Setup Time |
+|---------|-------------|------|-----------|
+| API Ninjas | Free tier | $0 | 2 minutes |
+| Unsplash Developer | Demo app | $0 | 5 minutes (create app in dashboard) |
+| Apple Shortcuts | Built-in iOS | $0 | N/A |
+
+### Files to Modify
+
+| File | Change |
+|------|--------|
+| `src/lib/api/horoscope.ts` | Replace ohmanda.com with API Ninjas endpoint |
+| `src/lib/api/countryOfDay.ts` | Add `fetchCountryImage()` function |
+| `src/components/sidebar/CountryPanel.tsx` | Add image display with Unsplash attribution |
+| `src/types/database.ts` | No changes needed (schema unchanged) |
+| `.env` | Add `VITE_API_NINJAS_KEY` and `VITE_UNSPLASH_ACCESS_KEY` |
+| Cloudflare Worker | May need to allowlist `api.api-ninjas.com` for CORS proxy |
+
+### Files NOT to Modify
+
+| File | Why |
+|------|-----|
+| `src/lib/supabase.ts` | Shortcuts use REST API directly, not the JS client |
+| `src/hooks/useSupabaseRealtime.ts` | Already subscribes to groceries/timers changes |
+| `src/lib/api/groceries.ts` | Shortcut inserts go through REST API, not this code |
+| `src/lib/api/timers.ts` | Same - Shortcuts bypass the React app entirely |
+| `package.json` | No new dependencies |
+
+---
+
+## Risk Assessment
+
+| Risk | Likelihood | Impact | Mitigation |
+|------|-----------|--------|------------|
+| API Ninjas CORS blocks browser requests | MEDIUM | LOW | Route through existing Cloudflare Worker CORS proxy |
+| Unsplash returns irrelevant images for obscure countries | LOW | LOW | Fallback to flag-only display (current behavior) |
+| Siri Shortcut JSON formatting issues | MEDIUM | LOW | Use Text action to build JSON manually, pass as File body |
+| Supabase RLS blocks anon INSERT from Shortcuts | MEDIUM | HIGH | Verify RLS policies before building Shortcuts |
+| API Ninjas deprecates free tier | LOW | MEDIUM | Aztro API as backup, or self-host horoscope content |
+| Unsplash Demo rate limit hit | VERY LOW | LOW | 1 request/day vs 50/hour limit; apply for Production if needed |
+
+---
+
+## Implementation Order
+
+1. **Verify Supabase RLS policies** allow anon INSERT on groceries and timers (5 min)
+2. **Replace horoscope API** - smallest code change, immediate visible fix (30 min)
+3. **Add country images** - new Unsplash integration + UI update (1-2 hours)
+4. **Build Apple Shortcuts** - configuration only, no code changes (30 min per shortcut)
+
+This order prioritizes fixing what's broken (horoscopes), then adding new value (images), then the Siri integration which depends on verifying the backend first.
