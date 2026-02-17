@@ -1,6 +1,5 @@
 import React from 'react';
 import { useHoroscope } from '../../hooks/useHoroscope';
-import { SIGN_LABELS } from '../../lib/api/horoscope';
 import type { ZodiacSign } from '../../lib/api/horoscope';
 
 const ZODIAC_EMOJI: Record<ZodiacSign, string> = {
@@ -27,13 +26,7 @@ function HoroscopePanelInner() {
   }
 
   if (error || !horoscopes?.length) {
-    return (
-      <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex-1 flex items-center justify-center">
-        <span className="text-text-secondary text-sm">
-          Horoscopes unavailable
-        </span>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -53,7 +46,6 @@ function HoroscopePanelInner() {
         {horoscopes.map((h) => {
           const sign = h.sign.toLowerCase() as ZodiacSign;
           const emoji = ZODIAC_EMOJI[sign] ?? '';
-          const label = SIGN_LABELS[sign] ?? h.sign;
 
           return (
             <div
@@ -61,12 +53,9 @@ function HoroscopePanelInner() {
               className="bg-white/5 rounded-lg p-2.5"
             >
               <div className="flex items-center gap-1.5 mb-1">
-                <span className="text-sm">{emoji}</span>
-                <span className="text-text-primary font-medium text-[clamp(12px,1vw,14px)]">
-                  {label}
-                </span>
+                <span className="text-base">{emoji}</span>
               </div>
-              <p className="text-text-secondary text-[clamp(11px,0.9vw,13px)] leading-snug line-clamp-3">
+              <p className="text-text-secondary text-[clamp(11px,0.9vw,13px)] leading-snug line-clamp-4">
                 {h.horoscope}
               </p>
             </div>

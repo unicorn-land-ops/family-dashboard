@@ -29,7 +29,7 @@ export const TRANSIT_REFRESH_MS = 60_000; // 60 seconds
 export const TRANSIT_STALE_MS = 30_000; // 30 seconds
 
 // Horoscope configuration
-export const HOROSCOPE_REFRESH_MS = 6 * 60 * 60 * 1000; // 6 hours
+export const HOROSCOPE_REFRESH_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 // Country configuration
 export const COUNTRY_REFRESH_MS = 24 * 60 * 60 * 1000; // 24 hours
