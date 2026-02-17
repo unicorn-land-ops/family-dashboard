@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 8 complete. Priority interrupt system replaces sidebar rotation with timers/groceries when active.
+**Current focus:** Phase 9 in progress. Chore tracking data layer complete (API, schedule logic, hook).
 
 ## Current Position
 
-Phase: 8 of 10 (Priority Interrupts) -- PHASE COMPLETE
-Plan: 1 of 1 in current phase -- COMPLETE
-Status: Priority interrupt system live. Sidebar shows timers/groceries when active, content rotation when clear.
-Last activity: 2026-02-17 -- Completed 08-01 priority interrupts
+Phase: 9 of 10 (Chore Tracking)
+Plan: 1 of 3 in current phase -- COMPLETE
+Status: Chore data layer complete. API CRUD, Berlin-timezone schedule logic, useChores hook with realtime.
+Last activity: 2026-02-17 -- Completed 09-01 chore data layer
 
-Progress: [████████████████████░] 82%
+Progress: [█████████████████████░] 86%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
-- Average duration: 2.0 min
-- Total execution time: 0.61 hours
+- Total plans completed: 19
+- Average duration: 1.9 min
+- Total execution time: 0.63 hours
 
 **By Phase:**
 
@@ -35,9 +35,10 @@ Progress: [████████████████████░] 82%
 | 06-grocery-list | 3 | 7min | 2.3min |
 | 07-timer-system | 3 | 3min | 1min |
 | 08-priority-interrupts | 1 | 1min | 1min |
+| 09-chore-tracking | 1 | 1min | 1min |
 
 **Recent Trend:**
-- Last 5 plans: 06-03 (1min), 07-01 (1min), 07-02 (1min), 07-03 (1min), 08-01 (1min)
+- Last 5 plans: 07-01 (1min), 07-02 (1min), 07-03 (1min), 08-01 (1min), 09-01 (1min)
 - Trend: Consistently fast
 
 *Updated after each plan completion*
@@ -91,6 +92,9 @@ Recent decisions affecting current work:
 - [Phase 07-03]: Timer sidebar shows when activeCount > 0 OR completedTimers.length > 0 (catches alerting timers)
 - [Phase 08-01]: Conditional render (not dual-mount crossfade) for priority vs rotation to handle different panel heights
 - [Phase 08-01]: 500ms debounce only on priority-to-rotation exit to prevent flicker
+- [09-01] 8-day completion fetch window covers weekly boundary with margin
+- [09-01] Period start uses toZonedTime before startOfDay/startOfWeek for Berlin-correct boundaries
+- [09-01] No optimistic update on addChore (server generates ID); optimistic on complete/uncomplete/deactivate
 
 ### Pending Todos
 
@@ -106,10 +110,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-17 (plan 08-01 execution)
-Stopped at: Completed 08-01-PLAN.md (Priority interrupts) -- Phase 08 complete
+Last session: 2026-02-17 (plan 09-01 execution)
+Stopped at: Completed 09-01-PLAN.md (Chore data layer)
 Resume file: None
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-17 (08-01 execution)*
+*Last updated: 2026-02-17 (09-01 execution)*
