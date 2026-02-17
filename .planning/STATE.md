@@ -103,6 +103,8 @@ Recent decisions affecting current work:
 - [09-03] Chores tab positioned last in mobile nav (newest feature, least time-urgent)
 - [10-02] Backup interval checks every 15 minutes with <15 minute window to avoid double reload
 - [10-02] Memory watchdog is Chromium-only no-op -- Safari/Firefox gracefully skip
+- [10-01] logError accepts unknown error type to match react-error-boundary v6 onError signature
+- [10-01] error instanceof Error guard in GlobalFallback for type-safe message display
 - [10-02] Transit API uses NetworkFirst with 5s timeout (real-time, cache fallback)
 - [10-02] Countries API uses CacheFirst with 7-day TTL (rarely changes)
 
@@ -120,8 +122,8 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-17 (plan 10-02 execution)
-Stopped at: Completed 10-02-PLAN.md (Reliability and caching)
+Last session: 2026-02-17 (plan 10-01 execution)
+Stopped at: Completed 10-01-PLAN.md (Error resilience and memory management)
 Resume file: None
 
 ---
