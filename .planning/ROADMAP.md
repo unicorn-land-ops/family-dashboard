@@ -184,7 +184,7 @@ Plans:
 ### Phase 10: Hardening & Polish
 **Goal**: Production-ready system for reliable 24/7 unattended operation
 **Depends on**: Phase 9
-**Requirements**: (Hardens all previous requirements for production)
+**Requirements**: DISP-06, DISP-03, DISP-01
 **Success Criteria** (what must be TRUE):
   1. Dashboard runs continuously for 48+ hours without crashes or memory issues
   2. Automatic page reload at 3am prevents memory accumulation
@@ -193,10 +193,12 @@ Plans:
   5. Performance metrics confirm responsive load times (<3s on Pi, <1s on mobile)
   6. All animations and transitions perform smoothly on Raspberry Pi hardware
   7. Family confirms system feels polished and reliable for daily use
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during plan-phase
+- [ ] 10-01-PLAN.md — Error boundaries (react-error-boundary), global error handlers, React Query GC tuning
+- [ ] 10-02-PLAN.md — Enhanced auto-refresh with backup timer, memory watchdog, workbox runtime caching
+- [ ] 10-03-PLAN.md — Pi CSS performance optimization (remove backdrop-filter, optimize animations), final build verification
 
 ## Progress
 
@@ -214,7 +216,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 7. Timer System | 0/3 | Not started | - |
 | 8. Priority Interrupts | 0/1 | Not started | - |
 | 9. Chore Tracking | 0/3 | Not started | - |
-| 10. Hardening & Polish | 0/TBD | Not started | - |
+| 10. Hardening & Polish | 0/3 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-16*
