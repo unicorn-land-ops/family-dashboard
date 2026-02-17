@@ -24,9 +24,9 @@ export async function fetchHoroscopes(): Promise<HoroscopeData[]> {
         }
 
         const data = await response.json();
-        // API Ninjas returns { date, zodiac, horoscope } — map zodiac to sign
+        // API Ninjas returns { date, sign, horoscope }
         return {
-          sign: data.zodiac,
+          sign: data.sign,
           date: data.date,
           horoscope: data.horoscope,
         };

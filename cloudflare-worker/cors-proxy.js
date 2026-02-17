@@ -42,7 +42,7 @@ async function handleHoroscope(url, env) {
 
   try {
     const response = await fetch(
-      `https://api.api-ninjas.com/v1/horoscope?sign=${encodeURIComponent(sign)}`,
+      `https://api.api-ninjas.com/v1/horoscope?zodiac=${encodeURIComponent(sign)}`,
       { headers: { 'X-Api-Key': env.API_NINJAS_KEY } }
     );
 
