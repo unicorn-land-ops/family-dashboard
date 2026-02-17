@@ -63,10 +63,10 @@ Plans:
   2. Person emoji is determined by matching calendar feed source to family member
   3. Weather info (temperature, icon) displays underneath the day header row, not inline with events
   4. Calendar layout remains readable on both wall kiosk and mobile views
-**Plans**: TBD
+**Plans:** 1 plan
 
 Plans:
-- [ ] 12-01: Calendar feed-to-person mapping, emoji badge component, weather row relocation
+- [ ] 12-01-PLAN.md — Update person emojis, move badge before event name, relocate weather below header
 
 ### Phase 13: Content Enhancements
 **Goal**: Sidebar content panels show richer information without clutter
@@ -127,4 +127,4 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15
 
 ---
 *Roadmap created: 2026-02-16*
-*Last updated: 2026-02-17 (Phase 11 planned)*
+*Last updated: 2026-02-17 (Phase 12 planned)*
