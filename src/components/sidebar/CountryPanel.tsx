@@ -1,10 +1,43 @@
 import React from 'react';
-import { useCountryOfDay } from '../../hooks/useCountryOfDay';
+import { useCountryOfDay, useCountryImage } from '../../hooks/useCountryOfDay';
 
 const numberFmt = new Intl.NumberFormat();
 
+function UnsplashAttribution({
+  photographer,
+  photographerUrl,
+}: {
+  photographer: string;
+  photographerUrl: string;
+  unsplashUrl: string;
+}) {
+  return (
+    <p className="text-[clamp(8px,0.6vw,10px)] text-text-secondary mt-1">
+      Photo by{' '}
+      <a
+        href={`${photographerUrl}?utm_source=family_dashboard&utm_medium=referral`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline"
+      >
+        {photographer}
+      </a>{' '}
+      on{' '}
+      <a
+        href="https://unsplash.com/?utm_source=family_dashboard&utm_medium=referral"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline"
+      >
+        Unsplash
+      </a>
+    </p>
+  );
+}
+
 function CountryPanelInner() {
   const { data: country, isLoading, error } = useCountryOfDay();
+  const { data: countryImage } = useCountryImage(country?.name.common);
 
   if (isLoading) {
     return (
@@ -73,6 +106,24 @@ function CountryPanelInner() {
           )}
         </div>
       </div>
+
+      {/* Country landscape photo */}
+      {countryImage && (
+        <div className="mb-3 rounded-lg overflow-hidden">
+          <img
+            src={countryImage.url}
+            alt={`Landscape of ${country.name.common}`}
+            className="w-full h-auto rounded-lg object-cover"
+            style={{ maxHeight: 'clamp(100px, 12vw, 180px)' }}
+            loading="eager"
+          />
+          <UnsplashAttribution
+            photographer={countryImage.photographer}
+            photographerUrl={countryImage.photographerUrl}
+            unsplashUrl={countryImage.unsplashUrl}
+          />
+        </div>
+      )}
 
       {/* Facts grid */}
       <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[clamp(11px,0.9vw,13px)]">

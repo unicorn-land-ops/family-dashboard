@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchCountryOfDay } from '../lib/api/countryOfDay';
+import { fetchCountryOfDay, fetchCountryImage } from '../lib/api/countryOfDay';
 import { COUNTRY_REFRESH_MS } from '../lib/constants';
 
 /**
@@ -13,5 +13,16 @@ export function useCountryOfDay() {
     staleTime: COUNTRY_REFRESH_MS,
     refetchInterval: COUNTRY_REFRESH_MS,
     retry: 2,
+  });
+}
+
+export function useCountryImage(countryName: string | undefined) {
+  return useQuery({
+    queryKey: ['country-image', countryName],
+    queryFn: () => fetchCountryImage(countryName!),
+    enabled: !!countryName,
+    staleTime: COUNTRY_REFRESH_MS,
+    refetchInterval: false,
+    retry: 1,
   });
 }
