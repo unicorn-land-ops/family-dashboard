@@ -17,16 +17,14 @@ import { PanelFallback, GlobalFallback, logError } from './components/ErrorFallb
 import { useAutoRefresh } from './hooks/useAutoRefresh';
 import { useMemoryWatchdog } from './hooks/useMemoryWatchdog';
 import { useContentRotation } from './hooks/useContentRotation';
-import { useGroceries } from './hooks/useGroceries';
 import { useMobileNav } from './hooks/useMobileNav';
 import { usePriorityInterrupt } from './hooks/usePriorityInterrupt';
 
 function App() {
   useAutoRefresh();
   useMemoryWatchdog();
-  const { uncheckedCount } = useGroceries();
   const { activeCount: activeTimerCount, completedTimers } = useTimers();
-  const priority = usePriorityInterrupt(activeTimerCount, completedTimers.length, uncheckedCount);
+  const priority = usePriorityInterrupt(activeTimerCount, completedTimers.length);
   const { activeIndex, goTo, panelCount } = useContentRotation(priority.rotationPaused);
   const { activeView, setActiveView } = useMobileNav();
 
@@ -67,7 +65,6 @@ function App() {
             <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
               <div className="sidebar-priority-enter flex flex-col gap-[clamp(10px,1vw,20px)] flex-1">
                 {priority.showTimers && <TimerPanel variant="compact" />}
-                {priority.showGroceries && <GroceryPanel variant="compact" />}
               </div>
             </ErrorBoundary>
           ) : (
