@@ -49,10 +49,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. Horoscope panel displays daily readings for Capricorn, Aquarius, and Sagittarius using API Ninjas
   2. Horoscope content rotates in the sidebar without errors or blank states
   3. Supabase RLS policies on groceries and timers tables allow anon INSERT (verified, ready for Phase 15)
-**Plans**: TBD
+**Plans:** 1 plan
 
 Plans:
-- [ ] 11-01: Replace ohmanda.com horoscope API with API Ninjas, add ErrorBoundary per panel, verify RLS policies
+- [ ] 11-01-PLAN.md — Horoscope API migration (Worker proxy + frontend) and Supabase RLS policies
 
 ### Phase 12: Calendar Polish
 **Goal**: Calendar events show who they belong to and weather sits cleanly under the day header
@@ -127,4 +127,4 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15
 
 ---
 *Roadmap created: 2026-02-16*
-*Last updated: 2026-02-17 (v1.1 milestone roadmap)*
+*Last updated: 2026-02-17 (Phase 11 planned)*
