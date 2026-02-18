@@ -137,7 +137,7 @@ Plans:
   2. Calendar emojis display correctly and weather sits under the day header (user-verified)
   3. CountryPanel.tsx has no unused variable build warning
   4. REQUIREMENTS.md checkboxes reflect actual completion status
-**Plans:** 0/1 plans needed
+**Plans:** 1 plan
 
 Plans:
 - [ ] 17-01-PLAN.md — RLS cleanup, calendar visual check, build fix, docs update
@@ -157,8 +157,8 @@ Phase 16 must complete before 17 (17 updates docs including SIRI-02 status)
 | 14. Behavior Cleanup | v1.1 | 1/1 | Complete | 2026-02-17 |
 | 15. Siri Voice Integration | v1.1 | 1/1 | Complete | 2026-02-17 |
 | 16. Siri Timer Duration Fix | 1/1 | Complete    | 2026-02-18 | - |
-| 17. Cleanup & Verification | v1.1 | 0/1 | Pending | - |
+| 17. Cleanup & Verification | v1.1 | 0/1 | Planned | - |
 
 ---
 *Roadmap created: 2026-02-16*
-*Last updated: 2026-02-18 (gap closure phases 16-17 added from audit)*
+*Last updated: 2026-02-18 (Phase 17 planned)*
