@@ -13,30 +13,30 @@ Requirements for polish milestone. Each maps to roadmap phases.
 
 ### Fixes
 
-- [ ] **FIX-01**: Horoscopes display daily readings using a working API (replace broken ohmanda.com with API Ninjas)
-- [ ] **FIX-02**: Calendar events show correct person emoji (🥑 Papa, 🍪 Daddy, 🌸 Wren, 🥭 Ellis, 🏠 Family)
+- [x] **FIX-01**: Horoscopes display daily readings using a working API (replace broken ohmanda.com with API Ninjas)
+- [x] **FIX-02**: Calendar events show correct person emoji (🥑 Papa, 🍪 Daddy, 🌸 Wren, 🥭 Ellis, 🏠 Family)
 
 ### Calendar Layout
 
-- [ ] **CALL-01**: Weather info (temp, icon) displays underneath the day header, not inline with events
-- [ ] **CALL-02**: Person emoji badge precedes each event name in the calendar row
+- [x] **CALL-01**: Weather info (temp, icon) displays underneath the day header, not inline with events
+- [x] **CALL-02**: Person emoji badge precedes each event name in the calendar row
 
 ### Transit
 
-- [ ] **TRNS-01**: BVG departures panel shows only the top 3 upcoming departures
+- [x] **TRNS-01**: BVG departures panel shows only the top 3 upcoming departures
 
 ### Country
 
-- [ ] **CTRY-01**: Country of the Day displays a representative landscape photo from the country (Unsplash API)
+- [x] **CTRY-01**: Country of the Day displays a representative landscape photo from the country (Unsplash API)
 
 ### Behavior
 
-- [ ] **BEHV-01**: Grocery list does not trigger priority interrupt (only active timers do)
-- [ ] **BEHV-02**: Timer tab removed from mobile navigation (timers remain visible as priority interrupt on wall)
+- [x] **BEHV-01**: Grocery list does not trigger priority interrupt (only active timers do)
+- [x] **BEHV-02**: Timer tab removed from mobile navigation (timers remain visible as priority interrupt on wall)
 
 ### Voice Integration
 
-- [ ] **SIRI-01**: User can add grocery items via Siri voice command ("Add X to the list")
+- [x] **SIRI-01**: User can add grocery items via Siri voice command ("Add X to the list")
 - [ ] **SIRI-02**: User can set timers via Siri voice command ("Set a timer for X, Y minutes")
 
 ## v2 Requirements
@@ -80,22 +80,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FIX-01 | Phase 11 | Pending |
-| FIX-02 | Phase 12 | Pending |
-| CALL-01 | Phase 12 | Pending |
-| CALL-02 | Phase 12 | Pending |
-| TRNS-01 | Phase 13 | Pending |
-| CTRY-01 | Phase 13 | Pending |
-| BEHV-01 | Phase 14 | Pending |
-| BEHV-02 | Phase 14 | Pending |
-| SIRI-01 | Phase 15 | Pending |
-| SIRI-02 | Phase 15 | Pending |
+| FIX-01 | Phase 11 | Satisfied |
+| FIX-02 | Phase 12 (verify: Phase 17) | Satisfied (re-verify) |
+| CALL-01 | Phase 12 (verify: Phase 17) | Satisfied (re-verify) |
+| CALL-02 | Phase 12 (verify: Phase 17) | Satisfied (re-verify) |
+| TRNS-01 | Phase 13 | Satisfied |
+| CTRY-01 | Phase 13 | Satisfied |
+| BEHV-01 | Phase 14 | Satisfied |
+| BEHV-02 | Phase 14 | Satisfied |
+| SIRI-01 | Phase 15 | Satisfied |
+| SIRI-02 | Phase 16 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 10 total
-- Mapped to phases: 10
+- Satisfied: 9
+- Pending (gap closure): 1 (SIRI-02 -> Phase 16)
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-17*
-*Last updated: 2026-02-17 (traceability updated with phase mappings)*
+*Last updated: 2026-02-18 (checkboxes updated from audit, SIRI-02 reassigned to Phase 16)*

@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 Core Dashboard** - Phases 1-10 (shipped 2026-02-17)
-- ✅ **v1.1 Polish** - Phases 11-15 (completed 2026-02-17)
+- 🔧 **v1.1 Polish** - Phases 11-17 (gap closure in progress)
 
 ## Phases
 
@@ -38,6 +38,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 13: Content Enhancements** - Country landscape photos and BVG departure limit
 - [ ] **Phase 14: Behavior Cleanup** - Remove grocery priority interrupt and timer mobile tab
 - [ ] **Phase 15: Siri Voice Integration** - Voice commands for groceries and timers via Apple Shortcuts
+- [ ] **Phase 16: Siri Timer Duration Fix** - Parse duration from Siri input so timers actually count down
+- [ ] **Phase 17: Cleanup & Verification** - RLS policy cleanup, calendar visual check, build fix, docs update
 
 ## Phase Details
 
@@ -110,21 +112,53 @@ Plans:
 Plans:
 - [x] 15-01-PLAN.md — Verify PostgREST endpoints, create Apple Shortcut step-by-step guides for grocery and timer voice commands
 
+### Phase 16: Siri Timer Duration Fix
+**Goal**: Siri timer shortcut creates a real countdown timer on the wall display
+**Depends on**: Phase 15
+**Requirements**: SIRI-02
+**Gap Closure:** Closes gaps from v1.1 audit
+**Success Criteria** (what must be TRUE):
+  1. User says "Hey Siri, set a timer for pasta, 10 minutes" and a 10-minute countdown appears on the wall display
+  2. Timer shortcut sends a valid duration_seconds value (not 0 sentinel)
+  3. useTimers.ts correctly calculates remaining time from the inserted row
+  4. Timer propagates to all connected devices via existing realtime subscriptions
+**Plans:** 0/1 plans needed
+
+Plans:
+- [ ] 16-01-PLAN.md — Fix timer shortcut duration and dashboard parsing
+
+### Phase 17: Cleanup & Verification
+**Goal**: Resolve remaining tech debt, verify calendar visuals, and update documentation
+**Depends on**: Phase 16
+**Requirements**: FIX-02, CALL-01, CALL-02 (visual re-verification)
+**Gap Closure:** Closes gaps from v1.1 audit
+**Success Criteria** (what must be TRUE):
+  1. Supabase RLS: only Phase 11's guardrail policies are active (no conflicting "Allow all" policies)
+  2. Calendar emojis display correctly and weather sits under the day header (user-verified)
+  3. CountryPanel.tsx has no unused variable build warning
+  4. REQUIREMENTS.md checkboxes reflect actual completion status
+**Plans:** 0/1 plans needed
+
+Plans:
+- [ ] 17-01-PLAN.md — RLS cleanup, calendar visual check, build fix, docs update
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15
-(Phases 12, 13, 14 are independent and could run in any order after 11)
+Phases execute in numeric order: 11 -> 12 -> ... -> 16 -> 17
+Phase 16 must complete before 17 (17 updates docs including SIRI-02 status)
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 1-10 | v1.0 | 24/24 | Complete | 2026-02-17 |
-| 11. Horoscope Fix & RLS Prep | v1.1 | Complete    | 2026-02-17 | - |
+| 11. Horoscope Fix & RLS Prep | v1.1 | Complete | 2026-02-17 | - |
 | 12. Calendar Polish | v1.1 | 1/1 | Complete | 2026-02-17 |
 | 13. Content Enhancements | v1.1 | 1/1 | Complete | 2026-02-17 |
 | 14. Behavior Cleanup | v1.1 | 1/1 | Complete | 2026-02-17 |
 | 15. Siri Voice Integration | v1.1 | 1/1 | Complete | 2026-02-17 |
+| 16. Siri Timer Duration Fix | v1.1 | 0/1 | Pending | - |
+| 17. Cleanup & Verification | v1.1 | 0/1 | Pending | - |
 
 ---
 *Roadmap created: 2026-02-16*
-*Last updated: 2026-02-17 (Phase 15 complete -- v1.1 shipped)*
+*Last updated: 2026-02-18 (gap closure phases 16-17 added from audit)*
