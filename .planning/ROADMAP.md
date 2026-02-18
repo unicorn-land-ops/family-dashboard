@@ -156,7 +156,7 @@ Phase 16 must complete before 17 (17 updates docs including SIRI-02 status)
 | 13. Content Enhancements | v1.1 | 1/1 | Complete | 2026-02-17 |
 | 14. Behavior Cleanup | v1.1 | 1/1 | Complete | 2026-02-17 |
 | 15. Siri Voice Integration | v1.1 | 1/1 | Complete | 2026-02-17 |
-| 16. Siri Timer Duration Fix | 1/1 | Complete   | 2026-02-18 | - |
+| 16. Siri Timer Duration Fix | 1/1 | Complete    | 2026-02-18 | - |
 | 17. Cleanup & Verification | v1.1 | 0/1 | Pending | - |
 
 ---
