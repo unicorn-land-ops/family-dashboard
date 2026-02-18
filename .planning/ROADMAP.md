@@ -38,7 +38,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 13: Content Enhancements** - Country landscape photos and BVG departure limit
 - [ ] **Phase 14: Behavior Cleanup** - Remove grocery priority interrupt and timer mobile tab
 - [ ] **Phase 15: Siri Voice Integration** - Voice commands for groceries and timers via Apple Shortcuts
-- [ ] **Phase 16: Siri Timer Duration Fix** - Parse duration from Siri input so timers actually count down
+- [x] **Phase 16: Siri Timer Duration Fix** - Parse duration from Siri input so timers actually count down (completed 2026-02-18)
 - [ ] **Phase 17: Cleanup & Verification** - RLS policy cleanup, calendar visual check, build fix, docs update
 
 ## Phase Details
@@ -122,7 +122,7 @@ Plans:
   2. Timer shortcut sends a valid duration_seconds value (not 0 sentinel)
   3. useTimers.ts correctly calculates remaining time from the inserted row
   4. Timer propagates to all connected devices via existing realtime subscriptions
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 16-01-PLAN.md — Fix timer shortcut duration and dashboard parsing
@@ -156,7 +156,7 @@ Phase 16 must complete before 17 (17 updates docs including SIRI-02 status)
 | 13. Content Enhancements | v1.1 | 1/1 | Complete | 2026-02-17 |
 | 14. Behavior Cleanup | v1.1 | 1/1 | Complete | 2026-02-17 |
 | 15. Siri Voice Integration | v1.1 | 1/1 | Complete | 2026-02-17 |
-| 16. Siri Timer Duration Fix | v1.1 | 0/1 | Pending | - |
+| 16. Siri Timer Duration Fix | 1/1 | Complete   | 2026-02-18 | - |
 | 17. Cleanup & Verification | v1.1 | 0/1 | Pending | - |
 
 ---
