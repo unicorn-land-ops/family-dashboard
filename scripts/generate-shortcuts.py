@@ -191,40 +191,57 @@ def build_grocery_shortcut():
 
 def build_timer_shortcut():
     """
-    Single Ask: user says "pasta 10 minutes". POST full text as label
-    with duration_seconds=0 (sentinel). Dashboard parses duration from label.
+    Two separate asks: name + minutes. Calculate action converts minutes to
+    seconds. POSTs real duration_seconds value so timers work immediately.
     """
     actions = []
 
-    ask_uid = make_uuid()
+    name_ask_uid = make_uuid()
+    mins_ask_uid = make_uuid()
+    calc_uid = make_uuid()
     json_uid = make_uuid()
     post_uid = make_uuid()
 
     base_url = f"{SUPABASE_URL}/rest/v1/timers"
 
-    # 1. Ask — user says everything: "pasta 10 minutes"
+    # 1. Ask for timer name
     actions.append(act("is.workflow.actions.ask", {
-        "WFAskActionPrompt": "What timer? (e.g. pasta 10 minutes)",
+        "WFAskActionPrompt": "What should the timer be called?",
         "WFInputType": "Text",
-        "UUID": ask_uid,
+        "UUID": name_ask_uid,
     }))
 
-    # 2. Build JSON — full input as label, duration_seconds=0 as sentinel
-    #    Dashboard parses "pasta 10 minutes" → label="pasta", duration=600
+    # 2. Ask for duration in minutes
+    actions.append(act("is.workflow.actions.ask", {
+        "WFAskActionPrompt": "How many minutes?",
+        "WFInputType": "Number",
+        "UUID": mins_ask_uid,
+    }))
+
+    # 3. Calculate: minutes * 60 = seconds
+    #    Input is implicitly the output of the previous action (mins Ask)
+    actions.append(act("is.workflow.actions.math", {
+        "WFMathOperand": 60,
+        "WFMathOperation": "\u00d7",
+        "UUID": calc_uid,
+    }))
+
+    # 4. Build JSON body with name from Ask 1 and seconds from Calculate
     actions.append(act("is.workflow.actions.gettext", {
         "WFTextActionText": twv([
-            '{"label":"', mv(ask_uid, "Provided Input"),
-            '","duration_seconds":0,"created_by":"siri"}',
+            '{"label":"', mv(name_ask_uid, "Provided Input"),
+            '","duration_seconds":', mv(calc_uid, "Calculation Result"),
+            ',"created_by":"siri"}',
         ]),
         "UUID": json_uid,
     }))
 
-    # 3. POST
+    # 5. POST
     actions.append(make_post_action(base_url, ANON_KEY, json_uid, uid=post_uid))
 
-    # 4. Confirm
+    # 6. Confirm using timer name
     actions.append(act("is.workflow.actions.showresult", {
-        "Text": twv(["Timer set: ", mv(ask_uid, "Provided Input")]),
+        "Text": twv(["Timer set: ", mv(name_ask_uid, "Provided Input")]),
     }))
 
     return wrap_shortcut(actions, icon_color=4251333119, icon_glyph=59548)
