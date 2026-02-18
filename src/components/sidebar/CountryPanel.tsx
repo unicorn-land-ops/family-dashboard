@@ -9,7 +9,6 @@ function UnsplashAttribution({
 }: {
   photographer: string;
   photographerUrl: string;
-  unsplashUrl: string;
 }) {
   return (
     <p className="text-[clamp(8px,0.6vw,10px)] text-text-secondary mt-1">
@@ -120,7 +119,6 @@ function CountryPanelInner() {
           <UnsplashAttribution
             photographer={countryImage.photographer}
             photographerUrl={countryImage.photographerUrl}
-            unsplashUrl={countryImage.unsplashUrl}
           />
         </div>
       )}

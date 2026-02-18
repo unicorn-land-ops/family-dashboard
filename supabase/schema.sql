@@ -48,18 +48,28 @@ create table chore_completions (
 -- ============================================================
 -- ROW LEVEL SECURITY
 -- ============================================================
--- RLS must be enabled even with permissive policies.
--- Tables with RLS disabled are only accessible via service_role key,
--- not the anon key used by the browser client.
+-- RLS must be enabled for anon key access. Groceries and timers use
+-- guardrail policies with INSERT row-count limits to prevent spam.
+-- Chores/completions use permissive "Allow all" (no guardrails needed).
 
 alter table groceries enable row level security;
 alter table timers enable row level security;
 alter table chores enable row level security;
 alter table chore_completions enable row level security;
 
--- Allow all operations via anon key (no auth -- family-only home network)
-create policy "Allow all" on groceries for all using (true) with check (true);
-create policy "Allow all" on timers for all using (true) with check (true);
+-- Groceries: guardrail policies (max 100 rows on INSERT)
+create policy "anon_select_groceries" on groceries for select to anon using (true);
+create policy "anon_insert_groceries" on groceries for insert to anon with check ((select count(*) from groceries) < 100);
+create policy "anon_update_groceries" on groceries for update to anon using (true) with check (true);
+create policy "anon_delete_groceries" on groceries for delete to anon using (true);
+
+-- Timers: guardrail policies (max 10 active timers on INSERT)
+create policy "anon_select_timers" on timers for select to anon using (true);
+create policy "anon_insert_timers" on timers for insert to anon with check ((select count(*) from timers where cancelled = false) < 10);
+create policy "anon_update_timers" on timers for update to anon using (true) with check (true);
+create policy "anon_delete_timers" on timers for delete to anon using (true);
+
+-- Chores and completions: full access (no guardrails needed)
 create policy "Allow all" on chores for all using (true) with check (true);
 create policy "Allow all" on chore_completions for all using (true) with check (true);
 

@@ -37,7 +37,7 @@ Requirements for polish milestone. Each maps to roadmap phases.
 ### Voice Integration
 
 - [x] **SIRI-01**: User can add grocery items via Siri voice command ("Add X to the list")
-- [ ] **SIRI-02**: User can set timers via Siri voice command ("Set a timer for X, Y minutes")
+- [x] **SIRI-02**: User can set timers via Siri voice command ("Set a timer for X, Y minutes")
 
 ## v2 Requirements
 
@@ -89,14 +89,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BEHV-01 | Phase 14 | Satisfied |
 | BEHV-02 | Phase 14 | Satisfied |
 | SIRI-01 | Phase 15 | Satisfied |
-| SIRI-02 | Phase 16 | Pending |
+| SIRI-02 | Phase 16 | Satisfied |
 
 **Coverage:**
 - v1.1 requirements: 10 total
-- Satisfied: 9
-- Pending (gap closure): 1 (SIRI-02 -> Phase 16)
+- Satisfied: 10
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-17*
-*Last updated: 2026-02-18 (checkboxes updated from audit, SIRI-02 reassigned to Phase 16)*
+*Last updated: 2026-02-18 (all v1.1 requirements satisfied, SIRI-02 marked complete)*
