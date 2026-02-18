@@ -122,7 +122,7 @@ Plans:
   2. Timer shortcut sends a valid duration_seconds value (not 0 sentinel)
   3. useTimers.ts correctly calculates remaining time from the inserted row
   4. Timer propagates to all connected devices via existing realtime subscriptions
-**Plans:** 0/1 plans needed
+**Plans:** 1 plan
 
 Plans:
 - [ ] 16-01-PLAN.md — Fix timer shortcut duration and dashboard parsing
