@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** The family can glance at the wall and instantly know what's happening today — schedule, weather, and anything that needs attention — while managing household tasks from their phones.
-**Current focus:** Phase 15 complete -- Siri voice integration docs delivered, awaiting user Shortcut creation
+**Current focus:** Phase 15 complete -- Siri shortcuts generated programmatically, tested and confirmed working
 
 ## Current Position
 
 Phase: 15 of 15 (Siri Voice Integration)
 Plan: 1 of 1 in current phase (COMPLETE)
-Status: Phase complete (awaiting user Shortcut creation and testing)
-Last activity: 2026-02-17 — 15-01 PostgREST verified + Siri Shortcut guides created
+Status: Phase complete (shortcuts generated, signed, and user-tested)
+Last activity: 2026-02-18 — 15-01 Programmatic shortcut generation + user testing confirmed
 
 Progress: [████████████████████████████████████████] 100% (v1.0 complete, v1.1 5/5 plans)
 
@@ -33,7 +33,7 @@ Progress: [███████████████████████
 | 12-01 | calendar-polish | 1min | 2 | 3 |
 | 13-01 | content-enhancements | 2min | 2 | 5 |
 | 14-01 | behavior-cleanup | 3min | 2 | 4 |
-| 15-01 | siri-shortcuts | 3min | 1 | 3 |
+| 15-01 | siri-shortcuts | extended | 2 | 4 |
 
 ## Accumulated Context
 
@@ -67,10 +67,10 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-17
-Stopped at: Completed 15-01-PLAN.md (awaiting user Shortcut creation checkpoint)
+Last session: 2026-02-18
+Stopped at: Phase 15 complete — shortcuts working, ready for milestone completion
 Resume file: .planning/phases/15-siri-voice-integration/15-01-SUMMARY.md
 
 ---
 *State initialized: 2026-02-16*
-*Last updated: 2026-02-17 (Phase 15 plan 01 complete)*
+*Last updated: 2026-02-18 (Phase 15 complete — shortcuts generated and tested)*

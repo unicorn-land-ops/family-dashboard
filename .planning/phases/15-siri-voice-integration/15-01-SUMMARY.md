@@ -45,60 +45,61 @@ completed: 2026-02-17
 
 # Phase 15 Plan 01: Siri Voice Integration Summary
 
-**PostgREST endpoint verification and step-by-step Apple Shortcut creation guides for grocery and timer voice commands via Siri**
+**PostgREST endpoint verification + programmatic Apple Shortcut generation for grocery and timer voice commands via Siri**
 
 ## Performance
 
-- **Duration:** 3 min
+- **Duration:** 3 min (docs) + extended session (programmatic shortcut generation)
 - **Started:** 2026-02-17T22:38:48Z
-- **Completed:** 2026-02-17T22:41:38Z
-- **Tasks:** 1 (auto) + 1 (human-action checkpoint)
-- **Files created:** 3
+- **Completed:** 2026-02-18
+- **Tasks:** 1 (auto) + 1 (human-action checkpoint, completed programmatically)
+- **Files created:** 4
 
 ## Accomplishments
 - Verified Supabase PostgREST endpoints work with anon key for grocery INSERT (201), timer INSERT (201), and case-insensitive duplicate check via ilike filter
-- Created comprehensive step-by-step Apple Shortcut construction guide for grocery voice commands (80 numbered steps)
-- Created comprehensive step-by-step Apple Shortcut construction guide for timer voice commands (101 numbered steps)
-- Created overview README with prerequisites, architecture diagram, and iCloud sharing instructions
+- Created Python script (`scripts/generate-shortcuts.py`) that programmatically generates and signs Apple Shortcuts using plistlib + `shortcuts sign` CLI
+- **Grocery Shortcut**: Ask → POST item to groceries table. User-tested and confirmed working.
+- **Timer Shortcut**: Ask → POST full text (e.g. "pasta 10 minutes") as label with duration_seconds=0. Dashboard parses duration from label.
+- Both shortcuts confirmed inserting to Supabase via Siri voice commands on iPhone
+- Created overview README with prerequisites, architecture, and sharing instructions
 
 ## Task Commits
 
-Each task was committed atomically:
-
 1. **Task 1: Verify PostgREST endpoints and create Shortcut documentation** - `bd57579` (docs)
-
-**Plan metadata:** (included in final docs commit)
+2. **Task 2: Programmatic shortcut generation script** - committed with this summary
 
 ## Files Created/Modified
+- `scripts/generate-shortcuts.py` - Generates and signs both Grocery and Timer .shortcut files
 - `docs/siri-shortcuts/README.md` - Overview, prerequisites, architecture, sharing instructions
-- `docs/siri-shortcuts/grocery-shortcut.md` - Step-by-step Grocery Shortcut creation guide with multi-item parsing, duplicate detection, and error handling
-- `docs/siri-shortcuts/timer-shortcut.md` - Step-by-step Timer Shortcut creation guide with duration regex parsing, follow-up prompts, and error handling
+- `docs/siri-shortcuts/grocery-shortcut.md` - Manual step-by-step guide (reference/fallback)
+- `docs/siri-shortcuts/timer-shortcut.md` - Manual step-by-step guide (reference/fallback)
+
+## Key Technical Discoveries
+- Apple Shortcuts .shortcut files are binary plists with WFWorkflowActions array
+- `shortcuts sign --mode anyone` signs for distribution without Apple Developer account
+- Only reliable pattern: **Single Ask → Get Text (JSON with one magic var) → POST (File body type) → Show Result**
+- Multiple Ask actions in one shortcut causes POST to silently fail
+- `attachmentsByRange` entries must be raw dicts, NOT wrapped in WFSerializationType
+- Named variables don't work in text attachments — use ActionOutput magic variables
+- First domain access prompts user to Allow; actual POST fires on next run
+- Loops, conditionals, regex — all unreliable in programmatically generated shortcuts
 
 ## Decisions Made
-- Commas and "and" as multi-item delimiters (not spaces) to preserve multi-word items like "orange juice"
-- Quantity stored as part of item name string ("2 milk") to avoid schema migration
-- URL Encode action before duplicate check GET to handle spaces in item names
-- Retry loop (count 2) for error handling pattern in both Shortcuts
+- Programmatic shortcut generation over manual 80+ step guides
+- Single Ask pattern (no multi-item splitting in shortcut — items added one at a time)
+- Timer stores raw text as label; dashboard responsible for parsing duration
+- `duration_seconds=0` as sentinel for "dashboard should parse from label"
+- `created_by: "siri"` tag on both grocery and timer inserts
 
 ## Deviations from Plan
-
-None - plan executed exactly as written.
-
-## Issues Encountered
-
-None.
-
-## User Setup Required
-
-User must create two Apple Shortcuts on their iPhone following the step-by-step guides:
-1. Follow `docs/siri-shortcuts/grocery-shortcut.md` to create the "Grocery" shortcut
-2. Follow `docs/siri-shortcuts/timer-shortcut.md` to create the "Timer" shortcut
-3. Replace `[YOUR_SUPABASE_URL]` and `[YOUR_ANON_KEY]` placeholders with values from Supabase Dashboard > Settings > API
+- Plan called for manual shortcut creation; implemented programmatic generation instead
+- Dropped in-shortcut features that proved unreliable: multi-item loop, duplicate check, regex duration parsing, error retry
+- Simplified to proven single-Ask pattern for reliability
 
 ## Next Phase Readiness
 
-Phase 15 is the final phase in v1.1. After user verification of the Shortcuts, the family dashboard is feature-complete with Siri voice control for groceries and timers.
+Phase 15 is the final phase in v1.1. Both Siri Shortcuts are working and inserting to Supabase. Dashboard needs minor enhancement to parse timer duration from label text when `duration_seconds=0`.
 
 ---
 *Phase: 15-siri-voice-integration*
-*Completed: 2026-02-17*
+*Completed: 2026-02-18*
