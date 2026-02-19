@@ -1,28 +1,35 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchWeatherForLocation } from '../lib/api/openMeteo';
-import type { PersonConfig } from '../lib/calendar/types';
 
-export function useTravelWeather(traveler: PersonConfig | null) {
+export interface TravelTarget {
+  id: string;
+  label: string;
+  timezone: string;
+  latitude: number;
+  longitude: number;
+}
+
+export function useTravelWeather(target: TravelTarget | null) {
   const hasTravelLocation =
-    traveler &&
-    traveler.travelTimezone &&
-    typeof traveler.travelLat === 'number' &&
-    typeof traveler.travelLon === 'number';
+    target &&
+    target.timezone &&
+    typeof target.latitude === 'number' &&
+    typeof target.longitude === 'number';
 
   return useQuery({
     queryKey: [
       'weather',
       'travel',
-      traveler?.id,
-      traveler?.travelLat,
-      traveler?.travelLon,
-      traveler?.travelTimezone,
+      target?.id,
+      target?.latitude,
+      target?.longitude,
+      target?.timezone,
     ],
     queryFn: () =>
       fetchWeatherForLocation({
-        latitude: traveler!.travelLat!,
-        longitude: traveler!.travelLon!,
-        timezone: traveler!.travelTimezone!,
+        latitude: target!.latitude,
+        longitude: target!.longitude,
+        timezone: target!.timezone,
       }),
     enabled: Boolean(hasTravelLocation),
     staleTime: 5 * 60 * 1000,

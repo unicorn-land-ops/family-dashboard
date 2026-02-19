@@ -1,7 +1,8 @@
 import React from 'react';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useWeather } from '../../hooks/useWeather';
-import { useTravelWeather } from '../../hooks/useTravelWeather';
+import { useTravelWeather, type TravelTarget } from '../../hooks/useTravelWeather';
+import { useAutoTravelTarget } from '../../hooks/useAutoTravelTarget';
 import { WeatherIcon } from './WeatherIcon';
 import { getWeatherInfo } from '../../lib/utils/weatherCodes';
 import { getPrimaryTraveler } from '../../lib/calendar/config';
@@ -10,13 +11,28 @@ import { useState } from 'react';
 
 export const CurrentWeather = React.memo(function CurrentWeather() {
   const { data, isLoading, isError } = useWeather();
-  const traveler = getPrimaryTraveler();
-  const { data: travelerWeather } = useTravelWeather(traveler);
+  const { data: autoTravelTarget } = useAutoTravelTarget();
+  const manualTraveler = getPrimaryTraveler();
+  const manualTravelTarget: TravelTarget | null =
+    manualTraveler &&
+    manualTraveler.travelTimezone &&
+    typeof manualTraveler.travelLat === 'number' &&
+    typeof manualTraveler.travelLon === 'number'
+      ? {
+          id: `manual-${manualTraveler.id}`,
+          label: `${manualTraveler.emoji} ${manualTraveler.name}${manualTraveler.travelLocationName ? ` (${manualTraveler.travelLocationName})` : ''}`,
+          timezone: manualTraveler.travelTimezone,
+          latitude: manualTraveler.travelLat,
+          longitude: manualTraveler.travelLon,
+        }
+      : null;
+  const travelTarget = autoTravelTarget ?? manualTravelTarget;
+  const { data: travelerWeather } = useTravelWeather(travelTarget);
   const [travelClock, setTravelClock] = useState(() => new Date());
 
   useInterval(() => {
     setTravelClock(new Date());
-  }, traveler?.travelTimezone ? 60_000 : null);
+  }, travelTarget?.timezone ? 60_000 : null);
 
   if (isLoading) {
     return (
@@ -39,11 +55,9 @@ export const CurrentWeather = React.memo(function CurrentWeather() {
   const travelerTemp = travelerWeather ? Math.round(travelerWeather.current.temperature_2m) : null;
   const travelerCode = travelerWeather?.current.weather_code;
   const travelerTime =
-    traveler?.travelTimezone &&
-    formatInTimeZone(travelClock, traveler.travelTimezone, 'HH:mm');
-  const travelerLabel = traveler
-    ? `${traveler.emoji} ${traveler.name}${traveler.travelLocationName ? ` (${traveler.travelLocationName})` : ''}`
-    : null;
+    travelTarget?.timezone &&
+    formatInTimeZone(travelClock, travelTarget.timezone, 'HH:mm');
+  const travelerLabel = travelTarget?.label ?? null;
 
   return (
     <div className="flex flex-col items-end gap-1">

@@ -3,10 +3,6 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { CALENDAR_FEEDS, HOME_TIMEZONE } from '../../lib/calendar/config';
 import type { CalendarEvent } from '../../lib/calendar/types';
 
-// Temporary onscreen debugger for calendar/person mapping.
-// Set VITE_CALENDAR_DEBUG=false to hide.
-const SHOW_CALENDAR_DEBUG = (import.meta.env.VITE_CALENDAR_DEBUG ?? 'true') !== 'false';
-
 interface EventCardProps {
   event: CalendarEvent;
 }
@@ -33,13 +29,6 @@ export const EventCard = React.memo(function EventCard({ event }: EventCardProps
   const travelLabel = traveler?.travelTimezone
     ? traveler.travelTimezone.split('/').pop()?.replace(/_/g, ' ') ?? ''
     : '';
-
-  const resolvedIds = personConfigs.map((p) => p?.id).filter(Boolean) as string[];
-  const unresolvedIds = event.persons.filter((id) => !resolvedIds.includes(id));
-  const debugPeople = [
-    ...personConfigs.map((p) => (p ? `${p.id}:${p.name}` : null)).filter(Boolean),
-    ...unresolvedIds.map((id) => `${id}:UNMAPPED`),
-  ].join(', ');
 
   return (
     <div
@@ -83,13 +72,8 @@ export const EventCard = React.memo(function EventCard({ event }: EventCardProps
       </div>
 
       {/* Summary */}
-      <div className="flex-1 min-w-0 text-[clamp(12px,0.9vw,15px)] leading-snug">
-        <div className="truncate">{event.summary}</div>
-        {SHOW_CALENDAR_DEBUG && (
-          <div className="mt-0.5 text-[10px] leading-tight text-amber-300/90 break-words">
-            debug: {debugPeople || 'none'}
-          </div>
-        )}
+      <div className="flex-1 min-w-0 text-[clamp(12px,0.9vw,15px)] leading-snug truncate">
+        {event.summary}
       </div>
     </div>
   );
