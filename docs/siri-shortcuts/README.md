@@ -3,7 +3,7 @@
 Two Apple Shortcuts that let you manage groceries and timers hands-free via Siri. Items added through Siri appear on the wall display in real-time.
 
 - **Grocery Shortcut** -- Say "Hey Siri, grocery" to add items to the shared grocery list
-- **Timer Shortcut** -- Say "Hey Siri, timer" to start a kitchen timer on the wall display
+- **Timer Shortcut** -- Say "Hey Siri, timer" to start a kitchen timer on the wall display (two-step reliable flow: name, then minutes)
 
 ## Prerequisites
 

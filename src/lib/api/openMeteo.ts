@@ -1,6 +1,7 @@
 const BERLIN_LAT = 52.52;
 const BERLIN_LON = 13.419;
 const BASE_URL = 'https://api.open-meteo.com/v1/forecast';
+const BERLIN_TIMEZONE = 'Europe/Berlin';
 
 export interface WeatherResponse {
   current: {
@@ -19,13 +20,23 @@ export interface WeatherResponse {
   timezone: string;
 }
 
-export async function fetchWeather(): Promise<WeatherResponse> {
+interface WeatherRequest {
+  latitude: number;
+  longitude: number;
+  timezone: string;
+}
+
+export async function fetchWeatherForLocation({
+  latitude,
+  longitude,
+  timezone,
+}: WeatherRequest): Promise<WeatherResponse> {
   const params = new URLSearchParams({
-    latitude: String(BERLIN_LAT),
-    longitude: String(BERLIN_LON),
+    latitude: String(latitude),
+    longitude: String(longitude),
     current: 'temperature_2m,weather_code',
     daily: 'temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset',
-    timezone: 'Europe/Berlin',
+    timezone,
     forecast_days: '7',
   });
 
@@ -36,4 +47,12 @@ export async function fetchWeather(): Promise<WeatherResponse> {
   }
 
   return response.json();
+}
+
+export async function fetchWeather(): Promise<WeatherResponse> {
+  return fetchWeatherForLocation({
+    latitude: BERLIN_LAT,
+    longitude: BERLIN_LON,
+    timezone: BERLIN_TIMEZONE,
+  });
 }

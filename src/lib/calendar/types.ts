@@ -27,4 +27,7 @@ export interface PersonConfig {
   calendarUrl: string;
   isWorkCalendar?: boolean;
   travelTimezone?: string;
+  travelLocationName?: string;
+  travelLat?: number;
+  travelLon?: number;
 }
