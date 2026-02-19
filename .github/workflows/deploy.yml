@@ -41,6 +41,10 @@ jobs:
           VITE_CORS_PROXY_URL: ${{ secrets.VITE_CORS_PROXY_URL }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_DADDY_TRAVEL_TIMEZONE: ${{ secrets.VITE_DADDY_TRAVEL_TIMEZONE }}
+          VITE_DADDY_TRAVEL_LOCATION: ${{ secrets.VITE_DADDY_TRAVEL_LOCATION }}
+          VITE_DADDY_TRAVEL_LAT: ${{ secrets.VITE_DADDY_TRAVEL_LAT }}
+          VITE_DADDY_TRAVEL_LON: ${{ secrets.VITE_DADDY_TRAVEL_LON }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
