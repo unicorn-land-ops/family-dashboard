@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useInterval } from './useInterval';
 import {
-  formatBerlinTimeWithSeconds,
+  formatBerlinTime,
   formatBerlinDate,
   formatBerlinDateShort,
 } from '../lib/utils/timeFormat';
 
 /**
  * Clock hook providing Berlin timezone time and date strings.
- * Updates every second. Isolated state prevents re-render cascade.
+ * Updates every second for responsive minute rollovers.
  */
 export function useClock() {
   const [now, setNow] = useState(() => new Date());
@@ -18,7 +18,7 @@ export function useClock() {
   }, 1000);
 
   return {
-    time: formatBerlinTimeWithSeconds(now),
+    time: formatBerlinTime(now),
     date: formatBerlinDate(now),
     dateShort: formatBerlinDateShort(now),
   };

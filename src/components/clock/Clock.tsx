@@ -33,7 +33,7 @@ export function Clock({ travelTarget = null }: ClockProps) {
         {time}
       </div>
       {travelTime && travelLocation && (
-        <div className="mb-[clamp(2px,0.6vw,10px)] rounded-md border border-cyan-300/35 bg-cyan-300/12 px-[clamp(6px,0.9vw,12px)] py-[clamp(4px,0.5vw,8px)]">
+        <div className="rounded-md border border-cyan-300/35 bg-cyan-300/12 px-[clamp(6px,0.9vw,12px)] py-[clamp(4px,0.5vw,8px)]">
           <div className="text-cyan-100/80 uppercase tracking-[0.08em] text-[clamp(0.45rem,0.8vw,0.68rem)] leading-none mb-1">
             {travelLocation}
           </div>
@@ -41,7 +41,7 @@ export function Clock({ travelTarget = null }: ClockProps) {
             className="font-medium text-cyan-50 leading-none tabular-nums"
             style={{ fontSize: 'clamp(1.5rem, 4.5vw, 4.5rem)' }}
           >
-            ({travelTime})
+            {travelTime}
           </div>
         </div>
       )}
