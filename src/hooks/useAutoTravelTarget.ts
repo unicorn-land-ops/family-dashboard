@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CALENDAR_FEEDS, HOME_TIMEZONE } from '../lib/calendar/config';
-import type { DaySchedule, CalendarEvent } from '../lib/calendar/types';
+import type { CalendarEvent } from '../lib/calendar/types';
 import { geocodeLocation } from '../lib/api/geocoding';
 import { useCalendar } from './useCalendar';
 import type { TravelTarget } from './useTravelWeather';
@@ -13,7 +13,14 @@ interface TravelCandidate {
 }
 
 const TRAVEL_HINT_REGEX = /\b(flight|trip|travel|hotel|stay|conference|quiltcon|vacation)\b/i;
-const SUMMARY_DESTINATION_REGEX = /\b(?:to|in)\s+([A-Z][A-Za-z.'-]*(?:\s+[A-Z][A-Za-z.'-]*){0,2})/;
+const PREPOSITION_DESTINATION_REGEX =
+  /\b(?:to|in|at)\s+([A-Za-z][A-Za-z.'-]*(?:\s+[A-Za-z][A-Za-z.'-]*){0,3}(?:,\s*[A-Za-z. ]{2,20})?)/i;
+const LABEL_DESTINATION_REGEX =
+  /^[^:]{2,40}:\s*([A-Za-z][A-Za-z.'-]*(?:\s+[A-Za-z][A-Za-z.'-]*){0,3}(?:,\s*[A-Za-z. ]{2,20})?)/;
+const PLACE_ONLY_REGEX =
+  /^[A-Za-z][A-Za-z.'-]*(?:\s+[A-Za-z][A-Za-z.'-]*){0,3}(?:,\s*[A-Za-z. ]{2,20})?$/;
+const NON_DESTINATION_SUMMARY_REGEX =
+  /\b(call|meeting|review|sync|chat|hold|block|dentist|doctor|appointment|school|kita)\b/i;
 
 function isHomeArea(text: string): boolean {
   return /berlin|germany|deutschland/i.test(text);
@@ -23,10 +30,43 @@ function selectPersonId(event: CalendarEvent): string | null {
   return event.persons.find((id) => id !== 'family') ?? event.persons[0] ?? null;
 }
 
-function buildCandidates(days: DaySchedule[]): TravelCandidate[] {
+function normalizeCandidate(text: string | undefined): string | null {
+  if (!text) return null;
+  const normalized = text
+    .replace(/^[\s\-:;,]+/, '')
+    .replace(/[\s\-:;,]+$/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!normalized || normalized.length < 2) return null;
+  if (/^https?:\/\//i.test(normalized)) return null;
+  return normalized;
+}
+
+function extractDestinationFromSummary(summary: string): string | null {
+  const normalizedSummary = summary.replace(/\s+/g, ' ').trim();
+  if (!normalizedSummary) return null;
+
+  const prepositionMatch = normalizedSummary.match(PREPOSITION_DESTINATION_REGEX);
+  const prepositionDestination = normalizeCandidate(prepositionMatch?.[1]);
+  if (prepositionDestination) return prepositionDestination;
+
+  const labelMatch = normalizedSummary.match(LABEL_DESTINATION_REGEX);
+  const labelDestination = normalizeCandidate(labelMatch?.[1]);
+  if (labelDestination) return labelDestination;
+
+  if (
+    PLACE_ONLY_REGEX.test(normalizedSummary) &&
+    !NON_DESTINATION_SUMMARY_REGEX.test(normalizedSummary)
+  ) {
+    return normalizeCandidate(normalizedSummary);
+  }
+
+  return null;
+}
+
+function buildCandidates(events: CalendarEvent[]): TravelCandidate[] {
   const now = Date.now();
-  const upcoming = days
-    .flatMap((day) => day.events)
+  const upcoming = events
     .filter((event) => event.endTime.getTime() > now - 12 * 60 * 60 * 1000)
     .sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
 
@@ -43,16 +83,18 @@ function buildCandidates(days: DaySchedule[]): TravelCandidate[] {
       });
     }
 
-    if (TRAVEL_HINT_REGEX.test(event.summary)) {
-      const destinationMatch = event.summary.match(SUMMARY_DESTINATION_REGEX);
-      const destination = destinationMatch?.[1]?.trim();
-      if (destination && !isHomeArea(destination)) {
-        candidates.push({
-          query: destination,
-          personId,
-          startMs: event.startTime.getTime(),
-        });
-      }
+    const destination = extractDestinationFromSummary(event.summary);
+    const hasTravelHint = TRAVEL_HINT_REGEX.test(event.summary);
+    if (
+      destination &&
+      !isHomeArea(destination) &&
+      (hasTravelHint || !location)
+    ) {
+      candidates.push({
+        query: destination,
+        personId,
+        startMs: event.startTime.getTime(),
+      });
     }
   }
 
@@ -97,8 +139,8 @@ async function resolveTravelTarget(candidates: TravelCandidate[]): Promise<Trave
 }
 
 export function useAutoTravelTarget() {
-  const { days } = useCalendar();
-  const candidates = useMemo(() => buildCandidates(days), [days]);
+  const { rawEvents } = useCalendar();
+  const candidates = useMemo(() => buildCandidates(rawEvents), [rawEvents]);
 
   return useQuery({
     queryKey: ['travel-target', 'auto', candidates],

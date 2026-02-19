@@ -20,7 +20,10 @@ export function useCalendar() {
     })),
   });
 
-  const days = useMemo<DaySchedule[]>(() => {
+  const { days, rawEvents } = useMemo<{
+    days: DaySchedule[];
+    rawEvents: CalendarEvent[];
+  }>(() => {
     // Collect all parsed events from successful queries
     const allEvents: CalendarEvent[] = [];
 
@@ -35,7 +38,7 @@ export function useCalendar() {
     if (allEvents.length === 0) {
       // Return empty 7-day structure
       const today = startOfToday();
-      return Array.from({ length: 7 }, (_, i) => {
+      const emptyDays = Array.from({ length: 7 }, (_, i) => {
         const date = addDays(today, i);
         return {
           date,
@@ -43,6 +46,7 @@ export function useCalendar() {
           events: [],
         };
       });
+      return { days: emptyDays, rawEvents: [] };
     }
 
     // Pipeline: dedup -> filter
@@ -79,7 +83,7 @@ export function useCalendar() {
       };
     });
 
-    return daySchedules;
+    return { days: daySchedules, rawEvents: deduped };
   }, [queries]);
 
   const isLoading = queries.some((q) => q.isLoading) && !queries.some((q) => q.data);
@@ -88,5 +92,5 @@ export function useCalendar() {
     .filter((q) => q.error)
     .map((q) => q.error as Error);
 
-  return { days, isLoading, isError, errors };
+  return { days, rawEvents, isLoading, isError, errors };
 }

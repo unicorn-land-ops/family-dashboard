@@ -7,10 +7,11 @@ export function parseICS(
   feed: PersonConfig,
 ): CalendarEvent[] {
   const expander = new IcalExpander({ ics: icsText, maxIterations: 1000 });
-  const start = startOfToday();
-  const end = addDays(start, 7);
+  // Include a short lookback window so ongoing multi-day trips still appear.
+  const start = addDays(startOfToday(), -14);
+  const end = addDays(startOfToday(), 7);
 
-  // Always use .between() with a 7-day window, NEVER .all() (infinite RRULE risk)
+  // Always use .between() with a bounded window, NEVER .all() (infinite RRULE risk)
   const { events, occurrences } = expander.between(start, end);
 
   const parsed: CalendarEvent[] = [];
