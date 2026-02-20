@@ -7,25 +7,17 @@ interface ContentRotatorProps {
 }
 
 /**
- * Container that keeps all children mounted and uses CSS opacity
- * crossfade to show the active panel. Keeping panels mounted
- * preserves React Query cache and prevents loading flashes.
+ * Memory-safe rotator that renders only the active panel.
+ * This avoids keeping hidden panels (and their data trees) mounted on low-RAM kiosks.
  */
 export function ContentRotator({ activeIndex, children }: ContentRotatorProps) {
+  const activeChild = React.Children.toArray(children)[activeIndex] ?? null;
+
   return (
-    <div className="relative flex-1 overflow-hidden">
-      {React.Children.map(children, (child, index) => (
-        <div
-          key={index}
-          className="absolute inset-0 transition-opacity duration-500 ease-in-out flex flex-col"
-          style={{
-            opacity: index === activeIndex ? 1 : 0,
-            pointerEvents: index === activeIndex ? 'auto' : 'none',
-          }}
-        >
-          {child}
-        </div>
-      ))}
+    <div className="relative flex-1 overflow-hidden transition-opacity duration-300 ease-in-out">
+      <div key={activeIndex} className="absolute inset-0 flex flex-col">
+        {activeChild}
+      </div>
     </div>
   );
 }
