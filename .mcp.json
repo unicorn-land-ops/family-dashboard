@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "knuspr": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp.knuspr.de/mcp/",
+        "--header",
+        "rhl-email: ${RHL_EMAIL}",
+        "--header",
+        "rhl-pass: ${RHL_PASS}"
+      ],
+      "env": {
+        "RHL_EMAIL": "${RHL_EMAIL}",
+        "RHL_PASS": "${RHL_PASS}"
+      }
+    }
+  }
+}
