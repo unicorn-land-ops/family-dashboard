@@ -11,8 +11,7 @@ export const CALENDAR_FEEDS: PersonConfig[] = [
     id: 'papa',
     name: 'Papa',
     emoji: '\u{1F951}',
-    // Temporary swap: existing env values are reversed in deployment secrets.
-    calendarUrl: import.meta.env.VITE_CAL_WREN ?? '',
+    calendarUrl: import.meta.env.VITE_CAL_PAPA ?? '',
     isWorkCalendar: true,
   },
   {
@@ -29,8 +28,7 @@ export const CALENDAR_FEEDS: PersonConfig[] = [
     id: 'wren',
     name: 'Wren',
     emoji: '\u{1F338}',
-    // Temporary swap: existing env values are reversed in deployment secrets.
-    calendarUrl: import.meta.env.VITE_CAL_PAPA ?? '',
+    calendarUrl: import.meta.env.VITE_CAL_WREN ?? '',
   },
   {
     id: 'ellis',
