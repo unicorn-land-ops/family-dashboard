@@ -20,6 +20,16 @@ export function useCalendar() {
     })),
   });
 
+  // Stable signature so expensive parsing/memoization only reruns when query data changes.
+  const queryDataSignature = queries
+    .map((query, index) => {
+      const feedId = CALENDAR_FEEDS[index]?.id ?? `feed-${index}`;
+      const updatedAt = query.dataUpdatedAt ?? 0;
+      const size = query.data?.length ?? 0;
+      return `${feedId}:${updatedAt}:${size}`;
+    })
+    .join('|');
+
   const { days, rawEvents } = useMemo<{
     days: DaySchedule[];
     rawEvents: CalendarEvent[];
@@ -84,7 +94,7 @@ export function useCalendar() {
     });
 
     return { days: daySchedules, rawEvents: deduped };
-  }, [queries]);
+  }, [queryDataSignature]);
 
   const isLoading = queries.some((q) => q.isLoading) && !queries.some((q) => q.data);
   const isError = queries.some((q) => q.isError);

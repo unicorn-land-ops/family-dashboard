@@ -141,9 +141,16 @@ async function resolveTravelTarget(candidates: TravelCandidate[]): Promise<Trave
 export function useAutoTravelTarget() {
   const { rawEvents } = useCalendar();
   const candidates = useMemo(() => buildCandidates(rawEvents), [rawEvents]);
+  const candidatesKey = useMemo(
+    () =>
+      candidates
+        .map((candidate) => `${candidate.personId ?? 'unknown'}|${candidate.query}|${candidate.startMs}`)
+        .join('||'),
+    [candidates],
+  );
 
   return useQuery({
-    queryKey: ['travel-target', 'auto', candidates],
+    queryKey: ['travel-target', 'auto', candidatesKey],
     queryFn: () => resolveTravelTarget(candidates),
     enabled: candidates.length > 0,
     staleTime: 15 * 60 * 1000,
