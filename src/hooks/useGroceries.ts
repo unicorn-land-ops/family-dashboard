@@ -7,6 +7,7 @@ import {
   removeGrocery,
   clearCheckedGroceries,
 } from '../lib/api/groceries';
+import { toPreferredGroceryName } from '../lib/grocery/preferences';
 import { useSupabaseRealtime } from './useSupabaseRealtime';
 import type { Grocery } from '../types/database';
 
@@ -35,7 +36,8 @@ export function useGroceries() {
 
   const addItem = useMutation({
     mutationFn: (name: string) => addGrocery(name),
-    onMutate: async (name: string) => {
+    onMutate: async (rawName: string) => {
+      const name = toPreferredGroceryName(rawName);
       await queryClient.cancelQueries({ queryKey: QUERY_KEY });
       const previous = queryClient.getQueryData<Grocery[]>(QUERY_KEY);
 
@@ -125,7 +127,7 @@ export function useGroceries() {
     items: query.data ?? [],
     isLoading: query.isLoading,
     error: query.error,
-    addItem: (name: string) => addItem.mutate(name),
+    addItem: (name: string) => addItem.mutate(toPreferredGroceryName(name)),
     toggleItem: (id: string, checked: boolean) => toggleItem.mutate({ id, checked }),
     removeItem: (id: string) => removeItemMutation.mutate(id),
     clearChecked: () => clearChecked.mutate(),

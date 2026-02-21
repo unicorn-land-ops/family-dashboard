@@ -1,5 +1,6 @@
 import { supabase } from '../supabase';
 import type { Grocery } from '../../types/database';
+import { toPreferredGroceryName } from '../grocery/preferences';
 
 export async function fetchGroceries(): Promise<Grocery[]> {
   if (!supabase) return [];
@@ -9,14 +10,19 @@ export async function fetchGroceries(): Promise<Grocery[]> {
     .order('checked', { ascending: true })
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []).map((item) => {
+    const normalizedName = toPreferredGroceryName(item.name);
+    if (normalizedName === item.name) return item;
+    return { ...item, name: normalizedName };
+  });
 }
 
 export async function addGrocery(name: string, addedBy?: string): Promise<void> {
   if (!supabase) throw new Error('Supabase not configured');
+  const normalizedName = toPreferredGroceryName(name);
   const { error } = await supabase
     .from('groceries')
-    .insert({ name, checked: false, added_by: addedBy ?? null });
+    .insert({ name: normalizedName, checked: false, added_by: addedBy ?? null });
   if (error) throw error;
 }
 
