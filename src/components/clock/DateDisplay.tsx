@@ -4,13 +4,22 @@ import { useClock } from '../../hooks/useClock';
  * Current date display component using Berlin timezone.
  * Shows English long format (e.g., "Monday, February 16, 2026").
  */
-export function DateDisplay() {
+interface DateDisplayProps {
+  variant?: 'default' | 'kiosk';
+}
+
+export function DateDisplay({ variant = 'default' }: DateDisplayProps) {
   const { date } = useClock();
+  const isKiosk = variant === 'kiosk';
 
   return (
     <div
       className="font-normal text-text-secondary mt-1"
-      style={{ fontSize: 'clamp(0.875rem, 1.2vw, 1.25rem)' }}
+      style={{
+        fontSize: isKiosk
+          ? 'clamp(1.2rem, 1.8vw, 1.8rem)'
+          : 'clamp(0.875rem, 1.2vw, 1.25rem)',
+      }}
     >
       {date}
     </div>

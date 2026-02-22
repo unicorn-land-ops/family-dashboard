@@ -34,6 +34,154 @@ body {
   grid-template-rows: auto 1fr auto;
 }
 
+.kiosk-grid {
+  display: grid;
+  grid-template-areas:
+    'header'
+    'main'
+    'utility'
+    'status';
+  grid-template-columns: 1fr;
+  grid-template-rows: auto minmax(0, 1.55fr) minmax(0, 0.95fr) auto;
+}
+
+.kiosk-header {
+  align-items: end;
+}
+
+.kiosk-main {
+  grid-area: main;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.kiosk-utility-row {
+  grid-area: utility;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1.65fr 0.95fr;
+  gap: clamp(10px, 1vw, 16px);
+}
+
+.kiosk-utility-primary,
+.kiosk-utility-secondary {
+  min-height: 0;
+}
+
+.kiosk-utility-primary {
+  display: flex;
+  flex-direction: column;
+}
+
+.kiosk-utility-secondary {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 1vw, 16px);
+}
+
+.kiosk-utility-secondary .card-glass,
+.kiosk-utility-primary .card-glass {
+  height: 100%;
+}
+
+.kiosk-status {
+  letter-spacing: 0.02em;
+}
+
+.kiosk-week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: clamp(8px, 0.7vw, 12px);
+  height: 100%;
+}
+
+.kiosk-day-card {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.02);
+  padding: clamp(7px, 0.7vw, 12px);
+}
+
+.kiosk-day-card-today {
+  border-color: rgba(255, 215, 0, 0.55);
+  background: rgba(255, 215, 0, 0.06);
+}
+
+.kiosk-day-title {
+  font-size: clamp(1rem, 1.1vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.kiosk-day-date {
+  font-size: clamp(0.74rem, 0.75vw, 0.9rem);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.kiosk-day-weather {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: clamp(0.74rem, 0.75vw, 0.9rem);
+}
+
+.kiosk-day-events {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.kiosk-event-row {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 6px;
+  align-items: start;
+  border-radius: 0.55rem;
+  padding: clamp(4px, 0.4vw, 7px);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.kiosk-event-time {
+  font-size: clamp(0.66rem, 0.75vw, 0.9rem);
+  color: rgba(255, 255, 255, 0.72);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.kiosk-event-people {
+  font-size: clamp(0.7rem, 0.76vw, 0.9rem);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.kiosk-event-summary {
+  min-width: 0;
+  font-size: clamp(0.76rem, 0.82vw, 1rem);
+  color: rgba(255, 255, 255, 0.94);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kiosk-empty-day {
+  margin-top: 4px;
+  font-size: clamp(0.74rem, 0.78vw, 0.92rem);
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.kiosk-overflow {
+  margin-top: auto;
+  padding-top: 5px;
+  font-size: clamp(0.72rem, 0.72vw, 0.86rem);
+  color: rgba(255, 215, 0, 0.88);
+}
+
 /* Portrait / mobile layout */
 @media (max-width: 768px) and (orientation: portrait) {
   .dashboard-grid {

@@ -19,10 +19,9 @@ import { useMemoryWatchdog } from './hooks/useMemoryWatchdog';
 import { useContentRotation } from './hooks/useContentRotation';
 import { useMobileNav } from './hooks/useMobileNav';
 import { usePriorityInterrupt } from './hooks/usePriorityInterrupt';
+import { KioskDashboard } from './components/kiosk/KioskDashboard';
 
-function App() {
-  useAutoRefresh();
-  useMemoryWatchdog();
+function DefaultDashboard() {
   const { activeCount: activeTimerCount, completedTimers } = useTimers();
   const priority = usePriorityInterrupt(activeTimerCount, completedTimers.length);
   const { activeIndex, goTo, panelCount } = useContentRotation(priority.rotationPaused);
@@ -89,6 +88,23 @@ function App() {
       </DashboardShell>
     </ErrorBoundary>
   );
+}
+
+function resolveDashboardView(): 'default' | 'kiosk' {
+  const viewParam = new URLSearchParams(window.location.search).get('view');
+  return viewParam?.toLowerCase() === 'kiosk' ? 'kiosk' : 'default';
+}
+
+function App() {
+  useAutoRefresh();
+  useMemoryWatchdog();
+  const view = resolveDashboardView();
+
+  if (view === 'kiosk') {
+    return <KioskDashboard />;
+  }
+
+  return <DefaultDashboard />;
 }
 
 export default App;

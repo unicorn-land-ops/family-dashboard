@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import { TIMEZONE } from '../../lib/constants';
 import { ConnectionStatus } from './ConnectionStatus';
 
-export function StatusBar() {
+interface StatusBarProps {
+  variant?: 'default' | 'kiosk';
+}
+
+export function StatusBar({ variant = 'default' }: StatusBarProps) {
   const [lastRefresh] = useState(() =>
     new Date().toLocaleTimeString('de-DE', { timeZone: TIMEZONE })
   );
@@ -17,8 +21,15 @@ export function StatusBar() {
 
   return (
     <footer
-      className="grid-area-status flex items-center justify-between px-[clamp(8px,1vw,16px)] text-text-secondary opacity-60"
-      style={{ fontSize: 'clamp(0.65rem, 0.8vw, 0.85rem)' }}
+      className={`grid-area-status flex items-center justify-between px-[clamp(8px,1vw,16px)] text-text-secondary opacity-60 ${
+        variant === 'kiosk' ? 'kiosk-status' : ''
+      }`}
+      style={{
+        fontSize:
+          variant === 'kiosk'
+            ? 'clamp(0.86rem,1.05vw,1rem)'
+            : 'clamp(0.65rem, 0.8vw, 0.85rem)',
+      }}
     >
       <span>Last refresh: {lastRefresh}</span>
       <ConnectionStatus />

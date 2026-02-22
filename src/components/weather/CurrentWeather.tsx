@@ -9,6 +9,7 @@ import { useState } from 'react';
 
 interface CurrentWeatherProps {
   travelTarget?: TravelTarget | null;
+  variant?: 'default' | 'kiosk';
 }
 
 function getTravelLocationLabel(target: TravelTarget): string {
@@ -21,10 +22,12 @@ function getTravelLocationLabel(target: TravelTarget): string {
 
 export const CurrentWeather = React.memo(function CurrentWeather({
   travelTarget = null,
+  variant = 'default',
 }: CurrentWeatherProps) {
   const { data, isLoading, isError } = useWeather();
   const { data: travelerWeather } = useTravelWeather(travelTarget);
   const [travelClock, setTravelClock] = useState(() => new Date());
+  const isKiosk = variant === 'kiosk';
 
   useInterval(() => {
     setTravelClock(new Date());
@@ -69,21 +72,43 @@ export const CurrentWeather = React.memo(function CurrentWeather({
               <WeatherIcon
                 code={travelerCode}
                 className="text-cyan-100"
-                size="clamp(1.2rem, 2.1vw, 2.1rem)"
+                size={
+                  isKiosk
+                    ? 'clamp(1.7rem, 2.6vw, 3rem)'
+                    : 'clamp(1.2rem, 2.1vw, 2.1rem)'
+                }
               />
               <div className="flex flex-col items-end leading-tight">
                 <span
                   className="font-semibold tabular-nums text-cyan-50"
-                  style={{ fontSize: 'clamp(1.15rem, 2.25vw, 2.25rem)' }}
+                  style={{
+                    fontSize: isKiosk
+                      ? 'clamp(1.7rem, 2.8vw, 3rem)'
+                      : 'clamp(1.15rem, 2.25vw, 2.25rem)',
+                  }}
                 >
                   {travelerTemp!}&deg;C
                 </span>
-                <span className="tabular-nums text-cyan-100/90 text-[clamp(0.5rem,0.78vw,0.7rem)]">
+                <span
+                  className="tabular-nums text-cyan-100/90"
+                  style={{
+                    fontSize: isKiosk
+                      ? 'clamp(0.72rem,1vw,0.92rem)'
+                      : 'clamp(0.5rem,0.78vw,0.7rem)',
+                  }}
+                >
                   {travelerTime}
                 </span>
               </div>
             </div>
-            <div className="text-cyan-100/80 uppercase tracking-[0.08em] text-[clamp(0.45rem,0.75vw,0.66rem)] mt-1 text-right">
+            <div
+              className="text-cyan-100/80 uppercase tracking-[0.08em] mt-1 text-right"
+              style={{
+                fontSize: isKiosk
+                  ? 'clamp(0.66rem,0.95vw,0.9rem)'
+                  : 'clamp(0.45rem,0.75vw,0.66rem)',
+              }}
+            >
               {travelerLocation}
             </div>
           </div>
@@ -93,16 +118,31 @@ export const CurrentWeather = React.memo(function CurrentWeather({
           <WeatherIcon
             code={data.current.weather_code}
             className="text-accent-gold"
-            size="clamp(1.5rem, 3vw, 3rem)"
+            size={
+              isKiosk
+                ? 'clamp(2.2rem, 3.6vw, 4rem)'
+                : 'clamp(1.5rem, 3vw, 3rem)'
+            }
           />
           <div className="flex flex-col items-end leading-tight">
             <span
               className="font-bold tabular-nums text-text-primary"
-              style={{ fontSize: 'clamp(1.5rem, 3vw, 3rem)' }}
+              style={{
+                fontSize: isKiosk
+                  ? 'clamp(2.3rem, 3.8vw, 4.2rem)'
+                  : 'clamp(1.5rem, 3vw, 3rem)',
+              }}
             >
               {temp}&deg;C
             </span>
-            <span className="text-text-secondary text-[clamp(0.6rem,1vw,0.85rem)]">
+            <span
+              className="text-text-secondary"
+              style={{
+                fontSize: isKiosk
+                  ? 'clamp(0.86rem,1.25vw,1.1rem)'
+                  : 'clamp(0.6rem,1vw,0.85rem)',
+              }}
+            >
               {description}
             </span>
           </div>
