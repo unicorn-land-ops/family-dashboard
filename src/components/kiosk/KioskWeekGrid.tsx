@@ -28,7 +28,7 @@ export function KioskWeekGrid() {
 
   if (isLoading) {
     return (
-      <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex-1 overflow-hidden">
+      <div className="card-glass h-full p-[clamp(12px,1.5vw,24px)] flex-1 overflow-hidden">
         <div className="kiosk-week-grid">
           {Array.from({ length: 7 }).map((_, i) => (
             <div key={i} className="kiosk-day-card animate-pulse">
@@ -46,7 +46,7 @@ export function KioskWeekGrid() {
 
   if (isError && days.every((day) => day.events.length === 0)) {
     return (
-      <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex-1 flex items-center justify-center">
+      <div className="card-glass h-full p-[clamp(12px,1.5vw,24px)] flex-1 flex items-center justify-center">
         <div className="text-center text-text-secondary">
           <p className="text-[clamp(1.1rem,1.8vw,1.6rem)] mb-2">Calendar unavailable</p>
           <p className="text-[clamp(0.85rem,1.1vw,1.05rem)] opacity-70">
@@ -60,7 +60,7 @@ export function KioskWeekGrid() {
   }
 
   return (
-    <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex-1 overflow-hidden">
+    <div className="card-glass h-full p-[clamp(12px,1.5vw,24px)] flex-1 overflow-hidden">
       <div className="kiosk-week-grid">
         {days.map((day, dayIndex) => {
           const today = isToday(day.date);
