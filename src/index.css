@@ -2,7 +2,7 @@
 
 /* Custom theme extending Tailwind */
 @theme {
-  --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --color-bg-primary: #0a0a1a;
   --color-bg-secondary: #151530;
   --color-accent-gold: #FFD700;
