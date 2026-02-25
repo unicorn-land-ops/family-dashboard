@@ -15,8 +15,8 @@ export function DateDisplay({ variant = 'default' }: DateDisplayProps) {
   return (
     <div
       className="font-normal mt-1"
-      style={{ color: 'var(--fd-text-2)' }}
       style={{
+        color: 'var(--fd-text-2)',
         fontSize: isKiosk
           ? 'clamp(1.2rem, 1.8vw, 1.8rem)'
           : 'clamp(0.875rem, 1.2vw, 1.25rem)',

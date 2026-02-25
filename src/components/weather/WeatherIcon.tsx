@@ -1,3 +1,4 @@
+import type React from 'react';
 import {
   WiDaySunny,
   WiDayCloudy,
@@ -40,10 +41,11 @@ interface WeatherIconProps {
   code: number;
   className?: string;
   size?: string;
+  style?: React.CSSProperties;
 }
 
-export function WeatherIcon({ code, className, size }: WeatherIconProps) {
+export function WeatherIcon({ code, className, size, style }: WeatherIconProps) {
   const { icon } = getWeatherInfo(code);
   const IconComponent = ICON_MAP[icon] ?? WiNa;
-  return <IconComponent className={className} size={size} />;
+  return <IconComponent className={className} size={size} style={style} />;
 }

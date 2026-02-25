@@ -32,8 +32,8 @@ export function Clock({ travelTarget = null, variant = 'default' }: ClockProps) 
         className={`font-light tracking-tight leading-none tabular-nums ${
           isKiosk ? 'clock-shimmer' : ''
         }`}
-        style={isKiosk ? undefined : { color: 'var(--fd-text-1)' }}
         style={{
+          ...(!isKiosk && { color: 'var(--fd-text-1)' }),
           fontSize: isKiosk
             ? 'clamp(4rem, 12vw, 11rem)'
             : 'clamp(2rem, 6vw, 6rem)',
