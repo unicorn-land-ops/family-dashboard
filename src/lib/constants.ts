@@ -7,11 +7,12 @@ export const BREAKPOINT_MOBILE = 768; // px — below this = portrait/mobile lay
 export const RELOAD_HOUR = 3; // 3am Berlin time
 export const TIMEZONE = 'Europe/Berlin';
 
-// Color tokens (matching @theme in index.css, for JS usage)
+// Color tokens — kiosk mode uses CSS custom properties (--fd-*) set by useTimeOfDay.
+// These static values are fallbacks for non-kiosk (default dashboard) usage.
 export const COLORS = {
-  bgPrimary: '#0a0a1a',
-  bgSecondary: '#151530',
-  accentGold: '#FFD700',
+  bgPrimary: '#1a1814',
+  bgSecondary: '#201e1a',
+  accentGold: '#f0a030',
   textPrimary: '#ffffff',
   textSecondary: 'rgba(255, 255, 255, 0.7)',
   surface: 'rgba(255, 255, 255, 0.1)',

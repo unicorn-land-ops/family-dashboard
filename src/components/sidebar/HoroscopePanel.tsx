@@ -46,7 +46,7 @@ function HoroscopePanelInner() {
         <span className="text-lg" role="img" aria-label="Horoscopes">
           ✨
         </span>
-        <h3 className="text-text-primary font-semibold text-[clamp(14px,1.2vw,18px)]">
+        <h3 className="font-semibold text-[clamp(14px,1.2vw,18px)]" style={{ color: 'var(--fd-text-1)' }}>
           Daily Horoscopes
         </h3>
       </div>
@@ -63,7 +63,7 @@ function HoroscopePanelInner() {
               key={h.sign}
               className="bg-white/5 rounded-lg p-2.5"
             >
-              <p className="text-text-secondary text-[clamp(11px,0.9vw,13px)] leading-snug">
+              <p className="text-[clamp(11px,0.9vw,13px)] leading-snug" style={{ color: 'var(--fd-text-2)' }}>
                 <span className="text-sm mr-1.5 not-italic">{emoji}</span>
                 {text}
               </p>

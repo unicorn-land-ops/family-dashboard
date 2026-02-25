@@ -30,8 +30,9 @@ export function Clock({ travelTarget = null, variant = 'default' }: ClockProps) 
     <div className="flex items-end gap-[clamp(8px,1vw,18px)]">
       <div
         className={`font-light tracking-tight leading-none tabular-nums ${
-          isKiosk ? 'clock-shimmer' : 'text-text-primary'
+          isKiosk ? 'clock-shimmer' : ''
         }`}
+        style={isKiosk ? undefined : { color: 'var(--fd-text-1)' }}
         style={{
           fontSize: isKiosk
             ? 'clamp(4rem, 12vw, 11rem)'

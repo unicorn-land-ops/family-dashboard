@@ -27,11 +27,12 @@ export function TimerAlert({ timer, onDismiss }: TimerAlertProps) {
     <div className="timer-alert-pulse p-4 mb-3">
       <div className="text-center space-y-3">
         <p className="text-sm font-medium text-white/70">{timer.label}</p>
-        <p className="text-2xl font-bold text-accent-gold">Time's up!</p>
+        <p className="text-2xl font-bold" style={{ color: 'var(--fd-accent)' }}>Time's up!</p>
         <button
           type="button"
           onClick={onDismiss}
-          className="w-full min-h-[48px] rounded-lg bg-accent-gold text-bg-primary font-bold text-lg transition-opacity hover:opacity-90 active:opacity-80"
+          className="w-full min-h-[48px] rounded-lg font-bold text-lg transition-opacity hover:opacity-90 active:opacity-80"
+          style={{ backgroundColor: 'var(--fd-accent)', color: 'var(--fd-bg)' }}
         >
           Dismiss
         </button>

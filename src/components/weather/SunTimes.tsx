@@ -42,19 +42,19 @@ export const SunTimes = React.memo(function SunTimes({ variant = 'default' }: Su
     >
       <div className="flex items-center gap-0.5">
         <WiSunrise
-          className="text-accent-gold"
+          style={{ color: 'var(--fd-accent)' }}
           size={isKiosk ? 'clamp(1.2rem,1.8vw,1.9rem)' : 'clamp(1rem, 1.5vw, 1.5rem)'}
         />
-        <span className="text-text-secondary tabular-nums">
+        <span className="tabular-nums" style={{ color: 'var(--fd-text-2)' }}>
           {formatSunTime(sunrise)}
         </span>
       </div>
       <div className="flex items-center gap-0.5">
         <WiSunset
-          className="text-accent-gold"
+          style={{ color: 'var(--fd-accent)' }}
           size={isKiosk ? 'clamp(1.2rem,1.8vw,1.9rem)' : 'clamp(1rem, 1.5vw, 1.5rem)'}
         />
-        <span className="text-text-secondary tabular-nums">
+        <span className="tabular-nums" style={{ color: 'var(--fd-text-2)' }}>
           {formatSunTime(sunset)}
         </span>
       </div>

@@ -11,7 +11,7 @@ function UnsplashAttribution({
   photographerUrl: string;
 }) {
   return (
-    <p className="text-[clamp(8px,0.6vw,10px)] text-text-secondary mt-1">
+    <p className="text-[clamp(8px,0.6vw,10px)] mt-1" style={{ color: 'var(--fd-text-2)' }}>
       Photo by{' '}
       <a
         href={`${photographerUrl}?utm_source=family_dashboard&utm_medium=referral`}
@@ -54,7 +54,7 @@ function CountryPanelInner() {
   if (error || !country) {
     return (
       <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex-1 flex items-center justify-center">
-        <span className="text-text-secondary text-sm">
+        <span className="text-sm" style={{ color: 'var(--fd-text-2)' }}>
           Country unavailable
         </span>
       </div>
@@ -82,7 +82,7 @@ function CountryPanelInner() {
         <span className="text-lg" role="img" aria-label="Globe">
           🌍
         </span>
-        <h3 className="text-text-primary font-semibold text-[clamp(14px,1.2vw,18px)]">
+        <h3 className="font-semibold text-[clamp(14px,1.2vw,18px)]" style={{ color: 'var(--fd-text-1)' }}>
           Country of the Day
         </h3>
       </div>
@@ -95,11 +95,11 @@ function CountryPanelInner() {
           className="h-16 w-auto rounded shadow-md object-contain"
         />
         <div>
-          <p className="text-text-primary font-bold text-[clamp(16px,1.4vw,22px)] leading-tight">
+          <p className="font-bold text-[clamp(16px,1.4vw,22px)] leading-tight" style={{ color: 'var(--fd-text-1)' }}>
             {country.name.common}
           </p>
           {showOfficial && (
-            <p className="text-text-secondary text-[clamp(10px,0.8vw,12px)] leading-tight mt-0.5">
+            <p className="text-[clamp(10px,0.8vw,12px)] leading-tight mt-0.5" style={{ color: 'var(--fd-text-2)' }}>
               {country.name.official}
             </p>
           )}
@@ -138,10 +138,10 @@ function CountryPanelInner() {
 function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <span className="text-text-secondary text-[clamp(9px,0.7vw,11px)] uppercase tracking-wider">
+      <span className="text-[clamp(9px,0.7vw,11px)] uppercase tracking-wider" style={{ color: 'var(--fd-text-2)' }}>
         {label}
       </span>
-      <p className="text-text-primary leading-snug">{value}</p>
+      <p className="leading-snug" style={{ color: 'var(--fd-text-1)' }}>{value}</p>
     </div>
   );
 }

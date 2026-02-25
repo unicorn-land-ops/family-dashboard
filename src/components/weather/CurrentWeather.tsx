@@ -35,7 +35,7 @@ export const CurrentWeather = React.memo(function CurrentWeather({
 
   if (isLoading) {
     return (
-      <span className="text-text-secondary text-[clamp(0.75rem,1.5vw,1rem)]">
+      <span className="text-[clamp(0.75rem,1.5vw,1rem)]" style={{ color: 'var(--fd-text-2)' }}>
         Loading...
       </span>
     );
@@ -43,7 +43,7 @@ export const CurrentWeather = React.memo(function CurrentWeather({
 
   if (isError || !data) {
     return (
-      <span className="text-text-secondary text-[clamp(0.75rem,1.5vw,1rem)]">
+      <span className="text-[clamp(0.75rem,1.5vw,1rem)]" style={{ color: 'var(--fd-text-2)' }}>
         Weather unavailable
       </span>
     );
@@ -117,7 +117,7 @@ export const CurrentWeather = React.memo(function CurrentWeather({
         <div className="flex items-center gap-[clamp(4px,0.5vw,8px)]">
           <WeatherIcon
             code={data.current.weather_code}
-            className="text-accent-gold"
+            style={{ color: 'var(--fd-accent)' }}
             size={
               isKiosk
                 ? 'clamp(2.2rem, 3.6vw, 4rem)'
@@ -126,8 +126,9 @@ export const CurrentWeather = React.memo(function CurrentWeather({
           />
           <div className="flex flex-col items-end leading-tight">
             <span
-              className="font-bold tabular-nums text-text-primary"
+              className="font-bold tabular-nums"
               style={{
+                color: 'var(--fd-text-1)',
                 fontSize: isKiosk
                   ? 'clamp(2.3rem, 3.8vw, 4.2rem)'
                   : 'clamp(1.5rem, 3vw, 3rem)',
@@ -136,8 +137,8 @@ export const CurrentWeather = React.memo(function CurrentWeather({
               {temp}&deg;C
             </span>
             <span
-              className="text-text-secondary"
               style={{
+                color: 'var(--fd-text-2)',
                 fontSize: isKiosk
                   ? 'clamp(0.86rem,1.25vw,1.1rem)'
                   : 'clamp(0.6rem,1vw,0.85rem)',

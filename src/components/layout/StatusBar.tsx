@@ -21,10 +21,11 @@ export function StatusBar({ variant = 'default' }: StatusBarProps) {
 
   return (
     <footer
-      className={`grid-area-status flex items-center justify-between px-[clamp(8px,1vw,16px)] text-text-secondary opacity-60 ${
+      className={`grid-area-status flex items-center justify-between px-[clamp(8px,1vw,16px)] opacity-60 ${
         variant === 'kiosk' ? 'kiosk-status' : ''
       }`}
       style={{
+        color: 'var(--fd-text-2)',
         fontSize:
           variant === 'kiosk'
             ? 'clamp(0.86rem,1.05vw,1rem)'

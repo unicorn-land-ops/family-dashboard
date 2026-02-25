@@ -32,16 +32,17 @@ export function RotationIndicator({
               onClick={() => onSelect(i)}
               className={`rounded-full transition-all duration-300 ${
                 isActive
-                  ? 'bg-accent-gold w-6 h-2'
+                  ? 'w-6 h-2'
                   : 'bg-white/30 w-2 h-2 hover:bg-white/50'
               }`}
+              style={isActive ? { backgroundColor: 'var(--fd-accent)' } : undefined}
             />
           );
         })}
       </div>
 
       {/* Next label */}
-      <span className="text-text-secondary text-[clamp(9px,0.7vw,11px)] tracking-wide">
+      <span className="text-[clamp(9px,0.7vw,11px)] tracking-wide" style={{ color: 'var(--fd-text-2)' }}>
         Next: {nextLabel}
       </span>
     </div>

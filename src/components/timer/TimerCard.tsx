@@ -42,7 +42,8 @@ export function TimerCard({
           <button
             type="button"
             onClick={onDismiss}
-            className="text-xs font-medium text-accent-gold hover:text-accent-gold/80 ml-2"
+            className="text-xs font-medium ml-2"
+            style={{ color: 'var(--fd-accent)' }}
           >
             Dismiss
           </button>
@@ -55,7 +56,7 @@ export function TimerCard({
         style={{ fontVariantNumeric: 'tabular-nums' }}
       >
         {isDone ? (
-          <span className="text-accent-gold font-bold">Done!</span>
+          <span className="font-bold" style={{ color: 'var(--fd-accent)' }}>Done!</span>
         ) : (
           <span className="text-white">{formatCountdown(remaining)}</span>
         )}
@@ -64,8 +65,8 @@ export function TimerCard({
       {/* Bottom: progress bar */}
       <div className="mt-3 h-1 rounded-full bg-white/10 overflow-hidden">
         <div
-          className="h-full bg-accent-gold rounded-full transition-[width] duration-1000 ease-linear"
-          style={{ width: `${Math.min(progress * 100, 100)}%` }}
+          className="h-full rounded-full transition-[width] duration-1000 ease-linear"
+          style={{ backgroundColor: 'var(--fd-accent)', width: `${Math.min(progress * 100, 100)}%` }}
         />
       </div>
     </div>

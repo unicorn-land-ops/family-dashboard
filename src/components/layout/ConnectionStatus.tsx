@@ -44,7 +44,7 @@ export function ConnectionStatus() {
   const { dotClass, label } = config[connectionStatus as keyof typeof config] ?? config.offline;
 
   return (
-    <span className="flex items-center gap-1.5 text-xs text-text-secondary opacity-60">
+    <span className="flex items-center gap-1.5 text-xs opacity-60" style={{ color: 'var(--fd-text-2)' }}>
       <span className={`inline-block w-1.5 h-1.5 rounded-full ${dotClass}`} />
       {showLabel && <span>{label}</span>}
     </span>

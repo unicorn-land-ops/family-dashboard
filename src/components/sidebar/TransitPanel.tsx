@@ -35,7 +35,7 @@ function TransitPanelInner() {
   if (error) {
     return (
       <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex-1 flex items-center justify-center">
-        <span className="text-text-secondary text-sm">
+        <span className="text-sm" style={{ color: 'var(--fd-text-2)' }}>
           Transit data unavailable
         </span>
       </div>
@@ -49,7 +49,7 @@ function TransitPanelInner() {
         <span className="text-lg" role="img" aria-label="U-Bahn">
           🚇
         </span>
-        <h3 className="text-text-primary font-semibold text-[clamp(14px,1.2vw,18px)]">
+        <h3 className="font-semibold text-[clamp(14px,1.2vw,18px)]" style={{ color: 'var(--fd-text-1)' }}>
           Senefelderplatz
         </h3>
       </div>
@@ -81,7 +81,7 @@ function TransitPanelInner() {
               </span>
 
               {/* Direction */}
-              <span className="text-text-secondary truncate flex-1">
+              <span className="truncate flex-1" style={{ color: 'var(--fd-text-2)' }}>
                 {dep.direction}
               </span>
 
@@ -91,7 +91,7 @@ function TransitPanelInner() {
                   Cancelled
                 </span>
               ) : (
-                <span className="text-text-primary font-mono tabular-nums whitespace-nowrap">
+                <span className="font-mono tabular-nums whitespace-nowrap" style={{ color: 'var(--fd-text-1)' }}>
                   {formatInTimeZone(
                     new Date(dep.when!),
                     'Europe/Berlin',
