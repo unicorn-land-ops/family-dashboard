@@ -31,13 +31,12 @@ export function DayRow({ day, dayIndex }: DayRowProps) {
       {/* Day header */}
       <div className="flex items-baseline gap-2 px-1 mb-0.5">
         <span
-          className={`text-[clamp(13px,1vw,16px)] font-semibold ${
-            today ? 'text-accent-gold' : 'text-text-primary'
-          }`}
+          className="text-[clamp(13px,1vw,16px)] font-semibold"
+          style={{ color: today ? 'var(--fd-accent)' : 'var(--fd-text-1)' }}
         >
           {dayLabel}
         </span>
-        <span className="text-[clamp(11px,0.8vw,13px)] text-text-secondary">
+        <span className="text-[clamp(11px,0.8vw,13px)]" style={{ color: 'var(--fd-text-2)' }}>
           {dateLabel}
         </span>
       </div>
@@ -61,13 +60,13 @@ export function DayRow({ day, dayIndex }: DayRowProps) {
           ))}
         </div>
       ) : (
-        <div className="px-2 py-1 text-[clamp(11px,0.8vw,13px)] text-text-secondary opacity-50">
+        <div className="px-2 py-1 text-[clamp(11px,0.8vw,13px)] opacity-50" style={{ color: 'var(--fd-text-2)' }}>
           No events
         </div>
       )}
 
       {/* Separator */}
-      <div className="mt-[clamp(6px,0.5vw,12px)] border-b border-white/[0.06]" />
+      <div className="mt-[clamp(6px,0.5vw,12px)]" style={{ borderBottom: '1px solid var(--fd-card-border)' }} />
     </div>
   );
 }

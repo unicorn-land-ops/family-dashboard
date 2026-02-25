@@ -35,7 +35,7 @@ export function TimerPanel({ variant = 'full' }: TimerPanelProps) {
   if (variant === 'compact') {
     return (
       <div className="card-glass p-4">
-        <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-2">
+        <h3 className="text-sm font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--fd-text-2)' }}>
           Timers ({activeCount})
         </h3>
         <div className="max-h-[400px] overflow-y-auto scrollbar-hide">
@@ -66,7 +66,7 @@ export function TimerPanel({ variant = 'full' }: TimerPanelProps) {
   if (!supabaseEnabled) {
     return (
       <div className="flex flex-col h-full">
-        <p className="text-white/30 text-center py-8">
+        <p className="text-center py-8" style={{ color: 'var(--fd-text-2)', opacity: 0.5 }}>
           Connect Supabase to use timers
         </p>
       </div>
@@ -77,7 +77,7 @@ export function TimerPanel({ variant = 'full' }: TimerPanelProps) {
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-3 pt-3 pb-1">
-        <h2 className="text-lg font-semibold text-white">
+        <h2 className="text-lg font-semibold" style={{ color: 'var(--fd-text-1)' }}>
           Timers ({activeCount})
         </h2>
       </div>
@@ -85,7 +85,7 @@ export function TimerPanel({ variant = 'full' }: TimerPanelProps) {
       {/* Timer list area */}
       <div className="flex-1 overflow-y-auto px-3 py-2">
         {activeTimers.length === 0 && completedTimers.length === 0 ? (
-          <p className="text-white/30 text-center py-8">No active timers</p>
+          <p className="text-center py-8" style={{ color: 'var(--fd-text-2)', opacity: 0.5 }}>No active timers</p>
         ) : (
           <>
             {activeTimers.map((timer) => (
@@ -109,7 +109,7 @@ export function TimerPanel({ variant = 'full' }: TimerPanelProps) {
       </div>
 
       {/* Sticky bottom: input */}
-      <div className="sticky bottom-0 bg-bg-primary/80 backdrop-blur-sm border-t border-white/10">
+      <div className="sticky bottom-0 backdrop-blur-sm" style={{ backgroundColor: 'color-mix(in srgb, var(--fd-bg-1) 80%, transparent)', borderTop: '1px solid var(--fd-card-border)' }}>
         <TimerInput onAdd={addTimer} />
       </div>
     </div>

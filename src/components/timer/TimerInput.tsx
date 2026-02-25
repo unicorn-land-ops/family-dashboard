@@ -44,7 +44,8 @@ export function TimerInput({ onAdd }: TimerInputProps) {
         onChange={(e) => setLabel(e.target.value)}
         placeholder="Timer label..."
         autoComplete="off"
-        className="min-h-[44px] w-full rounded-lg bg-white/10 px-4 text-white placeholder:text-white/40 outline-none focus:ring-2 focus:ring-accent-gold"
+        className="min-h-[44px] w-full rounded-lg px-4 outline-none focus:ring-2"
+        style={{ background: 'var(--fd-card-bg)', color: 'var(--fd-text-1)', borderColor: 'var(--fd-accent)' }}
       />
 
       {/* Preset duration buttons */}
@@ -54,7 +55,8 @@ export function TimerInput({ onAdd }: TimerInputProps) {
             key={p.seconds}
             type="button"
             onClick={() => handlePreset(p.seconds)}
-            className="card-glass min-h-[44px] px-4 py-2 text-sm font-medium text-white/80 hover:bg-accent-gold/20 hover:text-accent-gold active:bg-accent-gold/30 transition-colors"
+            className="card-glass min-h-[44px] px-4 py-2 text-sm font-medium hover:opacity-80 transition-colors"
+            style={{ color: 'var(--fd-text-1)' }}
           >
             {p.label}
           </button>
@@ -69,12 +71,14 @@ export function TimerInput({ onAdd }: TimerInputProps) {
           value={customMinutes}
           onChange={(e) => setCustomMinutes(e.target.value)}
           placeholder="min"
-          className="min-h-[44px] w-20 rounded-lg bg-white/10 px-4 text-white placeholder:text-white/40 outline-none focus:ring-2 focus:ring-accent-gold [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          className="min-h-[44px] w-20 rounded-lg px-4 outline-none focus:ring-2 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          style={{ background: 'var(--fd-card-bg)', color: 'var(--fd-text-1)' }}
         />
         <button
           type="submit"
           disabled={!customMinutes || Number(customMinutes) < 1}
-          className="min-h-[44px] rounded-lg bg-accent-gold px-6 text-bg-primary font-bold disabled:opacity-30 transition-opacity"
+          className="min-h-[44px] rounded-lg px-6 font-bold disabled:opacity-30 transition-opacity"
+          style={{ background: 'var(--fd-accent)', color: 'var(--fd-bg-1)' }}
         >
           Start
         </button>

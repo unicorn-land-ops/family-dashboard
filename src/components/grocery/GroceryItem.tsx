@@ -20,15 +20,14 @@ export function GroceryItem({ item, onToggle, onRemove }: GroceryItemProps) {
         {item.checked ? (
           <IoCheckmarkCircle className="w-6 h-6 text-green-400" />
         ) : (
-          <IoEllipseOutline className="w-6 h-6 text-white/40" />
+          <IoEllipseOutline className="w-6 h-6" style={{ color: 'var(--fd-text-2)' }} />
         )}
       </button>
 
       {/* Item name */}
       <span
-        className={`flex-1 text-base ${
-          item.checked ? 'line-through text-white/30' : 'text-white'
-        }`}
+        className={`flex-1 text-base ${item.checked ? 'line-through' : ''}`}
+        style={{ color: item.checked ? 'var(--fd-text-2)' : 'var(--fd-text-1)' }}
       >
         {item.name}
       </span>
@@ -37,7 +36,8 @@ export function GroceryItem({ item, onToggle, onRemove }: GroceryItemProps) {
       <button
         type="button"
         onClick={() => onRemove(item.id)}
-        className="flex items-center justify-center w-[44px] h-[44px] shrink-0 text-white/20 hover:text-red-400 transition-colors"
+        className="flex items-center justify-center w-[44px] h-[44px] shrink-0 hover:text-red-400 transition-colors"
+        style={{ color: 'var(--fd-card-border)' }}
         aria-label="Remove"
       >
         <IoTrashOutline className="w-5 h-5" />

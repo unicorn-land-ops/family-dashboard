@@ -25,11 +25,11 @@ function HoroscopePanelInner() {
     return (
       <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex-1 flex flex-col gap-3">
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-5 h-5 rounded bg-white/10 animate-pulse" />
-          <div className="h-5 w-40 rounded bg-white/10 animate-pulse" />
+          <div className="w-5 h-5 rounded bg-[var(--fd-card-border)] animate-pulse" />
+          <div className="h-5 w-40 rounded bg-[var(--fd-card-border)] animate-pulse" />
         </div>
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-16 rounded bg-white/10 animate-pulse" />
+          <div key={i} className="h-16 rounded bg-[var(--fd-card-border)] animate-pulse" />
         ))}
       </div>
     );
@@ -61,7 +61,7 @@ function HoroscopePanelInner() {
           return (
             <div
               key={h.sign}
-              className="bg-white/5 rounded-lg p-2.5"
+              className="bg-[var(--fd-card-bg)] rounded-lg p-2.5"
             >
               <p className="text-[clamp(11px,0.9vw,13px)] leading-snug" style={{ color: 'var(--fd-text-2)' }}>
                 <span className="text-sm mr-1.5 not-italic">{emoji}</span>

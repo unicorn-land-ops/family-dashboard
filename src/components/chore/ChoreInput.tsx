@@ -38,12 +38,14 @@ export function ChoreInput({ onAdd }: ChoreInputProps) {
           placeholder="Add a chore..."
           autoComplete="off"
           enterKeyHint="done"
-          className="min-h-[44px] flex-1 rounded-lg bg-white/10 px-4 text-white placeholder:text-white/40 outline-none focus:ring-2 focus:ring-accent-gold"
+          className="min-h-[44px] flex-1 rounded-lg px-4 outline-none focus:ring-2"
+          style={{ background: 'var(--fd-card-bg)', color: 'var(--fd-text-1)', borderColor: 'var(--fd-accent)' }}
         />
         <button
           type="submit"
           disabled={!trimmed}
-          className="min-h-[44px] w-[44px] rounded-lg bg-accent-gold text-bg-primary font-bold disabled:opacity-30"
+          className="min-h-[44px] w-[44px] rounded-lg font-bold disabled:opacity-30"
+          style={{ background: 'var(--fd-accent)', color: 'var(--fd-bg-1)' }}
         >
           +
         </button>
@@ -56,8 +58,8 @@ export function ChoreInput({ onAdd }: ChoreInputProps) {
           onClick={() => setAssignedTo(null)}
           className={`px-2.5 py-1 rounded-full text-xs transition-colors ${
             assignedTo === null
-              ? 'bg-accent-gold/30 text-accent-gold'
-              : 'bg-white/10 text-white/50 hover:bg-white/15'
+              ? 'bg-[color-mix(in_srgb,var(--fd-accent)_30%,transparent)] text-[var(--fd-accent)]'
+              : 'bg-[var(--fd-card-bg)] text-[var(--fd-text-2)] hover:opacity-80'
           }`}
         >
           Anyone
@@ -69,8 +71,8 @@ export function ChoreInput({ onAdd }: ChoreInputProps) {
             onClick={() => setAssignedTo(person.id)}
             className={`px-2.5 py-1 rounded-full text-xs transition-colors ${
               assignedTo === person.id
-                ? 'bg-accent-gold/30 text-accent-gold'
-                : 'bg-white/10 text-white/50 hover:bg-white/15'
+                ? 'bg-[color-mix(in_srgb,var(--fd-accent)_30%,transparent)] text-[var(--fd-accent)]'
+                : 'bg-[var(--fd-card-bg)] text-[var(--fd-text-2)] hover:opacity-80'
             }`}
           >
             {person.emoji} {person.name}
@@ -87,8 +89,8 @@ export function ChoreInput({ onAdd }: ChoreInputProps) {
             onClick={() => setSchedule(s.value)}
             className={`px-2.5 py-1 rounded-full text-xs transition-colors ${
               schedule === s.value
-                ? 'bg-accent-gold/30 text-accent-gold'
-                : 'bg-white/10 text-white/50 hover:bg-white/15'
+                ? 'bg-[color-mix(in_srgb,var(--fd-accent)_30%,transparent)] text-[var(--fd-accent)]'
+                : 'bg-[var(--fd-card-bg)] text-[var(--fd-text-2)] hover:opacity-80'
             }`}
           >
             {s.label}

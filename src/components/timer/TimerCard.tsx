@@ -25,14 +25,15 @@ export function TimerCard({
     >
       {/* Top row: label + cancel */}
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-white/70 truncate">
+        <span className="text-sm font-medium truncate" style={{ color: 'var(--fd-text-2)' }}>
           {timer.label}
         </span>
         {!isDone && (
           <button
             type="button"
             onClick={onCancel}
-            className="text-white/30 hover:text-white/60 text-lg leading-none ml-2"
+            className="text-lg leading-none ml-2 hover:opacity-80"
+            style={{ color: 'var(--fd-text-2)' }}
             aria-label="Cancel timer"
           >
             &times;
@@ -58,12 +59,12 @@ export function TimerCard({
         {isDone ? (
           <span className="font-bold" style={{ color: 'var(--fd-accent)' }}>Done!</span>
         ) : (
-          <span className="text-white">{formatCountdown(remaining)}</span>
+          <span style={{ color: 'var(--fd-text-1)' }}>{formatCountdown(remaining)}</span>
         )}
       </div>
 
       {/* Bottom: progress bar */}
-      <div className="mt-3 h-1 rounded-full bg-white/10 overflow-hidden">
+      <div className="mt-3 h-1 rounded-full overflow-hidden" style={{ background: 'var(--fd-card-border)' }}>
         <div
           className="h-full rounded-full transition-[width] duration-1000 ease-linear"
           style={{ backgroundColor: 'var(--fd-accent)', width: `${Math.min(progress * 100, 100)}%` }}

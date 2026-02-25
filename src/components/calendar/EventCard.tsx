@@ -33,13 +33,11 @@ export const EventCard = React.memo(function EventCard({ event }: EventCardProps
   return (
     <div
       className={`flex items-start gap-2 px-2 py-1.5 rounded-lg ${
-        event.isSchulfrei
-          ? 'event-schulfrei'
-          : 'bg-white/[0.03]'
+        event.isSchulfrei ? 'event-schulfrei' : 'default-event-row'
       }`}
     >
       {/* Time column */}
-      <div className="shrink-0 w-[clamp(40px,4vw,60px)] text-[clamp(11px,0.8vw,13px)] tabular-nums text-text-secondary">
+      <div className="shrink-0 w-[clamp(40px,4vw,60px)] text-[clamp(11px,0.8vw,13px)] tabular-nums" style={{ color: 'var(--fd-text-2)' }}>
         {timeDisplay && (
           <>
             <div>{timeDisplay}</div>
@@ -72,7 +70,7 @@ export const EventCard = React.memo(function EventCard({ event }: EventCardProps
       </div>
 
       {/* Summary */}
-      <div className="flex-1 min-w-0 text-[clamp(12px,0.9vw,15px)] leading-snug truncate">
+      <div className="flex-1 min-w-0 text-[clamp(12px,0.9vw,15px)] leading-snug truncate" style={{ color: 'var(--fd-text-1)' }}>
         {event.summary}
       </div>
     </div>

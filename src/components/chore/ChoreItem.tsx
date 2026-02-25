@@ -89,7 +89,7 @@ export function ChoreItem({
           {completed ? (
             <IoCheckmarkCircle className="w-6 h-6 text-green-400" />
           ) : (
-            <IoEllipseOutline className="w-6 h-6 text-white/40" />
+            <IoEllipseOutline className="w-6 h-6" style={{ color: 'var(--fd-text-2)' }} />
           )}
         </button>
 
@@ -97,9 +97,8 @@ export function ChoreItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span
-              className={`text-base truncate ${
-                completed ? 'line-through text-white/30' : 'text-white'
-              }`}
+              className={`text-base truncate ${completed ? 'line-through' : ''}`}
+              style={{ color: completed ? 'var(--fd-text-2)' : 'var(--fd-text-1)' }}
             >
               {chore.title}
             </span>
@@ -108,11 +107,11 @@ export function ChoreItem({
                 {assigneePerson.emoji}
               </span>
             )}
-            <span className="text-xs text-white/30 shrink-0">{scheduleLabel}</span>
+            <span className="text-xs shrink-0" style={{ color: 'var(--fd-text-2)', opacity: 0.6 }}>{scheduleLabel}</span>
           </div>
 
           {completed && completedByPerson && (
-            <span className="text-xs text-white/40">
+            <span className="text-xs" style={{ color: 'var(--fd-text-2)' }}>
               Done by {completedByPerson.emoji} {completedByPerson.name}
             </span>
           )}
@@ -126,7 +125,8 @@ export function ChoreItem({
               e.stopPropagation();
               if (completionInfo) onUncomplete(completionInfo.id);
             }}
-            className="text-xs text-white/30 hover:text-white/50 shrink-0"
+            className="text-xs hover:opacity-80 shrink-0"
+            style={{ color: 'var(--fd-text-2)' }}
           >
             undo
           </button>
@@ -137,7 +137,8 @@ export function ChoreItem({
           <button
             type="button"
             onClick={() => onDeactivate(chore.id)}
-            className="flex items-center justify-center w-[44px] h-[44px] shrink-0 text-white/20 hover:text-red-400 transition-colors"
+            className="flex items-center justify-center w-[44px] h-[44px] shrink-0 hover:text-red-400 transition-colors"
+            style={{ color: 'var(--fd-card-border)' }}
             aria-label="Remove chore"
           >
             <IoCloseCircleOutline className="w-5 h-5" />
@@ -153,7 +154,8 @@ export function ChoreItem({
               key={person.id}
               type="button"
               onClick={() => handlePickPerson(person.id)}
-              className="flex items-center gap-1 px-2 py-1 rounded-full bg-white/10 hover:bg-accent-gold/30 text-sm text-white/80 transition-colors"
+              className="flex items-center gap-1 px-2 py-1 rounded-full text-sm transition-colors hover:opacity-80"
+              style={{ background: 'var(--fd-card-bg)', color: 'var(--fd-text-1)' }}
             >
               <span>{person.emoji}</span>
               <span className="text-xs">{person.name}</span>

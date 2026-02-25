@@ -8,10 +8,11 @@ import type { FallbackProps } from 'react-error-boundary';
 export function PanelFallback({ resetErrorBoundary }: FallbackProps) {
   return (
     <div className="card-glass p-4 text-center">
-      <p className="text-secondary text-sm">Something went wrong</p>
+      <p className="text-sm" style={{ color: 'var(--fd-text-2)' }}>Something went wrong</p>
       <button
         onClick={resetErrorBoundary}
-        className="text-xs text-accent-gold underline mt-2"
+        className="text-xs underline mt-2"
+        style={{ color: 'var(--fd-accent)' }}
       >
         Try again
       </button>
@@ -32,7 +33,7 @@ export function GlobalFallback({ error }: FallbackProps) {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-bg-primary text-text-primary">
+    <div className="min-h-screen flex flex-col items-center justify-center" style={{ background: 'var(--fd-bg-1)', color: 'var(--fd-text-1)' }}>
       <p className="text-xl font-semibold">Dashboard will restart shortly...</p>
       <p className="text-secondary text-sm mt-2">{error instanceof Error ? error.message : 'Unknown error'}</p>
     </div>

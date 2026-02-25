@@ -10,8 +10,8 @@ import { startOfToday, addDays, format, isSameDay } from 'date-fns';
 
 export function useCalendar() {
   const queries = useQueries({
-    queries: CALENDAR_FEEDS.map((feed) => ({
-      queryKey: ['calendar', feed.id],
+    queries: CALENDAR_FEEDS.map((feed, index) => ({
+      queryKey: ['calendar', feed.id, index],
       queryFn: () => fetchCalendarFeed(feed.calendarUrl),
       staleTime: 5 * 60 * 1000,
       refetchInterval: 15 * 60 * 1000,

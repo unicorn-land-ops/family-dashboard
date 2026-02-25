@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Header } from '../layout/Header';
 import { StatusBar } from '../layout/StatusBar';
@@ -19,8 +18,6 @@ import { usePriorityInterrupt } from '../../hooks/usePriorityInterrupt';
 import { useContentRotation } from '../../hooks/useContentRotation';
 import { useCalendar } from '../../hooks/useCalendar';
 import { useWeather } from '../../hooks/useWeather';
-import { useTimeOfDay } from '../../hooks/useTimeOfDay';
-
 function getDailyWeather(weather: ReturnType<typeof useWeather>['data'], dayIndex: number) {
   if (!weather?.daily || dayIndex >= weather.daily.time.length) return null;
   return {
@@ -36,13 +33,6 @@ export function KioskDashboard() {
   const { activeIndex, goTo, panelCount } = useContentRotation(priority.rotationPaused);
   const { days } = useCalendar();
   const { data: weather } = useWeather();
-  const phase = useTimeOfDay();
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-phase', phase);
-    return () => document.documentElement.removeAttribute('data-phase');
-  }, [phase]);
-
   const todayDay = days[0];
   const tomorrowDay = days[1];
   const dayAfterDay = days[2];

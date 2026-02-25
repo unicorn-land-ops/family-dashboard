@@ -9,8 +9,8 @@ export function CalendarPanel() {
       <div className="card-glass p-[clamp(16px,2vw,32px)] flex-1 flex flex-col gap-3 animate-pulse">
         {Array.from({ length: 4 }, (_, i) => (
           <div key={i} className="flex flex-col gap-1">
-            <div className="h-4 w-32 rounded bg-white/[0.06]" />
-            <div className="h-8 w-full rounded bg-white/[0.04]" />
+            <div className="h-4 w-32 rounded" style={{ background: 'var(--fd-card-border)' }} />
+            <div className="h-8 w-full rounded" style={{ background: 'var(--fd-card-bg)' }} />
           </div>
         ))}
       </div>
@@ -20,7 +20,7 @@ export function CalendarPanel() {
   if (isError && days.every((d) => d.events.length === 0)) {
     return (
       <div className="card-glass p-[clamp(16px,2vw,32px)] flex-1 flex items-center justify-center">
-        <div className="text-center text-text-secondary">
+        <div className="text-center" style={{ color: 'var(--fd-text-2)' }}>
           <p className="text-lg mb-1">Calendar unavailable</p>
           <p className="text-sm opacity-70">
             {errors.length > 0 && errors[0]?.message?.includes('CORS_PROXY_URL')

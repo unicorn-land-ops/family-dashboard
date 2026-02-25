@@ -19,7 +19,7 @@ export function GroceryPanel({ variant = 'full' }: GroceryPanelProps) {
 
     return (
       <div className="card-glass p-4">
-        <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-2">
+        <h3 className="text-sm font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--fd-text-2)' }}>
           Groceries ({uncheckedCount})
         </h3>
         <div className="max-h-[300px] overflow-y-auto scrollbar-hide">
@@ -39,7 +39,7 @@ export function GroceryPanel({ variant = 'full' }: GroceryPanelProps) {
   if (!supabaseEnabled) {
     return (
       <div className="flex flex-col h-full">
-        <p className="text-white/30 text-center py-8">
+        <p className="text-center py-8" style={{ color: 'var(--fd-text-2)', opacity: 0.5 }}>
           Connect Supabase to use grocery list
         </p>
       </div>
@@ -50,14 +50,15 @@ export function GroceryPanel({ variant = 'full' }: GroceryPanelProps) {
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-3 pt-3 pb-1">
-        <h2 className="text-lg font-semibold text-white">
+        <h2 className="text-lg font-semibold" style={{ color: 'var(--fd-text-1)' }}>
           Groceries ({uncheckedCount})
         </h2>
         {checkedCount > 0 && (
           <button
             type="button"
             onClick={() => clearChecked()}
-            className="text-sm text-white/40 hover:text-white/60"
+            className="text-sm hover:opacity-80"
+            style={{ color: 'var(--fd-text-2)' }}
           >
             Clear done
           </button>
@@ -67,7 +68,7 @@ export function GroceryPanel({ variant = 'full' }: GroceryPanelProps) {
       {/* List area */}
       <div className="flex-1 overflow-y-auto">
         {items.length === 0 ? (
-          <p className="text-white/30 text-center py-8">No items yet</p>
+          <p className="text-center py-8" style={{ color: 'var(--fd-text-2)', opacity: 0.5 }}>No items yet</p>
         ) : (
           <GroceryList
             items={items}
@@ -78,7 +79,7 @@ export function GroceryPanel({ variant = 'full' }: GroceryPanelProps) {
       </div>
 
       {/* Input area */}
-      <div className="sticky bottom-0 bg-bg-primary/80 backdrop-blur-sm border-t border-white/10">
+      <div className="sticky bottom-0 backdrop-blur-sm" style={{ backgroundColor: 'color-mix(in srgb, var(--fd-bg-1) 80%, transparent)', borderTop: '1px solid var(--fd-card-border)' }}>
         <GroceryInput onAdd={addItem} />
       </div>
     </div>

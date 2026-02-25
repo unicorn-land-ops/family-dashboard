@@ -26,7 +26,7 @@ export function TimerAlert({ timer, onDismiss }: TimerAlertProps) {
   return (
     <div className="timer-alert-pulse p-4 mb-3">
       <div className="text-center space-y-3">
-        <p className="text-sm font-medium text-white/70">{timer.label}</p>
+        <p className="text-sm font-medium" style={{ color: 'var(--fd-text-2)' }}>{timer.label}</p>
         <p className="text-2xl font-bold" style={{ color: 'var(--fd-accent)' }}>Time's up!</p>
         <button
           type="button"

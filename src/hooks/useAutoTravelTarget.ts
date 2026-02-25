@@ -66,8 +66,15 @@ function extractDestinationFromSummary(summary: string): string | null {
 
 function buildCandidates(events: CalendarEvent[]): TravelCandidate[] {
   const now = Date.now();
+  const twentyFourHoursFromNow = now + 24 * 60 * 60 * 1000;
   const upcoming = events
-    .filter((event) => event.endTime.getTime() > now - 12 * 60 * 60 * 1000)
+    .filter(
+      (event) =>
+        // Event hasn't ended yet (or ended within last 12h for in-progress travel)
+        event.endTime.getTime() > now - 12 * 60 * 60 * 1000 &&
+        // Event starts within the next 24 hours
+        event.startTime.getTime() <= twentyFourHoursFromNow,
+    )
     .sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
 
   const candidates: TravelCandidate[] = [];

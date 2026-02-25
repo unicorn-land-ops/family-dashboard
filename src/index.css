@@ -331,13 +331,21 @@ body {
 }
 
 /* Calendar utilities */
+.default-event-row {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+:root[data-phase="day"] .default-event-row {
+  background: rgba(0, 0, 0, 0.03);
+}
+
 .event-schulfrei {
-  background: rgba(255, 215, 0, 0.08);
-  border-left: 2px solid var(--color-accent-gold);
+  background: color-mix(in srgb, var(--fd-accent) 8%, transparent);
+  border-left: 2px solid var(--fd-accent);
 }
 
 .day-today {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--fd-card-bg);
   border-radius: 0.5rem;
 }
 

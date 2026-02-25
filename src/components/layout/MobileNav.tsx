@@ -14,15 +14,14 @@ const tabs: { view: MobileView; label: string; icon: typeof IoCalendarOutline }[
 
 export function MobileNav({ activeView, onNavigate }: MobileNavProps) {
   return (
-    <div className="grid-area-nav flex bg-bg-primary/80 backdrop-blur-sm border-t border-white/10">
+    <div className="grid-area-nav flex backdrop-blur-sm" style={{ backgroundColor: 'color-mix(in srgb, var(--fd-bg-1) 80%, transparent)', borderTop: '1px solid var(--fd-card-border)' }}>
       {tabs.map(({ view, label, icon: Icon }) => (
         <button
           key={view}
           type="button"
           onClick={() => onNavigate(view)}
-          className={`flex-1 flex flex-col items-center justify-center py-2 min-h-[56px] ${
-            activeView === view ? 'text-accent-gold' : 'text-white/40'
-          }`}
+          className="flex-1 flex flex-col items-center justify-center py-2 min-h-[56px]"
+          style={{ color: activeView === view ? 'var(--fd-accent)' : 'var(--fd-text-2)' }}
         >
           <Icon className="w-6 h-6" />
           <span className="text-xs mt-1">{label}</span>

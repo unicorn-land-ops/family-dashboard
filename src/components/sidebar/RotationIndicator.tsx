@@ -33,7 +33,7 @@ export function RotationIndicator({
               className={`rounded-full transition-all duration-300 ${
                 isActive
                   ? 'w-6 h-2'
-                  : 'bg-white/30 w-2 h-2 hover:bg-white/50'
+                  : 'bg-[var(--fd-card-border)] w-2 h-2 hover:opacity-80'
               }`}
               style={isActive ? { backgroundColor: 'var(--fd-accent)' } : undefined}
             />

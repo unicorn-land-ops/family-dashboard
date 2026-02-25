@@ -25,12 +25,14 @@ export function GroceryInput({ onAdd }: GroceryInputProps) {
         placeholder="Add item..."
         autoComplete="off"
         enterKeyHint="done"
-        className="min-h-[44px] flex-1 rounded-lg bg-white/10 px-4 text-white placeholder:text-white/40 outline-none focus:ring-2 focus:ring-accent-gold"
+        className="min-h-[44px] flex-1 rounded-lg px-4 outline-none focus:ring-2"
+        style={{ background: 'var(--fd-card-bg)', color: 'var(--fd-text-1)', borderColor: 'var(--fd-accent)' }}
       />
       <button
         type="submit"
         disabled={!trimmed}
-        className="min-h-[44px] w-[44px] rounded-lg bg-accent-gold text-bg-primary font-bold disabled:opacity-30"
+        className="min-h-[44px] w-[44px] rounded-lg font-bold disabled:opacity-30"
+        style={{ background: 'var(--fd-accent)', color: 'var(--fd-bg-1)' }}
       >
         +
       </button>

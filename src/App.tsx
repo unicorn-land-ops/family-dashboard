@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { DashboardShell } from './components/layout/DashboardShell';
 import { Header } from './components/layout/Header';
@@ -19,6 +20,7 @@ import { useMemoryWatchdog } from './hooks/useMemoryWatchdog';
 import { useContentRotation } from './hooks/useContentRotation';
 import { useMobileNav } from './hooks/useMobileNav';
 import { usePriorityInterrupt } from './hooks/usePriorityInterrupt';
+import { useTimeOfDay } from './hooks/useTimeOfDay';
 import { KioskDashboard } from './components/kiosk/KioskDashboard';
 
 function DefaultDashboard() {
@@ -99,6 +101,12 @@ function App() {
   useAutoRefresh();
   useMemoryWatchdog();
   const view = resolveDashboardView();
+  const phase = useTimeOfDay();
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-phase', phase);
+    return () => document.documentElement.removeAttribute('data-phase');
+  }, [phase]);
 
   if (view === 'kiosk') {
     return <KioskDashboard />;

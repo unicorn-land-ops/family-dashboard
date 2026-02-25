@@ -22,11 +22,11 @@ function TransitPanelInner() {
     return (
       <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex-1 flex flex-col gap-3">
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-5 h-5 rounded bg-white/10 animate-pulse" />
-          <div className="h-5 w-36 rounded bg-white/10 animate-pulse" />
+          <div className="w-5 h-5 rounded bg-[var(--fd-card-border)] animate-pulse" />
+          <div className="h-5 w-36 rounded bg-[var(--fd-card-border)] animate-pulse" />
         </div>
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-8 rounded bg-white/10 animate-pulse" />
+          <div key={i} className="h-8 rounded bg-[var(--fd-card-border)] animate-pulse" />
         ))}
       </div>
     );

@@ -13,7 +13,7 @@ export const WeatherBadge = React.memo(function WeatherBadge({
   weatherCode,
 }: WeatherBadgeProps) {
   return (
-    <div className="flex items-center gap-1 text-text-secondary text-[clamp(11px,0.8vw,14px)]">
+    <div className="flex items-center gap-1 text-[clamp(11px,0.8vw,14px)]" style={{ color: 'var(--fd-text-2)' }}>
       <WeatherIcon code={weatherCode} size="1.2em" />
       <span>
         {Math.round(high)}&deg;/{Math.round(low)}&deg;

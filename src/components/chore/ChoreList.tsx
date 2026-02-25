@@ -58,7 +58,7 @@ export function ChoreList({
 
         return (
           <div key={key} className="mb-2">
-            <h4 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-3 py-1">
+            <h4 className="text-xs font-semibold uppercase tracking-wider px-3 py-1" style={{ color: 'var(--fd-text-2)' }}>
               {headerLabel}
             </h4>
             {groupChores.map((chore) => (
