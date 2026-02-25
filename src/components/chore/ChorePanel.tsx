@@ -39,8 +39,7 @@ export function ChorePanel({ variant = 'full' }: ChorePanelProps) {
           <div className="h-1.5 rounded-full mb-3 overflow-hidden" style={{ background: 'var(--fd-card-border)' }}>
             <div
               className="h-full rounded-full transition-all duration-300"
-              style={{ background: 'var(--fd-accent)' }}
-              style={{ width: `${(completedCount / totalCount) * 100}%` }}
+              style={{ background: 'var(--fd-accent)', width: `${(completedCount / totalCount) * 100}%` }}
             />
           </div>
         )}
