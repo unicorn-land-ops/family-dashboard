@@ -65,90 +65,76 @@ export const CurrentWeather = React.memo(function CurrentWeather({
 
   return (
     <div className="flex flex-col items-end gap-[clamp(4px,0.7vw,8px)]">
-      <div className="flex items-end gap-[clamp(8px,1vw,16px)]">
-        {showTravelWeather && travelerLocation && travelerTime && typeof travelerCode === 'number' && (
-          <div className="rounded-md border border-cyan-300/35 bg-cyan-300/12 px-[clamp(6px,0.9vw,12px)] py-[clamp(5px,0.6vw,9px)]">
-            <div className="flex items-center gap-[clamp(3px,0.5vw,7px)]">
-              <WeatherIcon
-                code={travelerCode}
-                className="text-cyan-100"
-                size={
-                  isKiosk
-                    ? 'clamp(1.7rem, 2.6vw, 3rem)'
-                    : 'clamp(1.2rem, 2.1vw, 2.1rem)'
-                }
-              />
-              <div className="flex flex-col items-end leading-tight">
-                <span
-                  className="font-semibold tabular-nums text-cyan-50"
-                  style={{
-                    fontSize: isKiosk
-                      ? 'clamp(1.7rem, 2.8vw, 3rem)'
-                      : 'clamp(1.15rem, 2.25vw, 2.25rem)',
-                  }}
-                >
-                  {travelerTemp!}&deg;C
-                </span>
-                <span
-                  className="tabular-nums text-cyan-100/90"
-                  style={{
-                    fontSize: isKiosk
-                      ? 'clamp(0.72rem,1vw,0.92rem)'
-                      : 'clamp(0.5rem,0.78vw,0.7rem)',
-                  }}
-                >
-                  {travelerTime}
-                </span>
-              </div>
-            </div>
-            <div
-              className="text-cyan-100/80 uppercase tracking-[0.08em] mt-1 text-right"
-              style={{
-                fontSize: isKiosk
-                  ? 'clamp(0.66rem,0.95vw,0.9rem)'
-                  : 'clamp(0.45rem,0.75vw,0.66rem)',
-              }}
-            >
-              {travelerLocation}
-            </div>
-          </div>
-        )}
-
-        <div className="flex items-center gap-[clamp(4px,0.5vw,8px)]">
-          <WeatherIcon
-            code={data.current.weather_code}
-            style={{ color: 'var(--fd-accent)' }}
-            size={
-              isKiosk
-                ? 'clamp(2.2rem, 3.6vw, 4rem)'
-                : 'clamp(1.5rem, 3vw, 3rem)'
-            }
-          />
-          <div className="flex flex-col items-end leading-tight">
-            <span
-              className="font-bold tabular-nums"
-              style={{
-                color: 'var(--fd-text-1)',
-                fontSize: isKiosk
-                  ? 'clamp(2.3rem, 3.8vw, 4.2rem)'
-                  : 'clamp(1.5rem, 3vw, 3rem)',
-              }}
-            >
-              {temp}&deg;C
-            </span>
-            <span
-              style={{
-                color: 'var(--fd-text-2)',
-                fontSize: isKiosk
-                  ? 'clamp(0.86rem,1.25vw,1.1rem)'
-                  : 'clamp(0.6rem,1vw,0.85rem)',
-              }}
-            >
-              {description}
-            </span>
-          </div>
+      <div className="flex items-center gap-[clamp(4px,0.5vw,8px)]">
+        <WeatherIcon
+          code={data.current.weather_code}
+          style={{ color: 'var(--fd-accent)' }}
+          size={
+            isKiosk
+              ? 'clamp(2.2rem, 3.6vw, 4rem)'
+              : 'clamp(1.5rem, 3vw, 3rem)'
+          }
+        />
+        <div className="flex flex-col items-end leading-tight">
+          <span
+            className="font-bold tabular-nums"
+            style={{
+              color: 'var(--fd-text-1)',
+              fontSize: isKiosk
+                ? 'clamp(2.3rem, 3.8vw, 4.2rem)'
+                : 'clamp(1.5rem, 3vw, 3rem)',
+            }}
+          >
+            {temp}&deg;C
+          </span>
+          <span
+            style={{
+              color: 'var(--fd-text-2)',
+              fontSize: isKiosk
+                ? 'clamp(0.86rem,1.25vw,1.1rem)'
+                : 'clamp(0.6rem,1vw,0.85rem)',
+            }}
+          >
+            {description}
+          </span>
         </div>
       </div>
+
+      {showTravelWeather && travelerLocation && typeof travelerCode === 'number' && (
+        <div
+          className="flex items-center gap-[clamp(4px,0.5vw,6px)] opacity-60"
+          style={{ color: 'var(--fd-text-2)' }}
+        >
+          <WeatherIcon
+            code={travelerCode}
+            size={
+              isKiosk
+                ? 'clamp(1rem, 1.4vw, 1.4rem)'
+                : 'clamp(0.8rem, 1.2vw, 1.1rem)'
+            }
+          />
+          <span
+            className="tabular-nums"
+            style={{
+              fontSize: isKiosk
+                ? 'clamp(0.8rem, 1.1vw, 1rem)'
+                : 'clamp(0.6rem, 0.9vw, 0.8rem)',
+            }}
+          >
+            {travelerTemp!}&deg;C
+          </span>
+          <span
+            className="uppercase tracking-[0.06em]"
+            style={{
+              fontSize: isKiosk
+                ? 'clamp(0.65rem, 0.9vw, 0.85rem)'
+                : 'clamp(0.45rem, 0.7vw, 0.65rem)',
+            }}
+          >
+            {travelerLocation}
+          </span>
+        </div>
+      )}
     </div>
   );
 });

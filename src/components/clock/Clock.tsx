@@ -27,7 +27,7 @@ export function Clock({ travelTarget = null, variant = 'default' }: ClockProps) 
   const isKiosk = variant === 'kiosk';
 
   return (
-    <div className="flex items-end gap-[clamp(8px,1vw,18px)]">
+    <div className="flex flex-col">
       <div
         className="font-light tracking-tight leading-none tabular-nums clock-shimmer"
         style={{
@@ -39,27 +39,30 @@ export function Clock({ travelTarget = null, variant = 'default' }: ClockProps) 
         {time}
       </div>
       {travelTime && travelLocation && (
-        <div className="rounded-md border border-cyan-300/35 bg-cyan-300/12 px-[clamp(6px,0.9vw,12px)] py-[clamp(4px,0.5vw,8px)]">
-          <div
-            className="text-cyan-100/80 uppercase tracking-[0.08em] leading-none mb-1"
+        <div
+          className="flex items-baseline gap-[clamp(4px,0.5vw,8px)] mt-1 opacity-60"
+          style={{ color: 'var(--fd-text-2)' }}
+        >
+          <span
+            className="uppercase tracking-[0.08em]"
             style={{
               fontSize: isKiosk
-                ? 'clamp(0.66rem,1.05vw,0.95rem)'
-                : 'clamp(0.45rem,0.8vw,0.68rem)',
+                ? 'clamp(0.7rem,1vw,0.95rem)'
+                : 'clamp(0.5rem,0.8vw,0.7rem)',
             }}
           >
             {travelLocation}
-          </div>
-          <div
-            className="font-medium text-cyan-50 leading-none tabular-nums"
+          </span>
+          <span
+            className="font-medium tabular-nums"
             style={{
               fontSize: isKiosk
-                ? 'clamp(2.4rem, 6.8vw, 7rem)'
-                : 'clamp(1.5rem, 4.5vw, 4.5rem)',
+                ? 'clamp(0.9rem,1.3vw,1.2rem)'
+                : 'clamp(0.65rem,1vw,0.9rem)',
             }}
           >
             {travelTime}
-          </div>
+          </span>
         </div>
       )}
     </div>

@@ -22,7 +22,7 @@ export function GroceryPanel({ variant = 'full' }: GroceryPanelProps) {
         <h3 className="text-sm font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--fd-text-2)' }}>
           Groceries ({uncheckedCount})
         </h3>
-        <div className="max-h-[300px] overflow-y-auto scrollbar-hide">
+        <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide">
           <GroceryList
             items={uncheckedItems}
             onToggle={toggleItem}

@@ -5,6 +5,13 @@ import { setupGlobalErrorHandlers } from './lib/errorReporting'
 import './index.css'
 import App from './App.tsx'
 
+// Kill stale service workers from old pre-kiosk builds
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
+  });
+}
+
 setupGlobalErrorHandlers()
 
 const queryClient = new QueryClient({

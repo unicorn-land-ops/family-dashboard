@@ -50,7 +50,7 @@ export function ChorePanel({ variant = 'full' }: ChorePanelProps) {
             <p className="text-sm mt-1" style={{ color: 'var(--fd-text-2)' }}>All done!</p>
           </div>
         ) : (
-          <div className="max-h-[300px] overflow-y-auto scrollbar-hide">
+          <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide">
             <ChoreList
               chores={chores}
               completions={completions}

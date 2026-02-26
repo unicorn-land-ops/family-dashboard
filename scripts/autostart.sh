@@ -16,7 +16,7 @@
 # =============================================================================
 
 # Static dashboard hosted on GitHub Pages
-DASHBOARD_URL="https://unicorn-land-ops.github.io/family-dashboard/"
+DASHBOARD_URL="https://unicorn-land-ops.github.io/family-dashboard/?view=kiosk"
 
 # Screen resolution (set to your display's native resolution)
 SCREEN_WIDTH=1920

@@ -20,7 +20,7 @@ const LABEL_DESTINATION_REGEX =
 const PLACE_ONLY_REGEX =
   /^[A-Za-z][A-Za-z.'-]*(?:\s+[A-Za-z][A-Za-z.'-]*){0,3}(?:,\s*[A-Za-z. ]{2,20})?$/;
 const NON_DESTINATION_SUMMARY_REGEX =
-  /\b(call|meeting|review|sync|chat|hold|block|dentist|doctor|appointment|school|kita)\b/i;
+  /\b(call|meeting|review|sync|chat|hold|block|dentist|doctor|appointment|school|kita|birthday|dinner|lunch|coffee|pickup|dropoff|class|lesson|practice|rehearsal)\b/i;
 
 function isHomeArea(text: string): boolean {
   return /berlin|germany|deutschland/i.test(text);
@@ -42,7 +42,7 @@ function normalizeCandidate(text: string | undefined): string | null {
   return normalized;
 }
 
-function extractDestinationFromSummary(summary: string): string | null {
+function extractDestinationFromSummary(summary: string, hasTravelHint: boolean): string | null {
   const normalizedSummary = summary.replace(/\s+/g, ' ').trim();
   if (!normalizedSummary) return null;
 
@@ -54,7 +54,9 @@ function extractDestinationFromSummary(summary: string): string | null {
   const labelDestination = normalizeCandidate(labelMatch?.[1]);
   if (labelDestination) return labelDestination;
 
+  // Only treat bare summaries as place names when a travel keyword is present
   if (
+    hasTravelHint &&
     PLACE_ONLY_REGEX.test(normalizedSummary) &&
     !NON_DESTINATION_SUMMARY_REGEX.test(normalizedSummary)
   ) {
@@ -90,8 +92,8 @@ function buildCandidates(events: CalendarEvent[]): TravelCandidate[] {
       });
     }
 
-    const destination = extractDestinationFromSummary(event.summary);
     const hasTravelHint = TRAVEL_HINT_REGEX.test(event.summary);
+    const destination = extractDestinationFromSummary(event.summary, hasTravelHint);
     if (
       destination &&
       !isHomeArea(destination) &&

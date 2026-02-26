@@ -84,7 +84,7 @@ export function KioskTodayCard({ day, weather }: KioskTodayCardProps) {
       </header>
 
       {day.events.length > 0 ? (
-        <ul className="flex flex-col gap-[clamp(6px,0.8vw,10px)]">
+        <ul className="flex-1 min-h-0 overflow-y-auto scrollbar-hide flex flex-col gap-[clamp(6px,0.8vw,10px)]">
           {day.events.map((event) => (
             <li
               key={`${event.id}-${event.startTime.toISOString()}`}
