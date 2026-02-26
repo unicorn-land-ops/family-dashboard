@@ -14,6 +14,22 @@ function isBeforeEvening(event: CalendarEvent): boolean {
 }
 
 /**
+ * Returns true if this looks like a travel/conference event that should
+ * always show, even from work calendars.
+ */
+function isTravelEvent(event: CalendarEvent): boolean {
+  if (TRAVEL_EVENT_REGEX.test(event.summary)) return true;
+  // "Label: Place" pattern (e.g. "health.tech: Basel, Switzerland")
+  if (DESTINATION_LABEL_REGEX.test(event.summary)) return true;
+  // Multi-day all-day events are typically conferences/trips
+  if (event.isAllDay) {
+    const durationMs = event.endTime.getTime() - event.startTime.getTime();
+    if (durationMs > 24 * 60 * 60 * 1000) return true;
+  }
+  return false;
+}
+
+/**
  * Returns true if the event is an all-day Schulfrei / No School day.
  */
 function isSchulfrei(event: CalendarEvent): boolean {
@@ -22,6 +38,7 @@ function isSchulfrei(event: CalendarEvent): boolean {
 }
 
 const TRAVEL_EVENT_REGEX = /\b(flight|fly|travel|trip|hotel|airport|layover|conference|quiltcon|vacation)\b/i;
+const DESTINATION_LABEL_REGEX = /^[^:]{2,40}:\s*[A-Z][a-z]/;
 
 /**
  * Apply calendar filters:
@@ -39,7 +56,7 @@ export function applyFilters(events: CalendarEvent[]): CalendarEvent[] {
         event.persons.includes(papaFeed.id) &&
         event.persons.length === 1 &&
         isBeforeEvening(event) &&
-        !TRAVEL_EVENT_REGEX.test(event.summary)
+        !isTravelEvent(event)
       ) {
         return false;
       }
