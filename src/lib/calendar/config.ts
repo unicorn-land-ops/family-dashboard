@@ -14,7 +14,7 @@ export const CALENDAR_FEEDS: PersonConfig[] = [
     calendarUrl: import.meta.env.VITE_CAL_PAPA ?? '',
   },
   {
-    id: 'papa',
+    id: 'papa-work',
     name: 'Papa',
     emoji: '\u{1F951}',
     calendarUrl: import.meta.env.VITE_CAL_PAPA_WORK ?? '',
