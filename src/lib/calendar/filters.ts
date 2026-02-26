@@ -21,9 +21,11 @@ function isSchulfrei(event: CalendarEvent): boolean {
   return /schulfrei|no school|kein unterricht/i.test(event.summary);
 }
 
+const TRAVEL_EVENT_REGEX = /\b(flight|fly|travel|trip|hotel|airport|layover|conference|quiltcon|vacation)\b/i;
+
 /**
  * Apply calendar filters:
- * 1. Remove Papa's solo events that start before 18:00 (keep shared events)
+ * 1. Remove Papa's solo work events that start before 18:00 (keep travel & shared events)
  * 2. Flag Schulfrei/No School all-day events for highlighting
  */
 export function applyFilters(events: CalendarEvent[]): CalendarEvent[] {
@@ -31,12 +33,13 @@ export function applyFilters(events: CalendarEvent[]): CalendarEvent[] {
 
   return events
     .filter((event) => {
-      // Filter out Papa's pre-18:00 events, but only if Papa is the sole person
+      // Filter out Papa's work pre-18:00 events, but keep travel and shared events
       if (
         papaFeed &&
         event.persons.includes(papaFeed.id) &&
         event.persons.length === 1 &&
-        isBeforeEvening(event)
+        isBeforeEvening(event) &&
+        !TRAVEL_EVENT_REGEX.test(event.summary)
       ) {
         return false;
       }
