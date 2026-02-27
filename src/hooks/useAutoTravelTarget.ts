@@ -50,9 +50,11 @@ function extractDestinationFromSummary(summary: string, hasTravelHint: boolean):
   const prepositionDestination = normalizeCandidate(prepositionMatch?.[1]);
   if (prepositionDestination) return prepositionDestination;
 
-  const labelMatch = normalizedSummary.match(LABEL_DESTINATION_REGEX);
-  const labelDestination = normalizeCandidate(labelMatch?.[1]);
-  if (labelDestination) return labelDestination;
+  if (hasTravelHint) {
+    const labelMatch = normalizedSummary.match(LABEL_DESTINATION_REGEX);
+    const labelDestination = normalizeCandidate(labelMatch?.[1]);
+    if (labelDestination) return labelDestination;
+  }
 
   // Only treat bare summaries as place names when a travel keyword is present
   if (
