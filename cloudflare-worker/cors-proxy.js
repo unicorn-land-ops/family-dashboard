@@ -74,6 +74,7 @@ async function handleCalendarProxy(url) {
   const allowedPrefixes = [
     'https://calendar.google.com/',
     'https://www.tripit.com/feed/ical/',
+    'https://outlook.office365.com/owa/calendar/',
   ];
   if (!allowedPrefixes.some(prefix => targetUrl.startsWith(prefix))) {
     return jsonError('URL not in allowlist', 403);
