@@ -46,15 +46,17 @@ const DESTINATION_LABEL_REGEX = /^[^:]{2,40}:\s*[A-Z][a-z]/;
  * 2. Flag Schulfrei/No School all-day events for highlighting
  */
 export function applyFilters(events: CalendarEvent[]): CalendarEvent[] {
-  const papaFeed = CALENDAR_FEEDS.find((f) => f.isWorkCalendar);
+  const workCalendarIds = new Set(
+    CALENDAR_FEEDS.filter((f) => f.isWorkCalendar).map((f) => f.id),
+  );
 
   return events
     .filter((event) => {
-      // Filter out Papa's work pre-18:00 events, but keep travel and shared events
+      // Filter out work calendar pre-18:00 solo events, but keep travel and shared events
       if (
-        papaFeed &&
-        event.persons.includes(papaFeed.id) &&
+        workCalendarIds.size > 0 &&
         event.persons.length === 1 &&
+        workCalendarIds.has(event.persons[0]) &&
         isBeforeEvening(event) &&
         !isTravelEvent(event)
       ) {

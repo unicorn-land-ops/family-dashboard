@@ -31,6 +31,13 @@ export const CALENDAR_FEEDS: PersonConfig[] = [
     travelLon: parseOptionalNumber(import.meta.env.VITE_DADDY_TRAVEL_LON),
   },
   {
+    id: 'daddy-work',
+    name: 'Daddy',
+    emoji: '\u{1F36A}',
+    calendarUrl: import.meta.env.VITE_CAL_DADDY_WORK ?? '',
+    isWorkCalendar: true,
+  },
+  {
     id: 'wren',
     name: 'Wren',
     emoji: '\u{1F338}',
