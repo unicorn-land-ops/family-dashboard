@@ -8,6 +8,12 @@ const ZODIAC_EMOJI: Record<ZodiacSign, string> = {
   sagittarius: '♐',
 };
 
+const ZODIAC_LABEL: Record<ZodiacSign, string> = {
+  capricorn: 'Capricorn',
+  aquarius: 'Aquarius',
+  sagittarius: 'Sagittarius',
+};
+
 /** Strip leading "Today, Capricorn, " / "Aquarius, " etc. from API text */
 function stripLeadingSign(text: string, sign: string): string {
   const pattern = new RegExp(
@@ -16,6 +22,13 @@ function stripLeadingSign(text: string, sign: string): string {
   );
   const stripped = text.replace(pattern, '');
   return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+}
+
+/** Extract the first sentence from a horoscope text */
+function firstSentence(text: string): string {
+  // Match up to the first period followed by a space or end of string
+  const match = text.match(/^(.+?\.)\s/);
+  return match ? match[1] : text;
 }
 
 function HoroscopePanelInner() {
@@ -29,7 +42,7 @@ function HoroscopePanelInner() {
           <div className="h-5 w-40 rounded bg-[var(--fd-card-border)] animate-pulse" />
         </div>
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-16 rounded bg-[var(--fd-card-border)] animate-pulse" />
+          <div key={i} className="h-6 rounded bg-[var(--fd-card-border)] animate-pulse" />
         ))}
       </div>
     );
@@ -51,21 +64,41 @@ function HoroscopePanelInner() {
         </h3>
       </div>
 
-      {/* Horoscope cards */}
-      <div className="flex flex-col gap-2 overflow-y-auto scrollbar-hide">
+      {/* One-line horoscope per sign */}
+      <div className="flex flex-col gap-[clamp(8px,1vw,14px)]">
         {horoscopes.map((h) => {
           const sign = h.sign.toLowerCase() as ZodiacSign;
           const emoji = ZODIAC_EMOJI[sign] ?? '';
-          const text = stripLeadingSign(h.horoscope, h.sign);
+          const label = ZODIAC_LABEL[sign] ?? h.sign;
+          const fullText = stripLeadingSign(h.horoscope, h.sign);
+          const summary = firstSentence(fullText);
 
           return (
-            <div
-              key={h.sign}
-              className="bg-[var(--fd-card-bg)] rounded-lg p-2.5"
-            >
-              <p className="text-[clamp(11px,0.9vw,13px)] leading-snug" style={{ color: 'var(--fd-text-2)' }}>
-                <span className="text-sm mr-1.5 not-italic">{emoji}</span>
-                {text}
+            <div key={h.sign}>
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <span
+                  style={{ fontSize: 'clamp(1rem, 1.2vw, 1.3rem)' }}
+                >
+                  {emoji}
+                </span>
+                <span
+                  className="font-medium"
+                  style={{
+                    fontSize: 'clamp(0.85rem, 1vw, 1.05rem)',
+                    color: 'var(--fd-text-1)',
+                  }}
+                >
+                  {label}
+                </span>
+              </div>
+              <p
+                style={{
+                  fontSize: 'clamp(0.82rem, 0.95vw, 1rem)',
+                  color: 'var(--fd-text-2)',
+                  lineHeight: 1.4,
+                }}
+              >
+                {summary}
               </p>
             </div>
           );

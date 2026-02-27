@@ -1,4 +1,5 @@
 import { useChores } from '../../hooks/useChores';
+import { isChoreCompleted } from '../../lib/choreSchedule';
 import { supabaseEnabled } from '../../lib/supabase';
 import { ChoreInput } from './ChoreInput';
 import { ChoreList } from './ChoreList';
@@ -19,17 +20,31 @@ export function ChorePanel({ variant = 'full' }: ChorePanelProps) {
     deactivateChore,
   } = useChores();
 
-  // --- Compact variant (wall sidebar) ---
+  // --- Compact variant (wall sidebar / kiosk) ---
   if (variant === 'compact') {
     const allDone = totalCount > 0 && completedCount === totalCount;
+    const remaining = chores.filter(
+      (c) => !isChoreCompleted(c, completions),
+    );
 
     return (
       <div className="card-glass p-4">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--fd-text-2)' }}>
+          <h3
+            className="font-semibold"
+            style={{
+              fontSize: 'clamp(0.82rem, 1vw, 1rem)',
+              color: 'var(--fd-text-2)',
+            }}
+          >
             Chores
           </h3>
-          <span className="text-sm" style={{ color: 'var(--fd-text-2)' }}>
+          <span
+            style={{
+              fontSize: 'clamp(0.78rem, 0.9vw, 0.95rem)',
+              color: 'var(--fd-text-2)',
+            }}
+          >
             {completedCount}/{totalCount}
           </span>
         </div>
@@ -45,21 +60,31 @@ export function ChorePanel({ variant = 'full' }: ChorePanelProps) {
         )}
 
         {allDone ? (
-          <div className="text-center py-3">
-            <span className="text-green-400 text-lg">&#10003;</span>
-            <p className="text-sm mt-1" style={{ color: 'var(--fd-text-2)' }}>All done!</p>
-          </div>
+          <p
+            className="text-center py-2"
+            style={{
+              color: 'var(--fd-text-2)',
+              fontSize: 'clamp(0.82rem, 0.95vw, 1rem)',
+            }}
+          >
+            ✓ All done
+          </p>
         ) : (
-          <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide">
-            <ChoreList
-              chores={chores}
-              completions={completions}
-              onComplete={completeChore}
-              onUncomplete={uncompleteChore}
-              onDeactivate={deactivateChore}
-              showCompleted={false}
-            />
-          </div>
+          <ul className="flex flex-col gap-[clamp(4px,0.5vw,8px)]">
+            {remaining.map((chore) => (
+              <li
+                key={chore.id}
+                className="flex items-baseline gap-2"
+                style={{
+                  fontSize: 'clamp(0.85rem, 1vw, 1.05rem)',
+                  color: 'var(--fd-text-1)',
+                }}
+              >
+                <span style={{ color: 'var(--fd-text-2)', fontSize: '0.6em' }}>○</span>
+                <span className="truncate">{chore.title}</span>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     );

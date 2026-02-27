@@ -1,4 +1,6 @@
 import { format } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+import { HOME_TIMEZONE } from '../../lib/calendar/config';
 import type { CalendarEvent } from '../../lib/calendar/types';
 import { WeatherIcon } from '../weather/WeatherIcon';
 
@@ -17,7 +19,12 @@ interface KioskCompactRowProps {
   } | null>;
 }
 
-const MAX_EVENTS_COMPACT = 3;
+const MAX_EVENTS_COMPACT = 2;
+
+function getEventTimeLabel(event: CalendarEvent): string {
+  if (event.isAllDay) return 'All day';
+  return formatInTimeZone(event.startTime, HOME_TIMEZONE, 'HH:mm');
+}
 
 export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
   return (
@@ -27,15 +34,19 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
         const weather = dailyWeather[i];
         const visibleEvents = day.events.slice(0, MAX_EVENTS_COMPACT);
         const hiddenCount = Math.max(0, day.events.length - MAX_EVENTS_COMPACT);
+        const hasEvents = day.events.length > 0;
 
         return (
-          <section key={day.dateStr} className="kiosk-compact-card">
+          <section
+            key={day.dateStr}
+            className={`kiosk-compact-card${hasEvents ? '' : ' kiosk-compact-card--empty'}`}
+          >
             <header className="mb-1">
               <div className="flex items-center justify-between">
                 <h4
                   className="font-semibold leading-none"
                   style={{
-                    fontSize: 'clamp(0.9rem, 1.1vw, 1.15rem)',
+                    fontSize: 'clamp(0.95rem, 1.2vw, 1.2rem)',
                     color: 'var(--fd-text-1)',
                   }}
                 >
@@ -45,14 +56,14 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
                   <div
                     className="flex items-center gap-0.5"
                     style={{
-                      fontSize: 'clamp(0.68rem, 0.75vw, 0.85rem)',
+                      fontSize: 'clamp(0.75rem, 0.85vw, 0.95rem)',
                       color: 'var(--fd-text-2)',
                     }}
                   >
                     <WeatherIcon
                       code={weather.weatherCode}
                       className="text-[var(--fd-accent)]"
-                      size="clamp(0.9rem, 1vw, 1.2rem)"
+                      size="clamp(1rem, 1.1vw, 1.3rem)"
                     />
                     <span className="tabular-nums">
                       {Math.round(weather.high)}&deg;
@@ -63,28 +74,40 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
             </header>
 
             {visibleEvents.length > 0 ? (
-              <ul className="flex flex-col gap-[clamp(2px,0.3vw,4px)]">
+              <ul className="flex flex-col gap-[clamp(3px,0.4vw,6px)]">
                 {visibleEvents.map((event) => (
                   <li
                     key={`${event.id}-${event.startTime.toISOString()}`}
-                    className="truncate"
-                    style={{
-                      fontSize: 'clamp(0.75rem, 0.9vw, 0.95rem)',
-                      color: 'var(--fd-text-1)',
-                      opacity: 0.85,
-                    }}
-                    title={event.summary}
+                    className="flex items-baseline gap-[clamp(4px,0.4vw,6px)] min-w-0"
                   >
-                    {event.summary}
+                    <span
+                      className="tabular-nums whitespace-nowrap shrink-0"
+                      style={{
+                        fontSize: 'clamp(0.72rem, 0.82vw, 0.9rem)',
+                        color: 'var(--fd-accent)',
+                      }}
+                    >
+                      {getEventTimeLabel(event)}
+                    </span>
+                    <span
+                      className="truncate min-w-0"
+                      style={{
+                        fontSize: 'clamp(0.78rem, 0.88vw, 0.95rem)',
+                        color: 'var(--fd-text-1)',
+                      }}
+                      title={event.summary}
+                    >
+                      {event.summary}
+                    </span>
                   </li>
                 ))}
               </ul>
             ) : (
               <p
                 style={{
-                  fontSize: 'clamp(0.72rem, 0.82vw, 0.9rem)',
+                  fontSize: 'clamp(0.78rem, 0.88vw, 0.95rem)',
                   color: 'var(--fd-text-2)',
-                  opacity: 0.4,
+                  opacity: 0.35,
                 }}
               >
                 Free
@@ -95,11 +118,11 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
               <p
                 className="mt-auto"
                 style={{
-                  fontSize: 'clamp(0.66rem, 0.72vw, 0.82rem)',
+                  fontSize: 'clamp(0.7rem, 0.78vw, 0.88rem)',
                   color: 'var(--fd-accent)',
                 }}
               >
-                +{hiddenCount}
+                +{hiddenCount} more
               </p>
             )}
           </section>
