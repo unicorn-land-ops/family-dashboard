@@ -1,5 +1,17 @@
+import { formatInTimeZone } from 'date-fns-tz';
 import type { CalendarEvent } from './types';
-import { CALENDAR_FEEDS } from './config';
+import { CALENDAR_FEEDS, HOME_TIMEZONE } from './config';
+
+/**
+ * Returns true if the event starts before 18:00 in the home timezone.
+ * All-day events are treated as "before evening" so they are filtered out
+ * for work-only events.
+ */
+function startsBeforeEvening(event: CalendarEvent): boolean {
+  if (event.isAllDay) return true;
+  const hour = Number(formatInTimeZone(event.startTime, HOME_TIMEZONE, 'H'));
+  return hour < 18;
+}
 
 /**
  * Returns true if this looks like a travel/conference event that should
@@ -30,24 +42,22 @@ const DESTINATION_LABEL_REGEX = /^[^:]{2,40}:\s*[A-Z][a-z]/;
 
 /**
  * Apply calendar filters:
- * 1. Hide work calendar events before 6pm (travel & shared events always show)
+ * 1. Hide work calendar events that start before 18:00 (travel & shared events always show)
  * 2. Flag Schulfrei/No School all-day events for highlighting
- *
- * @param showWork — true once wall-clock passes 18:00 Berlin time
  */
-export function applyFilters(events: CalendarEvent[], showWork: boolean): CalendarEvent[] {
+export function applyFilters(events: CalendarEvent[]): CalendarEvent[] {
   const workCalendarIds = new Set(
     CALENDAR_FEEDS.filter((f) => f.isWorkCalendar).map((f) => f.id),
   );
 
   return events
     .filter((event) => {
-      // Before 6pm: hide all work calendar solo events (keep travel & shared)
+      // Hide work calendar solo events starting before 6pm (keep travel & shared)
       if (
-        !showWork &&
         workCalendarIds.size > 0 &&
         event.persons.length === 1 &&
         workCalendarIds.has(event.persons[0]) &&
+        startsBeforeEvening(event) &&
         !isTravelEvent(event)
       ) {
         return false;
