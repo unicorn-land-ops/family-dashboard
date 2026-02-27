@@ -26,6 +26,7 @@ export interface PersonConfig {
   emoji: string;
   calendarUrl: string;
   isWorkCalendar?: boolean;
+  isTravelCalendar?: boolean;
   travelTimezone?: string;
   travelLocationName?: string;
   travelLat?: number;

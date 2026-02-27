@@ -71,8 +71,12 @@ async function handleCalendarProxy(url) {
     return jsonError('Missing "url" query parameter', 400);
   }
 
-  if (!targetUrl.startsWith('https://calendar.google.com/')) {
-    return jsonError('Only Google Calendar URLs are allowed', 403);
+  const allowedPrefixes = [
+    'https://calendar.google.com/',
+    'https://www.tripit.com/feed/ical/',
+  ];
+  if (!allowedPrefixes.some(prefix => targetUrl.startsWith(prefix))) {
+    return jsonError('URL not in allowlist', 403);
   }
 
   try {
