@@ -3,13 +3,10 @@ import type { CalendarEvent } from './types';
 import { CALENDAR_FEEDS, HOME_TIMEZONE } from './config';
 
 /**
- * Returns true if the event starts before 18:00 in the home timezone.
- * All-day events are treated as "before evening" so they are filtered out
- * for Papa-only events.
+ * Returns true if the current wall-clock time is before 18:00 in the home timezone.
  */
-function isBeforeEvening(event: CalendarEvent): boolean {
-  if (event.isAllDay) return true;
-  const hour = Number(formatInTimeZone(event.startTime, HOME_TIMEZONE, 'H'));
+function isCurrentlyBeforeEvening(): boolean {
+  const hour = Number(formatInTimeZone(new Date(), HOME_TIMEZONE, 'H'));
   return hour < 18;
 }
 
@@ -42,7 +39,7 @@ const DESTINATION_LABEL_REGEX = /^[^:]{2,40}:\s*[A-Z][a-z]/;
 
 /**
  * Apply calendar filters:
- * 1. Remove Papa's solo work events that start before 18:00 (keep travel & shared events)
+ * 1. Hide all work calendar events until 18:00 wall-clock time (travel & shared events always show)
  * 2. Flag Schulfrei/No School all-day events for highlighting
  */
 export function applyFilters(events: CalendarEvent[]): CalendarEvent[] {
@@ -50,14 +47,16 @@ export function applyFilters(events: CalendarEvent[]): CalendarEvent[] {
     CALENDAR_FEEDS.filter((f) => f.isWorkCalendar).map((f) => f.id),
   );
 
+  const beforeEvening = isCurrentlyBeforeEvening();
+
   return events
     .filter((event) => {
-      // Filter out work calendar pre-18:00 solo events, but keep travel and shared events
+      // Before 6pm: hide all work calendar solo events (keep travel & shared)
       if (
+        beforeEvening &&
         workCalendarIds.size > 0 &&
         event.persons.length === 1 &&
         workCalendarIds.has(event.persons[0]) &&
-        isBeforeEvening(event) &&
         !isTravelEvent(event)
       ) {
         return false;

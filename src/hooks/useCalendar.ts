@@ -1,14 +1,24 @@
 import { useQueries } from '@tanstack/react-query';
-import { useMemo } from 'react';
-import { CALENDAR_FEEDS } from '../lib/calendar/config';
+import { useMemo, useState } from 'react';
+import { CALENDAR_FEEDS, HOME_TIMEZONE } from '../lib/calendar/config';
 import { fetchCalendarFeed } from '../lib/api/calendarFetch';
 import { parseICS } from '../lib/calendar/parser';
 import { deduplicateEvents } from '../lib/calendar/dedup';
 import { applyFilters } from '../lib/calendar/filters';
 import type { DaySchedule, CalendarEvent } from '../lib/calendar/types';
 import { startOfToday, addDays, format, isSameDay } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+import { useInterval } from './useInterval';
 
 export function useCalendar() {
+  // Current hour in home timezone — forces filter re-evaluation at 6pm
+  const [currentHour, setCurrentHour] = useState(
+    () => Number(formatInTimeZone(new Date(), HOME_TIMEZONE, 'H')),
+  );
+  useInterval(() => {
+    const h = Number(formatInTimeZone(new Date(), HOME_TIMEZONE, 'H'));
+    if (h !== currentHour) setCurrentHour(h);
+  }, 60_000);
   const queries = useQueries({
     queries: CALENDAR_FEEDS.map((feed, index) => ({
       queryKey: ['calendar', feed.id, index],
@@ -94,7 +104,7 @@ export function useCalendar() {
     });
 
     return { days: daySchedules, rawEvents: deduped };
-  }, [queryDataSignature]);
+  }, [queryDataSignature, currentHour]);
 
   const isLoading = queries.some((q) => q.isLoading) && !queries.some((q) => q.data);
   const isError = queries.some((q) => q.isError);
