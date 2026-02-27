@@ -1,14 +1,5 @@
-import { formatInTimeZone } from 'date-fns-tz';
 import type { CalendarEvent } from './types';
-import { CALENDAR_FEEDS, HOME_TIMEZONE } from './config';
-
-/**
- * Returns true if the current wall-clock time is before 18:00 in the home timezone.
- */
-function isCurrentlyBeforeEvening(): boolean {
-  const hour = Number(formatInTimeZone(new Date(), HOME_TIMEZONE, 'H'));
-  return hour < 18;
-}
+import { CALENDAR_FEEDS } from './config';
 
 /**
  * Returns true if this looks like a travel/conference event that should
@@ -39,21 +30,21 @@ const DESTINATION_LABEL_REGEX = /^[^:]{2,40}:\s*[A-Z][a-z]/;
 
 /**
  * Apply calendar filters:
- * 1. Hide all work calendar events until 18:00 wall-clock time (travel & shared events always show)
+ * 1. Hide work calendar events before 6pm (travel & shared events always show)
  * 2. Flag Schulfrei/No School all-day events for highlighting
+ *
+ * @param showWork — true once wall-clock passes 18:00 Berlin time
  */
-export function applyFilters(events: CalendarEvent[]): CalendarEvent[] {
+export function applyFilters(events: CalendarEvent[], showWork: boolean): CalendarEvent[] {
   const workCalendarIds = new Set(
     CALENDAR_FEEDS.filter((f) => f.isWorkCalendar).map((f) => f.id),
   );
-
-  const beforeEvening = isCurrentlyBeforeEvening();
 
   return events
     .filter((event) => {
       // Before 6pm: hide all work calendar solo events (keep travel & shared)
       if (
-        beforeEvening &&
+        !showWork &&
         workCalendarIds.size > 0 &&
         event.persons.length === 1 &&
         workCalendarIds.has(event.persons[0]) &&
