@@ -5,6 +5,8 @@ import { KioskTodayCard } from './KioskTodayCard';
 import { KioskNextDayCard } from './KioskNextDayCard';
 import { KioskCompactRow } from './KioskCompactRow';
 import { KioskBottomSection } from './KioskBottomSection';
+import { KioskPageA } from './KioskPageA';
+import { KioskPageB } from './KioskPageB';
 import { PanelFallback, GlobalFallback, logError } from '../ErrorFallback';
 import { useCalendar } from '../../hooks/useCalendar';
 import { useWeather } from '../../hooks/useWeather';
@@ -69,14 +71,14 @@ export function KioskDashboard() {
         <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
           <KioskBottomSection
             pageA={
-              <div style={{ color: 'var(--fd-text-2)', opacity: 0.5, fontStyle: 'italic', padding: '1rem' }}>
-                Life Stuff — coming in Plan 02
-              </div>
+              <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
+                <KioskPageA />
+              </ErrorBoundary>
             }
             pageB={
-              <div style={{ color: 'var(--fd-text-2)', opacity: 0.5, fontStyle: 'italic', padding: '1rem' }}>
-                World Stuff — coming in Plan 02
-              </div>
+              <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
+                <KioskPageB />
+              </ErrorBoundary>
             }
           />
         </ErrorBoundary>
