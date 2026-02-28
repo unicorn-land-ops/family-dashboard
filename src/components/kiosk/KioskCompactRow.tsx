@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-import { HOME_TIMEZONE } from '../../lib/calendar/config';
+import { CALENDAR_FEEDS, HOME_TIMEZONE } from '../../lib/calendar/config';
 import type { CalendarEvent } from '../../lib/calendar/types';
 import { WeatherIcon } from '../weather/WeatherIcon';
 
@@ -24,6 +24,14 @@ const MAX_EVENTS_COMPACT = 2;
 function getEventTimeLabel(event: CalendarEvent): string {
   if (event.isAllDay) return 'All day';
   return formatInTimeZone(event.startTime, HOME_TIMEZONE, 'HH:mm');
+}
+
+function getEventPeopleLabel(event: CalendarEvent): string {
+  const emojis = event.persons
+    .map((id) => CALENDAR_FEEDS.find((feed) => feed.id === id)?.emoji ?? '')
+    .filter(Boolean)
+    .join('');
+  return emojis || '\u2022';
 }
 
 export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
@@ -78,7 +86,12 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
                 {visibleEvents.map((event) => (
                   <li
                     key={`${event.id}-${event.startTime.toISOString()}`}
-                    className="flex items-baseline gap-[clamp(4px,0.4vw,6px)] min-w-0"
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'auto auto minmax(0,1fr)',
+                      gap: 'clamp(4px,0.4vw,6px)',
+                      alignItems: 'center',
+                    }}
                   >
                     <span
                       className="tabular-nums whitespace-nowrap shrink-0"
@@ -88,6 +101,9 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
                       }}
                     >
                       {getEventTimeLabel(event)}
+                    </span>
+                    <span style={{ fontSize: 'clamp(0.85rem, 1.0vw, 1.1rem)' }}>
+                      {getEventPeopleLabel(event)}
                     </span>
                     <span
                       className="truncate min-w-0"
