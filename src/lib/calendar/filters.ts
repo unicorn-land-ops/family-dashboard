@@ -38,7 +38,7 @@ function isSchulfrei(event: CalendarEvent): boolean {
 }
 
 const TRAVEL_EVENT_REGEX = /\b(flight|fly|travel|trip|hotel|airport|layover|conference|quiltcon|vacation)\b/i;
-const DESTINATION_LABEL_REGEX = /^[^:]{2,40}:\s*[A-Z][a-z]/;
+const DESTINATION_LABEL_REGEX = /^[^:]{4,40}:\s*[A-Z][a-z]/;
 
 /**
  * Apply calendar filters:
