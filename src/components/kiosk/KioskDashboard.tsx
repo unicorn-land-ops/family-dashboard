@@ -115,6 +115,8 @@ export function KioskDashboard() {
         </div>
 
         <StatusBar variant="kiosk" />
+        {/* @ts-expect-error Web Component */}
+        <unicorn-footer />
       </div>
     </ErrorBoundary>
   );
