@@ -47,6 +47,8 @@ jobs:
           VITE_DADDY_TRAVEL_LOCATION: ${{ secrets.VITE_DADDY_TRAVEL_LOCATION }}
           VITE_DADDY_TRAVEL_LAT: ${{ secrets.VITE_DADDY_TRAVEL_LAT }}
           VITE_DADDY_TRAVEL_LON: ${{ secrets.VITE_DADDY_TRAVEL_LON }}
+          VITE_PHOTOS_WORKER_URL: ${{ secrets.VITE_PHOTOS_WORKER_URL }}
+          VITE_NEWS_PROXY_URL: ${{ secrets.VITE_NEWS_PROXY_URL }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
