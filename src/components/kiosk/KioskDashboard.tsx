@@ -7,6 +7,7 @@ import { KioskCompactRow } from './KioskCompactRow';
 import { KioskBottomSection } from './KioskBottomSection';
 import { KioskPageA } from './KioskPageA';
 import { KioskPageB } from './KioskPageB';
+import { KioskNewsTicker } from './KioskNewsTicker';
 import { PanelFallback, GlobalFallback, logError } from '../ErrorFallback';
 import { useCalendar } from '../../hooks/useCalendar';
 import { useWeather } from '../../hooks/useWeather';
@@ -83,7 +84,11 @@ export function KioskDashboard() {
           />
         </ErrorBoundary>
 
-        <div className="kiosk-ticker-area" />
+        <div className="kiosk-ticker-area">
+          <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
+            <KioskNewsTicker />
+          </ErrorBoundary>
+        </div>
 
         <StatusBar variant="kiosk" />
         {/* @ts-expect-error Web Component */}
