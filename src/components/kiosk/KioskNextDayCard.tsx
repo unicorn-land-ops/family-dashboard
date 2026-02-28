@@ -90,19 +90,19 @@ export function KioskNextDayCard({ day, dailyWeather }: KioskNextDayCardProps) {
               <span
                 className="tabular-nums whitespace-nowrap"
                 style={{
-                  fontSize: 'clamp(0.72rem, 0.85vw, 0.95rem)',
+                  fontSize: 'clamp(1.08rem, 1.28vw, 1.43rem)',
                   color: 'var(--fd-text-2)',
                 }}
               >
                 {getEventTimeLabel(event)}
               </span>
-              <span style={{ fontSize: 'clamp(0.78rem, 0.9vw, 1rem)' }}>
+              <span style={{ fontSize: 'clamp(1.17rem, 1.35vw, 1.5rem)' }}>
                 {getEventPeopleLabel(event)}
               </span>
               <span
                 className="min-w-0 truncate"
                 style={{
-                  fontSize: 'clamp(0.85rem, 1.2vw, 1.1rem)',
+                  fontSize: 'clamp(1.28rem, 1.8vw, 1.65rem)',
                   color: 'var(--fd-text-1)',
                 }}
                 title={event.summary}

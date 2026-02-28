@@ -46,7 +46,7 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
                 <h4
                   className="font-semibold leading-none"
                   style={{
-                    fontSize: 'clamp(0.95rem, 1.2vw, 1.2rem)',
+                    fontSize: 'clamp(1.33rem, 1.68vw, 1.68rem)',
                     color: 'var(--fd-text-1)',
                   }}
                 >
@@ -83,7 +83,7 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
                     <span
                       className="tabular-nums whitespace-nowrap shrink-0"
                       style={{
-                        fontSize: 'clamp(0.72rem, 0.82vw, 0.9rem)',
+                        fontSize: 'clamp(1.08rem, 1.23vw, 1.35rem)',
                         color: 'var(--fd-accent)',
                       }}
                     >
@@ -92,7 +92,7 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
                     <span
                       className="truncate min-w-0"
                       style={{
-                        fontSize: 'clamp(0.78rem, 0.88vw, 0.95rem)',
+                        fontSize: 'clamp(1.17rem, 1.32vw, 1.43rem)',
                         color: 'var(--fd-text-1)',
                       }}
                       title={event.summary}

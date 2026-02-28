@@ -93,21 +93,21 @@ export function KioskTodayCard({ day, weather }: KioskTodayCardProps) {
               <span
                 className="tabular-nums whitespace-nowrap"
                 style={{
-                  fontSize: 'clamp(0.85rem, 1.2vw, 1.1rem)',
+                  fontSize: 'clamp(1.35rem, 1.9vw, 1.75rem)',
                   color: 'var(--fd-text-2)',
                 }}
               >
                 {getEventTimeLabel(event)}
               </span>
               <span
-                style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.2rem)' }}
+                style={{ fontSize: 'clamp(1.5rem, 2.0vw, 1.9rem)' }}
               >
                 {getEventPeopleLabel(event)}
               </span>
               <span
                 className="min-w-0 truncate"
                 style={{
-                  fontSize: 'clamp(1rem, 1.5vw, 1.4rem)',
+                  fontSize: 'clamp(1.5rem, 2.25vw, 2.1rem)',
                   color: 'var(--fd-text-1)',
                 }}
                 title={event.summary}
