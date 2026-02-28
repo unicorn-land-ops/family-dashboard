@@ -148,10 +148,11 @@ body {
     'today'
     'next'
     'compact'
-    'utility'
+    'bottom'
+    'ticker'
     'status';
   grid-template-columns: 1fr;
-  grid-template-rows: auto auto auto auto 1fr auto;
+  grid-template-rows: auto auto auto auto 1fr auto auto;
 }
 
 .kiosk-grid > [style*="grid-area: today"] {
@@ -175,37 +176,66 @@ body {
   min-height: 0;
 }
 
-.kiosk-utility-row {
-  grid-area: utility;
-  min-height: 0;
+.kiosk-bottom-section {
+  grid-area: bottom;
   display: grid;
-  grid-template-columns: 1.65fr 0.95fr;
+  grid-template-columns: 55fr 45fr;
   gap: clamp(10px, 1vw, 16px);
-}
-
-.kiosk-utility-primary,
-.kiosk-utility-secondary {
   min-height: 0;
 }
 
-.kiosk-utility-primary {
-  display: flex;
-  flex-direction: column;
+.kiosk-photo-placeholder {
+  background: var(--fd-card-bg);
+  border: 1px solid var(--fd-card-border);
+  border-radius: 1rem;
 }
 
-.kiosk-utility-secondary {
-  display: grid;
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: clamp(10px, 1vw, 16px);
-  overflow: hidden;
-}
-
-.kiosk-utility-secondary .card-glass,
-.kiosk-utility-primary .card-glass {
+.kiosk-rotating-panel {
+  position: relative;
   height: 100%;
   overflow: hidden;
+  background: var(--fd-card-bg);
+  border: 1px solid var(--fd-card-border);
+  border-radius: 1rem;
+}
+
+.kiosk-rotating-page {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
+  gap: clamp(8px, 0.8vw, 12px);
+  padding: clamp(12px, 1.2vw, 20px);
+  overflow: hidden;
+}
+
+.kiosk-panel-section {
+  min-height: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kiosk-panel-section-title {
+  font-size: clamp(11px, 1vw, 14px);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fd-text-2);
+  opacity: 0.7;
+}
+
+.kiosk-panel-empty {
+  color: var(--fd-text-2);
+  opacity: 0.5;
+  font-size: clamp(12px, 1.1vw, 16px);
+  font-style: italic;
+}
+
+.kiosk-ticker-area {
+  grid-area: ticker;
+  height: 0;
+  overflow: hidden;
 }
 
 .kiosk-status {
