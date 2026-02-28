@@ -1,4 +1,5 @@
 import React from 'react';
+import { KioskPhotoFrame } from './KioskPhotoFrame';
 import { KioskRotatingPanel } from './KioskRotatingPanel';
 
 interface KioskBottomSectionProps {
@@ -9,8 +10,8 @@ interface KioskBottomSectionProps {
 export function KioskBottomSection({ pageA, pageB }: KioskBottomSectionProps) {
   return (
     <div className="kiosk-bottom-section">
-      {/* Left column — photo frame placeholder (Phase 4 replaces this) */}
-      <div className="kiosk-photo-placeholder" />
+      {/* Left column — family photo frame */}
+      <KioskPhotoFrame />
 
       {/* Right column — rotating panel */}
       <KioskRotatingPanel pageA={pageA} pageB={pageB} />
