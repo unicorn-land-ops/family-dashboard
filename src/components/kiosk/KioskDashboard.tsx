@@ -4,18 +4,8 @@ import { StatusBar } from '../layout/StatusBar';
 import { KioskTodayCard } from './KioskTodayCard';
 import { KioskNextDayCard } from './KioskNextDayCard';
 import { KioskCompactRow } from './KioskCompactRow';
-import { TimerPanel } from '../timer/TimerPanel';
-import { ContentRotator } from '../sidebar/ContentRotator';
-import { TransitPanel } from '../sidebar/TransitPanel';
-import { HoroscopePanel } from '../sidebar/HoroscopePanel';
-import { CountryPanel } from '../sidebar/CountryPanel';
-import { RotationIndicator } from '../sidebar/RotationIndicator';
-import { GroceryPanel } from '../grocery/GroceryPanel';
-import { ChorePanel } from '../chore/ChorePanel';
+import { KioskBottomSection } from './KioskBottomSection';
 import { PanelFallback, GlobalFallback, logError } from '../ErrorFallback';
-import { useTimers } from '../../hooks/useTimers';
-import { usePriorityInterrupt } from '../../hooks/usePriorityInterrupt';
-import { useContentRotation } from '../../hooks/useContentRotation';
 import { useCalendar } from '../../hooks/useCalendar';
 import { useWeather } from '../../hooks/useWeather';
 function getDailyWeather(weather: ReturnType<typeof useWeather>['data'], dayIndex: number) {
@@ -28,9 +18,6 @@ function getDailyWeather(weather: ReturnType<typeof useWeather>['data'], dayInde
 }
 
 export function KioskDashboard() {
-  const { activeCount: activeTimerCount, completedTimers } = useTimers();
-  const priority = usePriorityInterrupt(activeTimerCount, completedTimers.length);
-  const { activeIndex, goTo, panelCount } = useContentRotation(priority.rotationPaused);
   const { days } = useCalendar();
   const { data: weather } = useWeather();
   const todayDay = days[0];
@@ -79,40 +66,22 @@ export function KioskDashboard() {
           </div>
         </ErrorBoundary>
 
-        <div className="kiosk-utility-row">
-          <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
-            <div className="kiosk-utility-primary">
-              {priority.mode === 'priority' ? (
-                <TimerPanel variant="compact" />
-              ) : (
-                <div className="flex flex-col h-full">
-                  <ContentRotator activeIndex={activeIndex}>
-                    <TransitPanel />
-                    <HoroscopePanel />
-                    <CountryPanel />
-                  </ContentRotator>
-                  <div className="pointer-events-none">
-                    <RotationIndicator
-                      activeIndex={activeIndex}
-                      panelCount={panelCount}
-                      labels={['Transit', 'Horoscopes', 'Country']}
-                      onSelect={goTo}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </ErrorBoundary>
+        <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
+          <KioskBottomSection
+            pageA={
+              <div style={{ color: 'var(--fd-text-2)', opacity: 0.5, fontStyle: 'italic', padding: '1rem' }}>
+                Life Stuff — coming in Plan 02
+              </div>
+            }
+            pageB={
+              <div style={{ color: 'var(--fd-text-2)', opacity: 0.5, fontStyle: 'italic', padding: '1rem' }}>
+                World Stuff — coming in Plan 02
+              </div>
+            }
+          />
+        </ErrorBoundary>
 
-          <div className="kiosk-utility-secondary">
-            <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
-              <GroceryPanel variant="compact" />
-            </ErrorBoundary>
-            <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
-              <ChorePanel variant="compact" />
-            </ErrorBoundary>
-          </div>
-        </div>
+        <div className="kiosk-ticker-area" />
 
         <StatusBar variant="kiosk" />
         {/* @ts-expect-error Web Component */}
