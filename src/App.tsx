@@ -87,6 +87,8 @@ function DefaultDashboard() {
 
         <StatusBar />
         <MobileNav activeView={activeView} onNavigate={setActiveView} />
+        {/* @ts-expect-error Web Component */}
+        <unicorn-footer />
       </DashboardShell>
     </ErrorBoundary>
   );
