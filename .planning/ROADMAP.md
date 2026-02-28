@@ -51,7 +51,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. Horoscope panel displays daily readings for Capricorn, Aquarius, and Sagittarius using API Ninjas
   2. Horoscope content rotates in the sidebar without errors or blank states
   3. Supabase RLS policies on groceries and timers tables allow anon INSERT (verified, ready for Phase 15)
-**Plans:** 1/1 plans complete
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 11-01-PLAN.md — Horoscope API migration (Worker proxy + frontend) and Supabase RLS policies
