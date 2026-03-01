@@ -187,7 +187,10 @@ body {
 
 .kiosk-bottom-section[data-orientation="landscape"] {
   grid-template-columns: 1fr;
-  grid-template-rows: 3fr 2fr;
+}
+
+.kiosk-bottom-section[data-orientation="landscape"] .kiosk-rotating-panel {
+  display: none;
 }
 
 .kiosk-photo-placeholder {
