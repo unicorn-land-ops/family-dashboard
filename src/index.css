@@ -179,10 +179,15 @@ body {
 .kiosk-bottom-section {
   grid-area: bottom;
   display: grid;
-  grid-template-columns: 55fr 45fr;
   gap: clamp(10px, 1vw, 16px);
   min-height: 0;
   overflow: hidden;
+  grid-template-columns: 55fr 45fr;
+}
+
+.kiosk-bottom-section[data-orientation="landscape"] {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto;
 }
 
 .kiosk-photo-placeholder {
@@ -496,17 +501,7 @@ body {
   }
 }
 
-/* ===== Photo Frame — Ken Burns + Crossfade ===== */
-
-@keyframes kenburns-a {
-  from { transform: scale3d(1.0, 1.0, 1) translate3d(0px, 0px, 0px); }
-  to   { transform: scale3d(1.05, 1.05, 1) translate3d(-15px, -10px, 0px); }
-}
-
-@keyframes kenburns-b {
-  from { transform: scale3d(1.05, 1.05, 1) translate3d(-15px, -10px, 0px); }
-  to   { transform: scale3d(1.0, 1.0, 1) translate3d(10px, 8px, 0px); }
-}
+/* ===== Photo Frame — Crossfade ===== */
 
 .photo-frame {
   position: relative;
@@ -524,16 +519,10 @@ body {
   height: 100%;
   object-fit: cover;
   transition: opacity 1.8s ease-in-out;
-  will-change: transform, opacity;
 }
 
 .photo-img.active {
   opacity: 1;
-  animation: kenburns-a 25s ease-in-out alternate infinite;
-}
-
-.photo-img.active.kenburns-b {
-  animation-name: kenburns-b;
 }
 
 .photo-img.inactive {

@@ -1,5 +1,5 @@
-import React from 'react';
-import { KioskPhotoFrame } from './KioskPhotoFrame';
+import React, { useState, useCallback } from 'react';
+import { KioskPhotoFrame, type PhotoOrientation } from './KioskPhotoFrame';
 import { KioskRotatingPanel } from './KioskRotatingPanel';
 
 interface KioskBottomSectionProps {
@@ -8,12 +8,15 @@ interface KioskBottomSectionProps {
 }
 
 export function KioskBottomSection({ pageA, pageB }: KioskBottomSectionProps) {
-  return (
-    <div className="kiosk-bottom-section">
-      {/* Left column — family photo frame */}
-      <KioskPhotoFrame />
+  const [orientation, setOrientation] = useState<PhotoOrientation>('portrait');
 
-      {/* Right column — rotating panel */}
+  const handleOrientationChange = useCallback((o: PhotoOrientation) => {
+    setOrientation(o);
+  }, []);
+
+  return (
+    <div className="kiosk-bottom-section" data-orientation={orientation}>
+      <KioskPhotoFrame onOrientationChange={handleOrientationChange} />
       <KioskRotatingPanel pageA={pageA} pageB={pageB} />
     </div>
   );
