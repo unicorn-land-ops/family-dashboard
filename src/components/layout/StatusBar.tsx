@@ -33,12 +33,16 @@ export function StatusBar({ variant = 'default' }: StatusBarProps) {
       }}
     >
       <span>Last refresh: {lastRefresh}</span>
-      <ConnectionStatus />
+      {variant === 'kiosk' ? (
+        <span>Made in <span style={{ color: 'var(--fd-accent)', fontWeight: 600 }}>Unicorn.Land</span></span>
+      ) : (
+        <ConnectionStatus />
+      )}
       <span
         className="transition-opacity duration-500"
         style={{ opacity: mounted ? 1 : 0 }}
       >
-        Family Dashboard
+        {variant === 'kiosk' ? 'Culley.Haynes Information Station' : 'Family Dashboard'}
       </span>
     </footer>
   );
