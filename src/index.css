@@ -236,6 +236,8 @@ body {
 .kiosk-ticker-area {
   grid-area: ticker;
   min-height: 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* News Ticker */
