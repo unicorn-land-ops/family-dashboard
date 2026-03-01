@@ -1,56 +1,66 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNewsTicker } from '../../hooks/useNewsTicker';
-import { TICKER_SPEED_PX_PER_S } from '../../lib/news/config';
-import { type NewsHeadline } from '../../lib/news/types';
 
-function renderHeadlines(headlines: NewsHeadline[]) {
-  return headlines.map((h, index) => (
-    <React.Fragment key={index}>
-      <span className="ticker-source-label">{h.source}:</span>
-      {h.title}
-      <span className="ticker-separator">·</span>
-    </React.Fragment>
-  ));
-}
+const HEADLINE_DURATION_MS = 8000;
+const SLIDE_DURATION_MS = 400;
 
 export function KioskNewsTicker() {
   const { headlines, loading } = useNewsTicker();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isSliding, setIsSliding] = useState(false);
 
-  const tickerText = useMemo(
-    () => headlines.map((h) => `${h.source}: ${h.title}`).join(' · '),
-    [headlines]
-  );
+  const advance = useCallback(() => {
+    setIsSliding(true);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % headlines.length);
+      setIsSliding(false);
+    }, SLIDE_DURATION_MS);
+  }, [headlines.length]);
 
-  // Recalculate animation duration when headlines change
   useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper || headlines.length === 0) return;
+    if (headlines.length < 2) return;
+    const timer = setInterval(advance, HEADLINE_DURATION_MS);
+    return () => clearInterval(timer);
+  }, [advance, headlines.length]);
 
-    // Wait for DOM to measure scrollWidth after render
-    const frame = requestAnimationFrame(() => {
-      const halfWidth = wrapper.scrollWidth / 2;
-      const duration = halfWidth / TICKER_SPEED_PX_PER_S;
-      wrapper.style.setProperty('--ticker-duration', `${duration}s`);
+  // Reset index when headlines refresh (avoid stale index)
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [headlines]);
 
-      // Restart animation smoothly
-      wrapper.style.animation = 'none';
-      void wrapper.offsetHeight; // force reflow
-      wrapper.style.animation = '';
-    });
-
-    return () => cancelAnimationFrame(frame);
-  }, [tickerText, headlines.length]);
-
-  // Don't render while loading first batch or when no headlines
   if (loading || headlines.length === 0) return null;
 
+  const current = headlines[currentIndex % headlines.length];
+  const next = headlines[(currentIndex + 1) % headlines.length];
+
   return (
-    <div ref={containerRef} className="ticker-container">
-      <div ref={wrapperRef} className="ticker-wrapper">
-        <span className="ticker-content">{renderHeadlines(headlines)}</span>
-        <span className="ticker-content" aria-hidden="true">{renderHeadlines(headlines)}</span>
+    <div className="ticker-container">
+      <div className="ticker-carousel" aria-live="polite" aria-atomic="true">
+        <div
+          className="ticker-slide"
+          style={{
+            transform: isSliding ? 'translateY(-100%)' : 'translateY(0)',
+            transition: isSliding
+              ? `transform ${SLIDE_DURATION_MS}ms ease-out`
+              : 'none',
+          }}
+        >
+          <span className="ticker-source-label">{current.source}:</span>
+          {current.title}
+        </div>
+        <div
+          className="ticker-slide"
+          aria-hidden="true"
+          style={{
+            transform: isSliding ? 'translateY(-100%)' : 'translateY(0)',
+            transition: isSliding
+              ? `transform ${SLIDE_DURATION_MS}ms ease-out`
+              : 'none',
+          }}
+        >
+          <span className="ticker-source-label">{next.source}:</span>
+          {next.title}
+        </div>
       </div>
     </div>
   );

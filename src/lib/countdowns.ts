@@ -78,29 +78,12 @@ export function getUpcomingCountdowns(
 }
 
 // ---------------------------------------------------------------------------
-// Config: Berlin school holidays 2026
-// Update each August — source: https://www.berlin.de/en/tourism/travel-information/1887651-2862820-public-holidays-school-holidays.en.html
-// Confirmed dates (as of 2026-02-28):
-//   Winter Break:   Feb 2  – Feb 7,  2026
-//   Easter Break:   Mar 30 – Apr 10, 2026
-//   Summer Break:   Jul 9  – Aug 22, 2026
-//   Autumn Break:   Oct 19 – Oct 31, 2026
-//   Christmas Break: Dec 23, 2026 – Jan 2, 2027
+// Config: Berlin school milestones
+// Source: https://www.berlin.de/en/tourism/travel-information/1887651-2862820-public-holidays-school-holidays.en.html
+// Summer Break: Jul 9 – Aug 22, 2026 → School starts Aug 24, 2026
 // ---------------------------------------------------------------------------
 
-const BERLIN_SCHOOL_HOLIDAYS_2026: CountdownEvent[] = [
-  {
-    id: 'berlin-winter-2026',
-    emoji: '\u2744\uFE0F', // ❄️
-    label: 'Winter Break',
-    date: new Date('2026-02-02'), // Feb 2, 2026
-  },
-  {
-    id: 'berlin-easter-2026',
-    emoji: '\u{1F423}', // 🐣
-    label: 'Easter Break',
-    date: new Date('2026-03-30'), // Mar 30, 2026
-  },
+const BERLIN_SCHOOL_EVENTS: CountdownEvent[] = [
   {
     id: 'berlin-summer-2026',
     emoji: '\u2600\uFE0F', // ☀️
@@ -108,16 +91,10 @@ const BERLIN_SCHOOL_HOLIDAYS_2026: CountdownEvent[] = [
     date: new Date('2026-07-09'), // Jul 9, 2026
   },
   {
-    id: 'berlin-autumn-2026',
-    emoji: '\u{1F342}', // 🍂
-    label: 'Autumn Break',
-    date: new Date('2026-10-19'), // Oct 19, 2026
-  },
-  {
-    id: 'berlin-xmas-2026',
-    emoji: '\u{1F384}', // 🎄
-    label: 'Christmas Break',
-    date: new Date('2026-12-23'), // Dec 23, 2026
+    id: 'berlin-school-starts-2026',
+    emoji: '\u{1F4DA}', // 📚
+    label: 'School Starts',
+    date: new Date('2026-08-24'), // Aug 24, 2026
   },
 ];
 
@@ -220,9 +197,8 @@ export const COUNTDOWN_EVENTS: CountdownEvent[] = [
   { id: `easter-${YEAR}`, emoji: '\u{1F423}', label: 'Easter', date: computeEaster(YEAR) },
   { id: `easter-${NEXT_YEAR}`, emoji: '\u{1F423}', label: 'Easter', date: computeEaster(NEXT_YEAR) },
 
-  // Berlin school holidays
-  // Update each August — source: https://www.berlin.de/en/tourism/travel-information/1887651-2862820-public-holidays-school-holidays.en.html
-  ...BERLIN_SCHOOL_HOLIDAYS_2026,
+  // Berlin school milestones
+  ...BERLIN_SCHOOL_EVENTS,
 
   // Family birthdays and annual events
   ...FAMILY_EVENTS,
