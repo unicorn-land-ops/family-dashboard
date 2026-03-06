@@ -45,7 +45,7 @@ export function KioskNextDayCard({ day, dailyWeather }: KioskNextDayCardProps) {
           <h3
             className="font-semibold leading-none"
             style={{
-              fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)',
+              fontSize: 'clamp(1.35rem, 2vw, 1.75rem)',
               color: 'var(--fd-text-1)',
             }}
           >
@@ -53,7 +53,7 @@ export function KioskNextDayCard({ day, dailyWeather }: KioskNextDayCardProps) {
           </h3>
           <span
             style={{
-              fontSize: 'clamp(0.78rem, 0.9vw, 1rem)',
+              fontSize: 'clamp(0.85rem, 1vw, 1.1rem)',
               color: 'var(--fd-text-2)',
             }}
           >
@@ -65,7 +65,7 @@ export function KioskNextDayCard({ day, dailyWeather }: KioskNextDayCardProps) {
             className="mt-1 inline-flex items-center gap-1"
             style={{
               color: 'var(--fd-text-2)',
-              fontSize: 'clamp(0.78rem, 0.9vw, 1rem)',
+              fontSize: 'clamp(0.85rem, 1vw, 1.1rem)',
             }}
           >
             <WeatherIcon
@@ -90,19 +90,19 @@ export function KioskNextDayCard({ day, dailyWeather }: KioskNextDayCardProps) {
               <span
                 className="tabular-nums whitespace-nowrap"
                 style={{
-                  fontSize: 'clamp(1.08rem, 1.28vw, 1.43rem)',
+                  fontSize: 'clamp(1.2rem, 1.4vw, 1.55rem)',
                   color: 'var(--fd-text-2)',
                 }}
               >
                 {getEventTimeLabel(event)}
               </span>
-              <span style={{ fontSize: 'clamp(1.17rem, 1.35vw, 1.5rem)' }}>
+              <span style={{ fontSize: 'clamp(1.3rem, 1.5vw, 1.65rem)' }}>
                 {getEventPeopleLabel(event)}
               </span>
               <span
                 className="min-w-0 truncate"
                 style={{
-                  fontSize: 'clamp(1.28rem, 1.8vw, 1.65rem)',
+                  fontSize: 'clamp(1.4rem, 2vw, 1.8rem)',
                   color: 'var(--fd-text-1)',
                 }}
                 title={event.summary}
