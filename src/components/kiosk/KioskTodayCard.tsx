@@ -46,7 +46,7 @@ export function KioskTodayCard({ day, weather }: KioskTodayCardProps) {
           <h2
             className="font-bold leading-none"
             style={{
-              fontSize: 'clamp(1.6rem, 2.5vw, 2.2rem)',
+              fontSize: 'clamp(1.8rem, 3vw, 2.6rem)',
               color: 'var(--fd-accent)',
             }}
           >
