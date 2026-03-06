@@ -28,7 +28,7 @@ export function StatusBar({ variant = 'default' }: StatusBarProps) {
         color: 'var(--fd-text-2)',
         fontSize:
           variant === 'kiosk'
-            ? 'clamp(0.86rem,1.05vw,1rem)'
+            ? 'clamp(0.9rem,1.1vw,1.05rem)'
             : 'clamp(0.65rem, 0.8vw, 0.85rem)',
       }}
     >
