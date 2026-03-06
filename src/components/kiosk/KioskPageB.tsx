@@ -79,12 +79,12 @@ function PanelSection({
 }
 
 const itemStyle: React.CSSProperties = {
-  fontSize: 'clamp(13px, 1.2vw, 17px)',
+  fontSize: 'clamp(1.1rem, 1.5vw, 1.4rem)',
   color: 'var(--fd-text-1)',
 };
 
 const secondaryStyle: React.CSSProperties = {
-  fontSize: 'clamp(13px, 1.2vw, 17px)',
+  fontSize: 'clamp(1rem, 1.3vw, 1.25rem)',
   color: 'var(--fd-text-2)',
 };
 

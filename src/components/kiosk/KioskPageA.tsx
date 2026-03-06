@@ -35,12 +35,12 @@ function PanelSection({
 }
 
 const itemStyle: React.CSSProperties = {
-  fontSize: 'clamp(13px, 1.2vw, 17px)',
+  fontSize: 'clamp(1.1rem, 1.5vw, 1.4rem)',
   color: 'var(--fd-text-1)',
 };
 
 const secondaryStyle: React.CSSProperties = {
-  fontSize: 'clamp(13px, 1.2vw, 17px)',
+  fontSize: 'clamp(1rem, 1.3vw, 1.25rem)',
   color: 'var(--fd-text-2)',
 };
 
@@ -64,13 +64,13 @@ export function KioskPageA() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           {countdowns.map((event) => (
             <div key={event.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: 'clamp(1rem, 1.2vw, 1.3rem)', flexShrink: 0 }} role="img" aria-label={event.label}>
+              <span style={{ fontSize: 'clamp(1.2rem, 1.5vw, 1.6rem)', flexShrink: 0 }} role="img" aria-label={event.label}>
                 {event.emoji}
               </span>
               <span style={{ ...itemStyle, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {event.label}
               </span>
-              <span style={{ fontSize: 'clamp(13px, 1.2vw, 17px)', color: 'var(--fd-accent)', fontWeight: 700, flexShrink: 0 }}>
+              <span style={{ fontSize: 'clamp(1.1rem, 1.5vw, 1.4rem)', color: 'var(--fd-accent)', fontWeight: 700, flexShrink: 0 }}>
                 {event.daysRemaining === 0 ? 'TODAY' : `${event.daysRemaining}d`}
               </span>
             </div>
