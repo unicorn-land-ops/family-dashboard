@@ -148,15 +148,11 @@ body {
     'today'
     'next'
     'compact'
-    'bottom'
+    'stage'
     'ticker'
     'status';
   grid-template-columns: 1fr;
   grid-template-rows: auto auto auto auto 1fr auto auto;
-}
-
-.kiosk-grid > [style*="grid-area: today"] {
-  max-height: 45vh;
 }
 
 .kiosk-header {
@@ -176,13 +172,45 @@ body {
   min-height: 0;
 }
 
-.kiosk-bottom-section {
-  grid-area: bottom;
-  display: grid;
-  gap: clamp(10px, 1vw, 16px);
+/* Rotating stage — full-width zone for photo/life/world rotation */
+.kiosk-stage {
+  grid-area: stage;
+  position: relative;
   min-height: 0;
   overflow: hidden;
-  grid-template-columns: 55fr 45fr;
+}
+
+.kiosk-stage-slot {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Gallery photo treatment inside rotating stage */
+.kiosk-gallery-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: clamp(12px, 1.5vw, 24px);
+}
+
+.kiosk-gallery-photo {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: var(--fd-card-bg);
+  border: 1px solid color-mix(in srgb, var(--fd-accent) 15%, var(--fd-card-border));
+  padding: clamp(6px, 0.8vw, 12px);
+}
+
+.kiosk-gallery-photo .photo-frame {
+  border-radius: 0.5rem;
 }
 
 
@@ -241,13 +269,18 @@ body {
   overflow: hidden;
 }
 
-/* News Ticker — Slide-up carousel */
+/* News Ticker — "The Marquee" */
 .ticker-container {
   width: 100%;
   overflow: hidden;
   position: relative;
-  background: color-mix(in srgb, var(--fd-surface) 60%, transparent);
-  padding: 0.35rem 0;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 0.75rem;
+  padding: 0.6rem 1rem;
+}
+
+:root[data-phase="day"] .ticker-container {
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .ticker-carousel {
@@ -262,23 +295,27 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 0 1rem;
-  font-size: clamp(0.85rem, 1vw, 1rem);
-  color: var(--fd-text-secondary);
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  color: var(--fd-text-1);
   font-family: 'Outfit', sans-serif;
   letter-spacing: 0.01em;
   will-change: transform;
 }
 
 .ticker-source-label {
-  font-weight: 600;
-  color: var(--fd-text-primary);
-  margin-right: 0.25em;
+  font-weight: 700;
+  color: var(--fd-accent);
+  margin-right: 0.35em;
 }
 
-.ticker-separator {
-  opacity: 0.4;
-  margin: 0 1.5em;
+.ticker-accent-pip {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fd-accent);
+  margin-right: 0.5em;
+  vertical-align: middle;
 }
 
 .kiosk-status {
@@ -289,9 +326,9 @@ body {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  border-left: 4px solid var(--fd-accent);
+  border-left: 6px solid var(--fd-accent);
   border-radius: 1.25rem;
-  background: var(--fd-card-bg);
+  background: color-mix(in srgb, var(--fd-card-bg) 100%, rgba(255,255,255,0.04));
   border-top: 1px solid var(--fd-card-border);
   border-right: 1px solid var(--fd-card-border);
   border-bottom: 1px solid var(--fd-card-border);
@@ -321,7 +358,7 @@ body {
   border-radius: 1.25rem;
   background: var(--fd-card-bg);
   border: 1px solid var(--fd-card-border);
-  border-left: 3px solid color-mix(in srgb, var(--fd-accent) 40%, transparent);
+  border-left: 1px solid var(--fd-card-border);
   padding: clamp(10px, 1.2vw, 18px);
   overflow: hidden;
 }
@@ -351,20 +388,12 @@ body {
   min-height: 0;
 }
 
-.kiosk-compact-card {
-  min-height: 0;
+.kiosk-compact-cell {
   display: flex;
   flex-direction: column;
-  border-radius: 1rem;
-  background: var(--fd-card-bg);
-  border: 1px solid var(--fd-card-border);
-  padding: clamp(8px, 0.8vw, 14px);
-  overflow: hidden;
-}
-
-/* Empty compact day cards recede visually */
-.kiosk-compact-card--empty {
-  opacity: 0.55;
+  align-items: center;
+  gap: clamp(2px, 0.3vw, 4px);
+  padding: clamp(6px, 0.6vw, 10px);
 }
 
 /* Portrait / mobile layout */
