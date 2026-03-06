@@ -1,16 +1,20 @@
+import { useCallback, useRef } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Header } from '../layout/Header';
 import { StatusBar } from '../layout/StatusBar';
 import { KioskTodayCard } from './KioskTodayCard';
 import { KioskNextDayCard } from './KioskNextDayCard';
 import { KioskCompactRow } from './KioskCompactRow';
-import { KioskBottomSection } from './KioskBottomSection';
+import { KioskRotatingStage } from './KioskRotatingStage';
+import { KioskPhotoFrame } from './KioskPhotoFrame';
 import { KioskPageA } from './KioskPageA';
 import { KioskPageB } from './KioskPageB';
 import { KioskNewsTicker } from './KioskNewsTicker';
 import { PanelFallback, GlobalFallback, logError } from '../ErrorFallback';
 import { useCalendar } from '../../hooks/useCalendar';
 import { useWeather } from '../../hooks/useWeather';
+import type { StageSlot } from '../../hooks/useStageRotation';
+
 function getDailyWeather(weather: ReturnType<typeof useWeather>['data'], dayIndex: number) {
   if (!weather?.daily || dayIndex >= weather.daily.time.length) return null;
   return {
@@ -28,6 +32,11 @@ export function KioskDashboard() {
   const dayAfterDay = days[2];
   const compactDays = days.slice(3, 7);
   const compactWeather = compactDays.map((_, i) => getDailyWeather(weather, i + 3));
+
+  const prevSlotRef = useRef<StageSlot>('photo');
+  const handleSlotChange = useCallback((slot: StageSlot) => {
+    prevSlotRef.current = slot;
+  }, []);
 
   return (
     <ErrorBoundary FallbackComponent={GlobalFallback} onError={logError}>
@@ -70,13 +79,24 @@ export function KioskDashboard() {
         </ErrorBoundary>
 
         <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
-          <KioskBottomSection
-            pageA={
+          <KioskRotatingStage
+            cadenceMs={60000}
+            onSlotChange={handleSlotChange}
+            photoSlot={
+              <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
+                <div className="kiosk-gallery-frame">
+                  <div className="kiosk-gallery-photo">
+                    <KioskPhotoFrame />
+                  </div>
+                </div>
+              </ErrorBoundary>
+            }
+            lifeSlot={
               <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
                 <KioskPageA />
               </ErrorBoundary>
             }
-            pageB={
+            worldSlot={
               <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
                 <KioskPageB />
               </ErrorBoundary>
