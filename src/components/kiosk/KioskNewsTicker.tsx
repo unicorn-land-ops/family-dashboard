@@ -45,6 +45,7 @@ export function KioskNewsTicker() {
               : 'none',
           }}
         >
+          <span className="ticker-accent-pip" aria-hidden="true" />
           <span className="ticker-source-label">{current.source}:</span>
           {current.title}
         </div>
@@ -58,6 +59,7 @@ export function KioskNewsTicker() {
               : 'none',
           }}
         >
+          <span className="ticker-accent-pip" aria-hidden="true" />
           <span className="ticker-source-label">{next.source}:</span>
           {next.title}
         </div>
