@@ -11,89 +11,69 @@
   --color-surface: rgba(255, 255, 255, 0.1);
 }
 
-/* Time-of-day theme phases — set via data-phase attribute on :root */
+/*
+ * Time-of-day theme phases — INVERTED for Gallery Frame kiosk:
+ *   night/dawn/dusk = BRIGHT (warm cream) — lights up the room when dark outside
+ *   day/golden      = DARK  — reduces glare when bright outside
+ */
 :root {
-  --fd-bg-1: #1a1814;
-  --fd-bg-2: #201e1a;
-  --fd-card-bg: rgba(255, 255, 255, 0.04);
-  --fd-card-border: rgba(255, 255, 255, 0.06);
-  --fd-accent: #f0a030;
-  --fd-text-1: rgba(255, 255, 255, 0.90);
-  --fd-text-2: rgba(255, 255, 255, 0.55);
-  --fd-shimmer-1: #1a5ab8;
-  --fd-shimmer-2: #7c3aed;
-  --fd-shimmer-3: #d4a017;
-  --fd-shimmer-4: #1a5ab8;
+  --fd-bg-1: #F5F0E8;
+  --fd-bg-2: #EDE7DD;
+  --fd-card-bg: #FFFFFF;
+  --fd-card-border: rgba(0, 0, 0, 0.08);
+  --fd-accent: #D4813A;
+  --fd-accent-teal: #56BDB0;
+  --fd-text-1: #3D3530;
+  --fd-text-2: #6B5E52;
+  --fd-photo-frame: #3D3530;
+  --fd-compact-bg: #EDE7DD;
+  --fd-ticker-bg: #EDE7DD;
+  --fd-divider: #E8E0D6;
+  --fd-shimmer-1: #E8835A;
+  --fd-shimmer-2: #D4A43A;
+  --fd-shimmer-3: #56BDB0;
+  --fd-shimmer-4: #7BA4D9;
 }
 
-:root[data-phase="night"] {
-  --fd-bg-1: #1a1814;
-  --fd-bg-2: #201e1a;
-  --fd-card-bg: rgba(255, 255, 255, 0.04);
-  --fd-card-border: rgba(255, 255, 255, 0.06);
-  --fd-accent: #f0a030;
-  --fd-text-1: rgba(255, 255, 255, 0.90);
-  --fd-text-2: rgba(255, 255, 255, 0.55);
-  --fd-shimmer-1: #1a5ab8;
-  --fd-shimmer-2: #7c3aed;
-  --fd-shimmer-3: #d4a017;
-  --fd-shimmer-4: #1a5ab8;
-}
-
-:root[data-phase="dawn"] {
-  --fd-bg-1: #2a2018;
-  --fd-bg-2: #3d2c1e;
-  --fd-card-bg: rgba(255, 220, 180, 0.05);
-  --fd-card-border: rgba(255, 200, 150, 0.08);
-  --fd-accent: #f5883a;
-  --fd-text-1: rgba(255, 255, 255, 0.95);
-  --fd-text-2: rgba(255, 255, 255, 0.65);
-  --fd-shimmer-1: #f5a070;
-  --fd-shimmer-2: #e87090;
-  --fd-shimmer-3: #f0c040;
-  --fd-shimmer-4: #d4802a;
-}
-
-:root[data-phase="day"] {
-  --fd-bg-1: #faf8f5;
-  --fd-bg-2: #f2efe8;
-  --fd-card-bg: rgba(255, 255, 255, 0.85);
-  --fd-card-border: rgba(0, 0, 0, 0.06);
-  --fd-accent: #d96a1a;
-  --fd-text-1: rgba(28, 25, 23, 0.95);
-  --fd-text-2: rgba(28, 25, 23, 0.60);
-  --fd-shimmer-1: #e86040;
-  --fd-shimmer-2: #d4a017;
-  --fd-shimmer-3: #2aa8a0;
-  --fd-shimmer-4: #4a90d0;
-}
-
-:root[data-phase="golden"] {
-  --fd-bg-1: #2d2218;
-  --fd-bg-2: #3a2a1a;
-  --fd-card-bg: rgba(255, 200, 120, 0.06);
-  --fd-card-border: rgba(255, 180, 80, 0.10);
-  --fd-accent: #ffb833;
-  --fd-text-1: rgba(255, 255, 255, 0.95);
-  --fd-text-2: rgba(255, 255, 255, 0.68);
-  --fd-shimmer-1: #d4802a;
-  --fd-shimmer-2: #e86040;
-  --fd-shimmer-3: #e87090;
-  --fd-shimmer-4: #f0c040;
-}
-
+:root[data-phase="night"],
+:root[data-phase="dawn"],
 :root[data-phase="dusk"] {
-  --fd-bg-1: #1e1a1f;
-  --fd-bg-2: #252028;
-  --fd-card-bg: rgba(200, 180, 230, 0.04);
-  --fd-card-border: rgba(180, 160, 210, 0.07);
-  --fd-accent: #e88540;
-  --fd-text-1: rgba(255, 255, 255, 0.90);
-  --fd-text-2: rgba(255, 255, 255, 0.58);
-  --fd-shimmer-1: #a07ad0;
-  --fd-shimmer-2: #c070a0;
-  --fd-shimmer-3: #d4a050;
-  --fd-shimmer-4: #5050a0;
+  --fd-bg-1: #F5F0E8;
+  --fd-bg-2: #EDE7DD;
+  --fd-card-bg: #FFFFFF;
+  --fd-card-border: rgba(0, 0, 0, 0.08);
+  --fd-accent: #D4813A;
+  --fd-accent-teal: #56BDB0;
+  --fd-text-1: #3D3530;
+  --fd-text-2: #6B5E52;
+  --fd-photo-frame: #3D3530;
+  --fd-compact-bg: #EDE7DD;
+  --fd-ticker-bg: #EDE7DD;
+  --fd-divider: #E8E0D6;
+  --fd-shimmer-1: #E8835A;
+  --fd-shimmer-2: #D4A43A;
+  --fd-shimmer-3: #56BDB0;
+  --fd-shimmer-4: #7BA4D9;
+}
+
+:root[data-phase="day"],
+:root[data-phase="golden"] {
+  --fd-bg-1: #1E1A16;
+  --fd-bg-2: #2A2420;
+  --fd-card-bg: #2A2420;
+  --fd-card-border: rgba(255, 255, 255, 0.08);
+  --fd-accent: #D4813A;
+  --fd-accent-teal: #56BDB0;
+  --fd-text-1: #F5F0E8;
+  --fd-text-2: #C4B8AC;
+  --fd-photo-frame: #F0EBE3;
+  --fd-compact-bg: #3D3530;
+  --fd-ticker-bg: #3D3530;
+  --fd-divider: #3D3530;
+  --fd-shimmer-1: #E8835A;
+  --fd-shimmer-2: #D4A43A;
+  --fd-shimmer-3: #56BDB0;
+  --fd-shimmer-4: #7BA4D9;
 }
 
 /* Clock shimmer — gradient text animation */
@@ -149,10 +129,43 @@ body {
     'next'
     'compact'
     'stage'
+    'photo'
     'ticker'
     'status';
   grid-template-columns: 1fr;
-  grid-template-rows: auto auto auto auto 1fr auto auto;
+  grid-template-rows: auto auto auto auto auto 1fr auto auto;
+}
+
+/* Stage card — white container with colored top-border */
+.kiosk-stage-card {
+  grid-area: stage;
+  background: var(--fd-card-bg);
+  border: 1px solid var(--fd-card-border);
+  border-top: 3px solid var(--fd-accent);
+  border-radius: 1rem;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* 3-column layout inside stage pages */
+.kiosk-stage-columns {
+  display: flex;
+  gap: clamp(10px, 1vw, 16px);
+  height: 100%;
+  padding: clamp(12px, 1.2vw, 20px);
+}
+
+.kiosk-stage-column {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Photo area — always visible, below stage */
+.kiosk-photo-area {
+  grid-area: photo;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .kiosk-header {
@@ -205,9 +218,8 @@ body {
   min-height: 0;
   overflow: hidden;
   border-radius: 0.75rem;
-  background: var(--fd-card-bg);
-  border: 1px solid color-mix(in srgb, var(--fd-accent) 15%, var(--fd-card-border));
-  padding: clamp(6px, 0.8vw, 12px);
+  background: var(--fd-photo-frame, #3D3530);
+  padding: clamp(8px, 1vw, 16px);
 }
 
 .kiosk-gallery-photo .photo-frame {
@@ -275,13 +287,9 @@ body {
   width: 100%;
   overflow: hidden;
   position: relative;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--fd-ticker-bg);
   border-radius: 0.75rem;
   padding: 0.6rem 1rem;
-}
-
-:root[data-phase="day"] .ticker-container {
-  background: rgba(0, 0, 0, 0.04);
 }
 
 .ticker-carousel {
@@ -344,11 +352,7 @@ body {
   align-items: center;
   border-radius: 0.65rem;
   padding: clamp(6px, 0.6vw, 10px);
-  background: rgba(255, 255, 255, 0.03);
-}
-
-:root[data-phase="day"] .kiosk-today-event-row {
-  background: rgba(0, 0, 0, 0.03);
+  background: color-mix(in srgb, var(--fd-text-1) 3%, transparent);
 }
 
 /* Next-day cards (Tomorrow / Day After) — subtle left accent to tie to Today hero */
@@ -375,11 +379,7 @@ body {
   align-items: center;
   border-radius: 0.55rem;
   padding: clamp(4px, 0.4vw, 7px);
-  background: rgba(255, 255, 255, 0.03);
-}
-
-:root[data-phase="day"] .kiosk-next-event-row {
-  background: rgba(0, 0, 0, 0.03);
+  background: color-mix(in srgb, var(--fd-text-1) 3%, transparent);
 }
 
 .kiosk-compact-grid {
@@ -449,11 +449,7 @@ body {
 
 /* Calendar utilities */
 .default-event-row {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-:root[data-phase="day"] .default-event-row {
-  background: rgba(0, 0, 0, 0.03);
+  background: color-mix(in srgb, var(--fd-text-1) 3%, transparent);
 }
 
 .event-schulfrei {

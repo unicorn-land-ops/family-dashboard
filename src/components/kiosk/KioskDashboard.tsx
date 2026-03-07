@@ -33,7 +33,7 @@ export function KioskDashboard() {
   const compactDays = days.slice(3, 7);
   const compactWeather = compactDays.map((_, i) => getDailyWeather(weather, i + 3));
 
-  const prevSlotRef = useRef<StageSlot>('photo');
+  const prevSlotRef = useRef<StageSlot>('life');
   const handleSlotChange = useCallback((slot: StageSlot) => {
     prevSlotRef.current = slot;
   }, []);
@@ -82,15 +82,6 @@ export function KioskDashboard() {
           <KioskRotatingStage
             cadenceMs={60000}
             onSlotChange={handleSlotChange}
-            photoSlot={
-              <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
-                <div className="kiosk-gallery-frame">
-                  <div className="kiosk-gallery-photo">
-                    <KioskPhotoFrame />
-                  </div>
-                </div>
-              </ErrorBoundary>
-            }
             lifeSlot={
               <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
                 <KioskPageA />
@@ -102,6 +93,16 @@ export function KioskDashboard() {
               </ErrorBoundary>
             }
           />
+        </ErrorBoundary>
+
+        <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
+          <div className="kiosk-photo-area">
+            <div className="kiosk-gallery-frame">
+              <div className="kiosk-gallery-photo">
+                <KioskPhotoFrame />
+              </div>
+            </div>
+          </div>
         </ErrorBoundary>
 
         <div className="kiosk-ticker-area">

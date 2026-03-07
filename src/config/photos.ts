@@ -9,8 +9,8 @@
 export const PHOTO_WORKER_URL: string =
   import.meta.env.VITE_PHOTOS_WORKER_URL ?? '';
 
-/** How long each photo is displayed before crossfading to the next (12 minutes) */
-export const ROTATION_INTERVAL_MS: number = 12 * 60 * 1000;
+/** How long each photo is displayed before crossfading to the next (5 minutes) */
+export const ROTATION_INTERVAL_MS: number = 5 * 60 * 1000;
 
 /** Duration of the CSS crossfade opacity transition (must match CSS transition value) */
 export const TRANSITION_DURATION_MS: number = 1800;

@@ -1,8 +1,7 @@
 /**
  * KioskPageA.tsx — Life Stuff rotating panel page
  *
- * Sections: Coming Up (countdowns) + Groceries + Chores
- * Calls its own data hooks directly (same pattern as all other panels).
+ * 3-column horizontal layout: Coming Up | Groceries | Chores
  */
 
 import React from 'react';
@@ -11,38 +10,33 @@ import { useGroceries } from '../../hooks/useGroceries';
 import { useChores } from '../../hooks/useChores';
 import { isChoreCompleted } from '../../lib/choreSchedule';
 
-function PanelSection({
-  title,
-  isEmpty,
-  emptyText,
-  children,
-}: {
-  title: string;
-  isEmpty: boolean;
-  emptyText: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="kiosk-panel-section">
-      <div className="kiosk-panel-section-title">{title}</div>
-      {isEmpty ? (
-        <div className="kiosk-panel-empty">{emptyText}</div>
-      ) : (
-        children
-      )}
-    </div>
-  );
-}
+const titleStyle: React.CSSProperties = {
+  fontSize: 'clamp(14px, 1.3vw, 20px)',
+  fontWeight: 700,
+  color: 'var(--fd-text-1)',
+  marginBottom: 'clamp(4px, 0.4vw, 8px)',
+};
 
 const itemStyle: React.CSSProperties = {
-  fontSize: 'clamp(1.1rem, 1.5vw, 1.4rem)',
+  fontSize: 'clamp(14px, 1.3vw, 20px)',
   color: 'var(--fd-text-1)',
+  lineHeight: 1.4,
 };
 
 const secondaryStyle: React.CSSProperties = {
-  fontSize: 'clamp(1rem, 1.3vw, 1.25rem)',
+  fontSize: 'clamp(12px, 1.1vw, 16px)',
   color: 'var(--fd-text-2)',
 };
+
+const badgeStyle = (bg: string): React.CSSProperties => ({
+  fontSize: 'clamp(10px, 0.8vw, 14px)',
+  fontWeight: 700,
+  color: '#fff',
+  background: bg,
+  borderRadius: '10px',
+  padding: '1px 8px',
+  marginLeft: '6px',
+});
 
 export function KioskPageA() {
   const countdowns = getUpcomingCountdowns(COUNTDOWN_EVENTS);
@@ -53,77 +47,78 @@ export function KioskPageA() {
   const remainingChores = chores.filter((c) => !isChoreCompleted(c, completions));
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', height: '100%', overflow: 'hidden' }}>
+    <div className="kiosk-stage-columns">
+      {/* Column 1: Coming Up */}
+      <div className="kiosk-stage-column">
+        <div style={titleStyle}>Coming Up</div>
+        {countdowns.length === 0 ? (
+          <div style={secondaryStyle}>Nothing coming up</div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(4px, 0.4vw, 8px)' }}>
+            {countdowns.map((event) => (
+              <div key={event.id} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <span style={{ fontSize: 'clamp(14px, 1.3vw, 20px)', flexShrink: 0 }}>{event.emoji}</span>
+                <span style={{ ...itemStyle, fontWeight: 700, color: 'var(--fd-accent)', flexShrink: 0 }}>
+                  {event.daysRemaining === 0 ? 'TODAY' : `${event.daysRemaining}d`}
+                </span>
+                <span style={{ ...secondaryStyle, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {event.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-      {/* Coming Up — countdowns */}
-      <PanelSection
-        title="Coming Up"
-        isEmpty={countdowns.length === 0}
-        emptyText="Nothing coming up"
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-          {countdowns.map((event) => (
-            <div key={event.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: 'clamp(1.2rem, 1.5vw, 1.6rem)', flexShrink: 0 }} role="img" aria-label={event.label}>
-                {event.emoji}
-              </span>
-              <span style={{ ...itemStyle, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {event.label}
-              </span>
-              <span style={{ fontSize: 'clamp(1.1rem, 1.5vw, 1.4rem)', color: 'var(--fd-accent)', fontWeight: 700, flexShrink: 0 }}>
-                {event.daysRemaining === 0 ? 'TODAY' : `${event.daysRemaining}d`}
-              </span>
-            </div>
-          ))}
+      {/* Column 2: Groceries */}
+      <div className="kiosk-stage-column">
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={titleStyle}>Groceries</span>
+          {uncheckedCount > 0 && <span style={badgeStyle('var(--fd-accent)')}>{uncheckedCount}</span>}
         </div>
-      </PanelSection>
-
-      {/* Groceries */}
-      <PanelSection
-        title={`Groceries${uncheckedCount > 0 ? ` (${uncheckedCount})` : ''}`}
-        isEmpty={!groceriesLoading && uncheckedItems.length === 0}
-        emptyText="Nothing needed"
-      >
         {groceriesLoading ? (
           <div style={secondaryStyle}>Loading...</div>
+        ) : uncheckedItems.length === 0 ? (
+          <div style={secondaryStyle}>Nothing needed</div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(2px, 0.2vw, 4px)' }}>
             {uncheckedItems.slice(0, 6).map((item) => (
-              <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <span style={{ color: 'var(--fd-accent)', fontSize: '0.5rem', flexShrink: 0 }}>●</span>
+              <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <span style={{ color: 'var(--fd-accent)', fontSize: '0.4rem', flexShrink: 0 }}>&#9679;</span>
                 <span style={itemStyle}>{item.name}</span>
               </div>
             ))}
             {uncheckedItems.length > 6 && (
-              <div style={secondaryStyle}>+{uncheckedItems.length - 6} more</div>
+              <div style={{ ...secondaryStyle, fontStyle: 'italic' }}>+{uncheckedItems.length - 6} more</div>
             )}
           </div>
         )}
-      </PanelSection>
+      </div>
 
-      {/* Chores */}
-      <PanelSection
-        title={`Chores (${completedCount}/${totalCount})`}
-        isEmpty={!choresLoading && remainingChores.length === 0}
-        emptyText="All done"
-      >
+      {/* Column 3: Chores */}
+      <div className="kiosk-stage-column">
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={titleStyle}>Chores</span>
+          <span style={badgeStyle('var(--fd-accent-teal)')}>{completedCount}/{totalCount}</span>
+        </div>
         {choresLoading ? (
           <div style={secondaryStyle}>Loading...</div>
+        ) : remainingChores.length === 0 ? (
+          <div style={secondaryStyle}>All done</div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(2px, 0.2vw, 4px)' }}>
             {remainingChores.slice(0, 5).map((chore) => (
-              <div key={chore.id} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <span style={{ color: 'var(--fd-text-2)', fontSize: '0.75rem', flexShrink: 0 }}>○</span>
+              <div key={chore.id} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <span style={{ color: 'var(--fd-text-2)', fontSize: '0.6rem', flexShrink: 0 }}>&#9675;</span>
                 <span style={itemStyle}>{chore.title}</span>
               </div>
             ))}
             {remainingChores.length > 5 && (
-              <div style={secondaryStyle}>+{remainingChores.length - 5} more</div>
+              <div style={{ ...secondaryStyle, fontStyle: 'italic' }}>+{remainingChores.length - 5} more</div>
             )}
           </div>
         )}
-      </PanelSection>
-
+      </div>
     </div>
   );
 }

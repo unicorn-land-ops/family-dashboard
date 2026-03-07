@@ -1,8 +1,7 @@
 /**
  * KioskPageB.tsx — World Stuff rotating panel page
  *
- * Sections: Stars (horoscopes) + Transit + World (country-of-day)
- * Calls its own data hooks directly (same pattern as all other panels).
+ * 3-column horizontal layout: Stars | Transit | Country
  */
 
 import React from 'react';
@@ -13,12 +12,10 @@ import { useCountryOfDay } from '../../hooks/useCountryOfDay';
 import type { ZodiacSign } from '../../lib/api/horoscope';
 import type { Departure } from '../../lib/api/bvgTransit';
 
-// --- Horoscope helpers (copied from HoroscopePanel — small pure functions) ---
-
 const ZODIAC_EMOJI: Record<ZodiacSign, string> = {
-  capricorn: '♑',
-  aquarius: '♒',
-  sagittarius: '♐',
+  capricorn: '\u2651',
+  aquarius: '\u2652',
+  sagittarius: '\u2650',
 };
 
 const ZODIAC_LABEL: Record<ZodiacSign, string> = {
@@ -33,13 +30,11 @@ function stripLeadingSign(text: string, sign: string): string {
   return stripped.charAt(0).toUpperCase() + stripped.slice(1);
 }
 
-function truncateToSentences(text: string, maxSentences = 2): string {
+function truncateToSentences(text: string, maxSentences = 1): string {
   const sentenceRegex = /[^.!?]*[.!?]+/g;
   const sentences = text.match(sentenceRegex) ?? [text];
   return sentences.slice(0, maxSentences).join(' ').trim();
 }
-
-// --- Transit helpers (copied from TransitPanel — small pure functions) ---
 
 function isSEV(departure: Departure): boolean {
   return (
@@ -50,41 +45,24 @@ function isSEV(departure: Departure): boolean {
 
 function formatDelay(delaySec: number | null): string | null {
   if (delaySec === null || delaySec <= 0) return null;
-  return `+${Math.round(delaySec / 60)} min`;
+  return `+${Math.round(delaySec / 60)}`;
 }
 
-// --- PanelSection helper ---
-
-function PanelSection({
-  title,
-  isEmpty,
-  emptyText,
-  children,
-}: {
-  title: string;
-  isEmpty: boolean;
-  emptyText: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="kiosk-panel-section">
-      <div className="kiosk-panel-section-title">{title}</div>
-      {isEmpty ? (
-        <div className="kiosk-panel-empty">{emptyText}</div>
-      ) : (
-        children
-      )}
-    </div>
-  );
-}
+const titleStyle: React.CSSProperties = {
+  fontSize: 'clamp(14px, 1.3vw, 20px)',
+  fontWeight: 700,
+  color: 'var(--fd-text-1)',
+  marginBottom: 'clamp(4px, 0.4vw, 8px)',
+};
 
 const itemStyle: React.CSSProperties = {
-  fontSize: 'clamp(1.1rem, 1.5vw, 1.4rem)',
+  fontSize: 'clamp(14px, 1.3vw, 20px)',
   color: 'var(--fd-text-1)',
+  lineHeight: 1.4,
 };
 
 const secondaryStyle: React.CSSProperties = {
-  fontSize: 'clamp(1rem, 1.3vw, 1.25rem)',
+  fontSize: 'clamp(12px, 1.1vw, 16px)',
   color: 'var(--fd-text-2)',
 };
 
@@ -97,100 +75,85 @@ export function KioskPageB() {
   const visibleDepartures = departures?.slice(0, 4) ?? [];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', height: '100%', overflow: 'hidden' }}>
-
-      {/* Stars — horoscopes */}
-      <PanelSection
-        title="Stars"
-        isEmpty={!horoscopeLoading && visibleHoroscopes.length === 0}
-        emptyText="No horoscopes today"
-      >
+    <div className="kiosk-stage-columns">
+      {/* Column 1: Stars */}
+      <div className="kiosk-stage-column">
+        <div style={titleStyle}>Stars</div>
         {horoscopeLoading ? (
           <div style={secondaryStyle}>Loading...</div>
+        ) : visibleHoroscopes.length === 0 ? (
+          <div style={secondaryStyle}>No horoscopes today</div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(6px, 0.5vw, 10px)' }}>
             {visibleHoroscopes.map((h) => {
               const sign = h.sign.toLowerCase() as ZodiacSign;
               const emoji = ZODIAC_EMOJI[sign] ?? '';
               const label = ZODIAC_LABEL[sign] ?? h.sign;
               const fullText = stripLeadingSign(h.horoscope, h.sign);
-              const summary = truncateToSentences(fullText, 2);
+              const summary = truncateToSentences(fullText, 1);
 
               return (
                 <div key={h.sign}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.1rem' }}>
-                    <span style={{ fontSize: 'clamp(0.9rem, 1.1vw, 1.2rem)' }}>{emoji}</span>
-                    <span style={{ ...itemStyle, fontWeight: 500 }}>{label}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '2px' }}>
+                    <span style={{ fontSize: 'clamp(14px, 1.2vw, 18px)' }}>{emoji}</span>
+                    <span style={{ ...itemStyle, fontWeight: 600, color: 'var(--fd-accent)' }}>{label}</span>
                   </div>
-                  <p style={{ ...secondaryStyle, lineHeight: 1.35, margin: 0 }}>
-                    {summary}
-                  </p>
+                  <p style={{ ...secondaryStyle, lineHeight: 1.35, margin: 0 }}>{summary}</p>
                 </div>
               );
             })}
           </div>
         )}
-      </PanelSection>
+      </div>
 
-      {/* Transit */}
-      <PanelSection
-        title="Transit"
-        isEmpty={!transitLoading && visibleDepartures.length === 0}
-        emptyText="No departures"
-      >
+      {/* Column 2: Transit */}
+      <div className="kiosk-stage-column">
+        <div style={titleStyle}>Senefelderplatz</div>
         {transitLoading ? (
           <div style={secondaryStyle}>Loading...</div>
+        ) : visibleDepartures.length === 0 ? (
+          <div style={secondaryStyle}>No departures</div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(3px, 0.3vw, 6px)' }}>
             {visibleDepartures.map((dep) => {
               const cancelled = dep.when === null;
               const sev = isSEV(dep);
               const delay = formatDelay(dep.delay);
 
               return (
-                <div
-                  key={dep.tripId}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: 'clamp(12px, 1.1vw, 15px)' }}
-                >
-                  {/* Line badge */}
+                <div key={dep.tripId} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <span
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontWeight: 700,
-                      borderRadius: '4px',
-                      padding: '1px 5px',
-                      minWidth: '2.2rem',
+                      borderRadius: '5px',
+                      padding: '1px 6px',
+                      minWidth: '2.4rem',
                       textAlign: 'center',
-                      fontSize: '0.75rem',
-                      background: sev ? 'rgba(59,130,246,0.2)' : 'rgba(234,179,8,0.2)',
-                      color: sev ? '#93c5fd' : '#fde047',
+                      fontSize: 'clamp(11px, 1vw, 15px)',
+                      background: sev ? '#D4483A' : '#1A5276',
+                      color: '#fff',
                       flexShrink: 0,
                     }}
                   >
-                    {sev ? '🚌 SEV' : dep.line.name}
+                    {sev ? 'SEV' : dep.line.name}
                   </span>
-
-                  {/* Direction */}
                   <span style={{ ...secondaryStyle, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {dep.direction}
                   </span>
-
-                  {/* Time or Cancelled */}
                   {cancelled ? (
-                    <span style={{ color: '#f87171', fontWeight: 600, fontSize: '0.75rem', flexShrink: 0 }}>
+                    <span style={{ color: '#f87171', fontWeight: 600, fontSize: 'clamp(11px, 1vw, 14px)', flexShrink: 0 }}>
                       Cancelled
                     </span>
                   ) : (
-                    <span style={{ ...itemStyle, fontFamily: 'monospace', flexShrink: 0 }}>
+                    <span style={{ ...itemStyle, fontWeight: 600, color: 'var(--fd-accent)', flexShrink: 0 }}>
                       {formatInTimeZone(new Date(dep.when!), 'Europe/Berlin', 'HH:mm')}
                     </span>
                   )}
-
-                  {/* Delay */}
                   {delay && !cancelled && (
-                    <span style={{ color: '#fb923c', fontSize: '0.75rem', fontWeight: 600, flexShrink: 0 }}>
+                    <span style={{ color: '#C4483A', fontSize: 'clamp(10px, 0.9vw, 13px)', fontWeight: 600, flexShrink: 0 }}>
                       {delay}
                     </span>
                   )}
@@ -199,38 +162,33 @@ export function KioskPageB() {
             })}
           </div>
         )}
-      </PanelSection>
+      </div>
 
-      {/* World — country of day */}
-      <PanelSection
-        title="World"
-        isEmpty={!countryLoading && !country}
-        emptyText="Loading..."
-      >
+      {/* Column 3: Country of the Day */}
+      <div className="kiosk-stage-column">
+        <div style={titleStyle}>Country of the Day</div>
         {countryLoading ? (
           <div style={secondaryStyle}>Loading...</div>
         ) : country ? (
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'flex-start' }}>
             {country.flags?.svg && (
               <img
                 src={country.flags.svg}
                 alt={country.flags.alt ?? `Flag of ${country.name.common}`}
-                style={{ height: '2rem', width: 'auto', borderRadius: '2px', flexShrink: 0, objectFit: 'cover' }}
+                style={{ width: '100%', maxHeight: 'clamp(40px, 5vw, 80px)', objectFit: 'contain', objectPosition: 'left', borderRadius: '4px', flexShrink: 0 }}
               />
             )}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', minWidth: 0 }}>
-              <span style={{ ...itemStyle, fontWeight: 600 }}>{country.name.common}</span>
+            <div>
+              <div style={{ ...itemStyle, fontWeight: 700 }}>{country.name.common}</div>
               {country.capital && (
-                <span style={secondaryStyle}>{country.capital[0]}</span>
-              )}
-              {country.region && (
-                <span style={secondaryStyle}>{country.region}</span>
+                <div style={secondaryStyle}>{country.capital[0]}{country.region ? ` \u00B7 ${country.region}` : ''}</div>
               )}
             </div>
           </div>
-        ) : null}
-      </PanelSection>
-
+        ) : (
+          <div style={secondaryStyle}>No data</div>
+        )}
+      </div>
     </div>
   );
 }

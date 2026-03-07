@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
 import { useInterval } from './useInterval';
 
-export type StageSlot = 'photo' | 'life' | 'world';
+export type StageSlot = 'life' | 'world';
 
-const STAGES: StageSlot[] = ['photo', 'life', 'world'];
+const STAGES: StageSlot[] = ['life', 'world'];
 
 /**
- * Cycles through 3 stage slots on a timer.
+ * Cycles through 2 stage slots (life/world) on a timer.
  * Returns the active slot and a transitioning flag for crossfade.
  */
 export function useStageRotation(cadenceMs: number = 60000) {
