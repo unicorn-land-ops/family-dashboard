@@ -185,17 +185,17 @@ body {
   min-height: 0;
 }
 
-/* Rotating stage — full-width zone for photo/life/world rotation */
+/* Rotating stage — full-width zone for life/world rotation */
 .kiosk-stage {
-  grid-area: stage;
-  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
   min-height: 0;
   overflow: hidden;
 }
 
 .kiosk-stage-slot {
-  position: absolute;
-  inset: 0;
+  grid-area: 1 / 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
