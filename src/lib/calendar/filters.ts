@@ -18,9 +18,9 @@ function startsBeforeEvening(event: CalendarEvent): boolean {
  * always show, even from work calendars.
  */
 function isTravelEvent(event: CalendarEvent): boolean {
-  if (TRAVEL_EVENT_REGEX.test(event.summary)) return true;
+  if (TRAVEL_EVENT_REGEX.test(event.summary ?? '')) return true;
   // "Label: Place" pattern (e.g. "health.tech: Basel, Switzerland")
-  if (DESTINATION_LABEL_REGEX.test(event.summary)) return true;
+  if (DESTINATION_LABEL_REGEX.test(event.summary ?? '')) return true;
   // Multi-day all-day events are typically conferences/trips
   if (event.isAllDay) {
     const durationMs = event.endTime.getTime() - event.startTime.getTime();
@@ -34,7 +34,7 @@ function isTravelEvent(event: CalendarEvent): boolean {
  */
 function isSchulfrei(event: CalendarEvent): boolean {
   if (!event.isAllDay) return false;
-  return /schulfrei|no school|kein unterricht/i.test(event.summary);
+  return /schulfrei|no school|kein unterricht/i.test(event.summary ?? '');
 }
 
 const TRAVEL_EVENT_REGEX = /\b(flight|fly|travel|trip|hotel|airport|layover|conference|quiltcon|vacation)\b/i;

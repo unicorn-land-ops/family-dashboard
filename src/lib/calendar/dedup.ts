@@ -1,7 +1,7 @@
 import type { CalendarEvent } from './types';
 
 function eventKey(event: CalendarEvent): string {
-  const summary = event.summary.trim().toLowerCase();
+  const summary = (event.summary ?? '').trim().toLowerCase();
   const start = event.startTime.toISOString();
   const end = event.endTime.toISOString();
   return `${summary}|${start}|${end}`;

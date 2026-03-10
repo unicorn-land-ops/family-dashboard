@@ -162,7 +162,7 @@ export function parseICS(
   for (const event of events) {
     parsed.push({
       id: event.uid,
-      summary: event.summary,
+      summary: event.summary ?? '',
       startTime: event.startDate.toJSDate(),
       endTime: event.endDate.toJSDate(),
       isAllDay: event.startDate.isDate,
@@ -175,7 +175,7 @@ export function parseICS(
   for (const occ of occurrences) {
     parsed.push({
       id: `${occ.item.uid}-${occ.startDate.toJSDate().toISOString()}`,
-      summary: occ.item.summary,
+      summary: occ.item.summary ?? '',
       startTime: occ.startDate.toJSDate(),
       endTime: occ.endDate.toJSDate(),
       isAllDay: occ.startDate.isDate,
