@@ -25,7 +25,7 @@ export function KioskDashboard() {
   const todayDay = days[0];
   const tomorrowDay = days[1];
   const dayAfterDay = days[2];
-  const compactDays = days.slice(3, 7);
+  const compactDays = days.slice(3, 10);
   const compactWeather = compactDays.map((_, i) => getDailyWeather(weather, i + 3));
 
   return (

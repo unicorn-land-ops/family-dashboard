@@ -46,9 +46,9 @@ export function useCalendar() {
     });
 
     if (allEvents.length === 0) {
-      // Return empty 7-day structure
+      // Return empty 10-day structure
       const today = startOfToday();
-      const emptyDays = Array.from({ length: 7 }, (_, i) => {
+      const emptyDays = Array.from({ length: 10 }, (_, i) => {
         const date = addDays(today, i);
         return {
           date,
@@ -63,9 +63,9 @@ export function useCalendar() {
     const deduped = deduplicateEvents(allEvents);
     const filtered = applyFilters(deduped);
 
-    // Group by day: 7 days starting from today
+    // Group by day: 10 days starting from today
     const today = startOfToday();
-    const daySchedules: DaySchedule[] = Array.from({ length: 7 }, (_, i) => {
+    const daySchedules: DaySchedule[] = Array.from({ length: 10 }, (_, i) => {
       const date = addDays(today, i);
       const nextDay = addDays(date, 1);
 

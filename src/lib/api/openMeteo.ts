@@ -37,7 +37,7 @@ export async function fetchWeatherForLocation({
     current: 'temperature_2m,weather_code',
     daily: 'temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset',
     timezone,
-    forecast_days: '7',
+    forecast_days: '10',
   });
 
   const response = await fetch(`${BASE_URL}?${params}`);
