@@ -288,22 +288,22 @@ body {
   position: relative;
   background: var(--fd-ticker-bg);
   border-radius: 0.75rem;
-  padding: 0.6rem 1rem;
+  padding: 0.85rem 1.2rem;
 }
 
 .ticker-carousel {
   position: relative;
-  height: 1.6em;
+  height: 2.1em;
   overflow: hidden;
 }
 
 .ticker-slide {
-  height: 1.6em;
-  line-height: 1.6em;
+  height: 2.1em;
+  line-height: 2.1em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  font-size: clamp(1.3rem, 1.8vw, 1.6rem);
   color: var(--fd-text-1);
   font-family: 'Outfit', sans-serif;
   letter-spacing: 0.01em;
@@ -318,8 +318,8 @@ body {
 
 .ticker-accent-pip {
   display: inline-block;
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--fd-accent);
   margin-right: 0.5em;
