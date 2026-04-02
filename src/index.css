@@ -17,18 +17,18 @@
  *   day/golden      = DARK  — reduces glare when bright outside
  */
 :root {
-  --fd-bg-1: #F5F0E8;
-  --fd-bg-2: #EDE7DD;
-  --fd-card-bg: #FFFFFF;
-  --fd-card-border: rgba(0, 0, 0, 0.08);
+  --fd-bg-1: #141210;
+  --fd-bg-2: #1C1816;
+  --fd-card-bg: #1C1816;
+  --fd-card-border: rgba(255, 255, 255, 0.06);
   --fd-accent: #D4813A;
   --fd-accent-teal: #56BDB0;
-  --fd-text-1: #3D3530;
-  --fd-text-2: #6B5E52;
-  --fd-photo-frame: #3D3530;
-  --fd-compact-bg: #EDE7DD;
-  --fd-ticker-bg: #EDE7DD;
-  --fd-divider: #E8E0D6;
+  --fd-text-1: #F5F0E8;
+  --fd-text-2: #C4B8AC;
+  --fd-photo-frame: #1C1816;
+  --fd-compact-bg: #2A2420;
+  --fd-ticker-bg: #2A2420;
+  --fd-divider: #2A2420;
   --fd-shimmer-1: #E8835A;
   --fd-shimmer-2: #D4A43A;
   --fd-shimmer-3: #56BDB0;
@@ -38,18 +38,18 @@
 :root[data-phase="night"],
 :root[data-phase="dawn"],
 :root[data-phase="dusk"] {
-  --fd-bg-1: #F5F0E8;
-  --fd-bg-2: #EDE7DD;
-  --fd-card-bg: #FFFFFF;
-  --fd-card-border: rgba(0, 0, 0, 0.08);
+  --fd-bg-1: #141210;
+  --fd-bg-2: #1C1816;
+  --fd-card-bg: #1C1816;
+  --fd-card-border: rgba(255, 255, 255, 0.06);
   --fd-accent: #D4813A;
   --fd-accent-teal: #56BDB0;
-  --fd-text-1: #3D3530;
-  --fd-text-2: #6B5E52;
-  --fd-photo-frame: #3D3530;
-  --fd-compact-bg: #EDE7DD;
-  --fd-ticker-bg: #EDE7DD;
-  --fd-divider: #E8E0D6;
+  --fd-text-1: #F5F0E8;
+  --fd-text-2: #C4B8AC;
+  --fd-photo-frame: #1C1816;
+  --fd-compact-bg: #2A2420;
+  --fd-ticker-bg: #2A2420;
+  --fd-divider: #2A2420;
   --fd-shimmer-1: #E8835A;
   --fd-shimmer-2: #D4A43A;
   --fd-shimmer-3: #56BDB0;
@@ -66,7 +66,7 @@
   --fd-accent-teal: #56BDB0;
   --fd-text-1: #F5F0E8;
   --fd-text-2: #C4B8AC;
-  --fd-photo-frame: #F0EBE3;
+  --fd-photo-frame: #2A2420;
   --fd-compact-bg: #3D3530;
   --fd-ticker-bg: #3D3530;
   --fd-divider: #3D3530;
