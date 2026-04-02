@@ -128,12 +128,11 @@ body {
     'today'
     'next'
     'compact'
-    'stage'
     'photo'
     'ticker'
     'status';
   grid-template-columns: 1fr;
-  grid-template-rows: auto auto auto auto minmax(0, 1fr) minmax(200px, 1fr) auto auto;
+  grid-template-rows: auto auto auto auto minmax(200px, 1fr) auto auto;
 }
 
 /* Stage card — white container with colored top-border */
