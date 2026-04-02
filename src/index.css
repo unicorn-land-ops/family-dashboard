@@ -383,17 +383,20 @@ body {
 
 .kiosk-compact-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(8px, 0.8vw, 12px);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: clamp(6px, 0.6vw, 10px);
   min-height: 0;
 }
 
 .kiosk-compact-cell {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: clamp(2px, 0.3vw, 4px);
-  padding: clamp(6px, 0.6vw, 10px);
+  gap: clamp(2px, 0.2vw, 3px);
+  padding: clamp(6px, 0.5vw, 8px);
+  background: var(--fd-compact-bg);
+  border-radius: 0.65rem;
+  overflow: hidden;
+  min-width: 0;
 }
 
 /* Portrait / mobile layout */

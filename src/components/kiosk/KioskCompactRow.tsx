@@ -2,6 +2,8 @@ import { format } from 'date-fns';
 import type { CalendarEvent } from '../../lib/calendar/types';
 import { WeatherIcon } from '../weather/WeatherIcon';
 
+const MAX_EVENTS = 3;
+
 interface CompactDay {
   date: Date;
   dateStr: string;
@@ -17,55 +19,111 @@ interface KioskCompactRowProps {
   } | null>;
 }
 
+function CompactEvent({ event }: { event: CalendarEvent }) {
+  return (
+    <div
+      className="truncate"
+      style={{
+        fontSize: 'clamp(0.65rem, 0.8vw, 0.85rem)',
+        color: 'var(--fd-text-2)',
+        lineHeight: 1.3,
+      }}
+      title={event.summary}
+    >
+      {event.summary}
+    </div>
+  );
+}
+
 export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
   return (
     <div className="kiosk-compact-grid">
       {days.map((day, i) => {
-        const dayTitle = format(day.date, 'EEE');
+        const dayAbbrev = format(day.date, 'EEE');
+        const dateNum = format(day.date, 'd');
         const weather = dailyWeather[i];
-        const eventCount = day.events.length;
+        const visibleEvents = day.events.slice(0, MAX_EVENTS);
+        const extraCount = day.events.length - MAX_EVENTS;
 
         return (
           <div key={day.dateStr} className="kiosk-compact-cell">
-            <span
-              style={{
-                fontSize: 'clamp(1.2rem, 1.5vw, 1.5rem)',
-                fontWeight: 600,
-                color: 'var(--fd-text-1)',
-              }}
-            >
-              {dayTitle}
-            </span>
+            {/* Day header: abbrev + date */}
+            <div className="flex items-baseline justify-between">
+              <span
+                style={{
+                  fontSize: 'clamp(0.9rem, 1.1vw, 1.15rem)',
+                  fontWeight: 600,
+                  color: 'var(--fd-text-1)',
+                }}
+              >
+                {dayAbbrev}
+              </span>
+              <span
+                style={{
+                  fontSize: 'clamp(0.75rem, 0.9vw, 0.95rem)',
+                  color: 'var(--fd-text-2)',
+                  opacity: 0.7,
+                }}
+              >
+                {dateNum}
+              </span>
+            </div>
+
+            {/* Weather */}
             {weather && (
               <div
-                className="flex items-center gap-1"
+                className="flex items-center gap-0.5"
                 style={{
-                  fontSize: 'clamp(0.85rem, 1vw, 1.1rem)',
+                  fontSize: 'clamp(0.7rem, 0.85vw, 0.9rem)',
                   color: 'var(--fd-accent)',
                 }}
               >
                 <WeatherIcon
                   code={weather.weatherCode}
-                  size="clamp(1.1rem, 1.3vw, 1.5rem)"
+                  size="clamp(0.9rem, 1vw, 1.1rem)"
                 />
                 <span className="tabular-nums font-medium">
                   {Math.round(weather.high)}&deg;
                 </span>
+                <span
+                  className="tabular-nums"
+                  style={{ color: 'var(--fd-text-2)', opacity: 0.6 }}
+                >
+                  {Math.round(weather.low)}&deg;
+                </span>
               </div>
             )}
-            <span
-              style={{
-                fontSize: 'clamp(0.8rem, 0.95vw, 1rem)',
-                color: 'var(--fd-text-2)',
-                opacity: eventCount > 0 ? 0.8 : 0.4,
-              }}
-            >
-              {eventCount === 0
-                ? 'Free'
-                : eventCount === 1
-                  ? '1 event'
-                  : `${eventCount} events`}
-            </span>
+
+            {/* Events */}
+            {visibleEvents.length > 0 ? (
+              <div className="flex flex-col gap-px mt-0.5">
+                {visibleEvents.map((event) => (
+                  <CompactEvent key={event.id} event={event} />
+                ))}
+                {extraCount > 0 && (
+                  <span
+                    style={{
+                      fontSize: 'clamp(0.6rem, 0.7vw, 0.75rem)',
+                      color: 'var(--fd-text-2)',
+                      opacity: 0.5,
+                    }}
+                  >
+                    +{extraCount} more
+                  </span>
+                )}
+              </div>
+            ) : (
+              <span
+                style={{
+                  fontSize: 'clamp(0.65rem, 0.8vw, 0.85rem)',
+                  color: 'var(--fd-text-2)',
+                  opacity: 0.35,
+                  fontStyle: 'italic',
+                }}
+              >
+                Free
+              </span>
+            )}
           </div>
         );
       })}
