@@ -71,7 +71,7 @@ export const CurrentWeather = React.memo(function CurrentWeather({
           style={{ color: 'var(--fd-accent)' }}
           size={
             isKiosk
-              ? 'clamp(2.2rem, 3.6vw, 4rem)'
+              ? 'clamp(3rem, 4.8vw, 5.5rem)'
               : 'clamp(1.5rem, 3vw, 3rem)'
           }
         />
@@ -81,7 +81,7 @@ export const CurrentWeather = React.memo(function CurrentWeather({
             style={{
               color: 'var(--fd-text-1)',
               fontSize: isKiosk
-                ? 'clamp(2.3rem, 3.8vw, 4.2rem)'
+                ? 'clamp(3rem, 5vw, 5.5rem)'
                 : 'clamp(1.5rem, 3vw, 3rem)',
             }}
           >
@@ -91,7 +91,7 @@ export const CurrentWeather = React.memo(function CurrentWeather({
             style={{
               color: 'var(--fd-text-2)',
               fontSize: isKiosk
-                ? 'clamp(0.86rem,1.25vw,1.1rem)'
+                ? 'clamp(1.15rem,1.7vw,1.5rem)'
                 : 'clamp(0.6rem,1vw,0.85rem)',
             }}
           >
@@ -109,7 +109,7 @@ export const CurrentWeather = React.memo(function CurrentWeather({
             code={travelerCode}
             size={
               isKiosk
-                ? 'clamp(1rem, 1.4vw, 1.4rem)'
+                ? 'clamp(1.3rem, 1.9vw, 1.9rem)'
                 : 'clamp(0.8rem, 1.2vw, 1.1rem)'
             }
           />
@@ -117,7 +117,7 @@ export const CurrentWeather = React.memo(function CurrentWeather({
             className="tabular-nums"
             style={{
               fontSize: isKiosk
-                ? 'clamp(0.8rem, 1.1vw, 1rem)'
+                ? 'clamp(1.05rem, 1.5vw, 1.35rem)'
                 : 'clamp(0.6rem, 0.9vw, 0.8rem)',
             }}
           >
@@ -127,7 +127,7 @@ export const CurrentWeather = React.memo(function CurrentWeather({
             className="uppercase tracking-[0.06em]"
             style={{
               fontSize: isKiosk
-                ? 'clamp(0.65rem, 0.9vw, 0.85rem)'
+                ? 'clamp(0.85rem, 1.2vw, 1.15rem)'
                 : 'clamp(0.45rem, 0.7vw, 0.65rem)',
             }}
           >

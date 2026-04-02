@@ -18,7 +18,7 @@ export function DateDisplay({ variant = 'default' }: DateDisplayProps) {
       style={{
         color: 'var(--fd-text-2)',
         fontSize: isKiosk
-          ? 'clamp(1.2rem, 1.8vw, 1.8rem)'
+          ? 'clamp(1.6rem, 2.4vw, 2.4rem)'
           : 'clamp(0.875rem, 1.2vw, 1.25rem)',
       }}
     >

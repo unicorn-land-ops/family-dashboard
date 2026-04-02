@@ -32,7 +32,7 @@ export function Clock({ travelTarget = null, variant = 'default' }: ClockProps) 
         className="font-light tracking-tight leading-none tabular-nums clock-shimmer"
         style={{
           fontSize: isKiosk
-            ? 'clamp(4rem, 12vw, 11rem)'
+            ? 'clamp(5.5rem, 15vw, 14rem)'
             : 'clamp(2rem, 6vw, 6rem)',
         }}
       >
@@ -47,7 +47,7 @@ export function Clock({ travelTarget = null, variant = 'default' }: ClockProps) 
             className="uppercase tracking-[0.08em]"
             style={{
               fontSize: isKiosk
-                ? 'clamp(0.7rem,1vw,0.95rem)'
+                ? 'clamp(0.95rem,1.35vw,1.3rem)'
                 : 'clamp(0.5rem,0.8vw,0.7rem)',
             }}
           >
@@ -57,7 +57,7 @@ export function Clock({ travelTarget = null, variant = 'default' }: ClockProps) 
             className="font-medium tabular-nums"
             style={{
               fontSize: isKiosk
-                ? 'clamp(0.9rem,1.3vw,1.2rem)'
+                ? 'clamp(1.2rem,1.7vw,1.6rem)'
                 : 'clamp(0.65rem,1vw,0.9rem)',
             }}
           >

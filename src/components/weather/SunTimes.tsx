@@ -36,14 +36,14 @@ export const SunTimes = React.memo(function SunTimes({ variant = 'default' }: Su
       className="flex items-center gap-[clamp(6px,1vw,12px)]"
       style={{
         fontSize: isKiosk
-          ? 'clamp(0.82rem,1.18vw,1.02rem)'
+          ? 'clamp(1.1rem,1.6vw,1.4rem)'
           : 'clamp(0.65rem,1vw,0.85rem)',
       }}
     >
       <div className="flex items-center gap-0.5">
         <WiSunrise
           style={{ color: 'var(--fd-accent)' }}
-          size={isKiosk ? 'clamp(1.2rem,1.8vw,1.9rem)' : 'clamp(1rem, 1.5vw, 1.5rem)'}
+          size={isKiosk ? 'clamp(1.6rem,2.4vw,2.5rem)' : 'clamp(1rem, 1.5vw, 1.5rem)'}
         />
         <span className="tabular-nums" style={{ color: 'var(--fd-text-2)' }}>
           {formatSunTime(sunrise)}
@@ -52,7 +52,7 @@ export const SunTimes = React.memo(function SunTimes({ variant = 'default' }: Su
       <div className="flex items-center gap-0.5">
         <WiSunset
           style={{ color: 'var(--fd-accent)' }}
-          size={isKiosk ? 'clamp(1.2rem,1.8vw,1.9rem)' : 'clamp(1rem, 1.5vw, 1.5rem)'}
+          size={isKiosk ? 'clamp(1.6rem,2.4vw,2.5rem)' : 'clamp(1rem, 1.5vw, 1.5rem)'}
         />
         <span className="tabular-nums" style={{ color: 'var(--fd-text-2)' }}>
           {formatSunTime(sunset)}
