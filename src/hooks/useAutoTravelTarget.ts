@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CALENDAR_FEEDS, HOME_TIMEZONE } from '../lib/calendar/config';
+import { CALENDAR_FEEDS } from '../lib/calendar/config';
 import type { CalendarEvent } from '../lib/calendar/types';
 import { geocodeLocation } from '../lib/api/geocoding';
 import { useCalendar } from './useCalendar';
@@ -123,11 +123,11 @@ async function resolveTravelTarget(candidates: TravelCandidate[]): Promise<Trave
     const results = await geocodeLocation(candidate.query);
     if (results.length === 0) continue;
 
-    const selected =
-      results.find((result) => result.timezone !== HOME_TIMEZONE) ?? results[0];
+    const selected = results[0];
     if (!selected) continue;
 
-    if (selected.timezone === HOME_TIMEZONE && isHomeArea(candidate.query)) {
+    // Skip if the location is in the home area (Berlin/Germany)
+    if (isHomeArea(candidate.query) || isHomeArea(selected.name)) {
       continue;
     }
 
