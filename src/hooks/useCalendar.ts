@@ -48,7 +48,7 @@ export function useCalendar() {
     if (allEvents.length === 0) {
       // Return empty 10-day structure
       const today = startOfToday();
-      const emptyDays = Array.from({ length: 10 }, (_, i) => {
+      const emptyDays = Array.from({ length: 11 }, (_, i) => {
         const date = addDays(today, i);
         return {
           date,
@@ -65,7 +65,7 @@ export function useCalendar() {
 
     // Group by day: 10 days starting from today
     const today = startOfToday();
-    const daySchedules: DaySchedule[] = Array.from({ length: 10 }, (_, i) => {
+    const daySchedules: DaySchedule[] = Array.from({ length: 11 }, (_, i) => {
       const date = addDays(today, i);
       const nextDay = addDays(date, 1);
 

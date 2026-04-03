@@ -25,8 +25,10 @@ export function KioskDashboard() {
   const todayDay = days[0];
   const tomorrowDay = days[1];
   const dayAfterDay = days[2];
-  const compactDays = days.slice(3, 10);
-  const compactWeather = compactDays.map((_, i) => getDailyWeather(weather, i + 3));
+  const compactDaysRow1 = days.slice(3, 7);
+  const compactWeatherRow1 = compactDaysRow1.map((_, i) => getDailyWeather(weather, i + 3));
+  const compactDaysRow2 = days.slice(7, 11);
+  const compactWeatherRow2 = compactDaysRow2.map((_, i) => getDailyWeather(weather, i + 7));
 
   return (
     <ErrorBoundary FallbackComponent={GlobalFallback} onError={logError}>
@@ -64,7 +66,13 @@ export function KioskDashboard() {
 
         <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
           <div className="kiosk-compact-area">
-            <KioskCompactRow days={compactDays} dailyWeather={compactWeather} />
+            <KioskCompactRow days={compactDaysRow1} dailyWeather={compactWeatherRow1} />
+          </div>
+        </ErrorBoundary>
+
+        <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
+          <div className="kiosk-compact-area-2">
+            <KioskCompactRow days={compactDaysRow2} dailyWeather={compactWeatherRow2} />
           </div>
         </ErrorBoundary>
 
