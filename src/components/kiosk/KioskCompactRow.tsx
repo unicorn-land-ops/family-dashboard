@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import type { CalendarEvent } from '../../lib/calendar/types';
 import { WeatherIcon } from '../weather/WeatherIcon';
 
-const MAX_EVENTS = 3;
+const MAX_EVENTS = 2;
 
 interface CompactDay {
   date: Date;
@@ -40,59 +40,62 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
     <div className="kiosk-compact-grid">
       {days.map((day, i) => {
         const dayAbbrev = format(day.date, 'EEE');
-        const dateNum = format(day.date, 'd');
         const weather = dailyWeather[i];
         const visibleEvents = day.events.slice(0, MAX_EVENTS);
         const extraCount = day.events.length - MAX_EVENTS;
 
+        const monthDate = format(day.date, 'MMM d');
+
         return (
           <div key={day.dateStr} className="kiosk-compact-cell">
-            {/* Day header: abbrev + date */}
-            <div className="flex items-baseline justify-between">
-              <span
-                style={{
-                  fontSize: 'clamp(0.9rem, 1.1vw, 1.15rem)',
-                  fontWeight: 600,
-                  color: 'var(--fd-text-1)',
-                }}
-              >
-                {dayAbbrev}
-              </span>
-              <span
-                style={{
-                  fontSize: 'clamp(0.75rem, 0.9vw, 0.95rem)',
-                  color: 'var(--fd-text-2)',
-                  opacity: 0.7,
-                }}
-              >
-                {dateNum}
-              </span>
-            </div>
-
-            {/* Weather */}
-            {weather && (
-              <div
-                className="flex items-center gap-0.5"
-                style={{
-                  fontSize: 'clamp(0.7rem, 0.85vw, 0.9rem)',
-                  color: 'var(--fd-accent)',
-                }}
-              >
-                <WeatherIcon
-                  code={weather.weatherCode}
-                  size="clamp(0.9rem, 1vw, 1.1rem)"
-                />
-                <span className="tabular-nums font-medium">
-                  {Math.round(weather.high)}&deg;
+            {/* Header: day name + date on left, weather on right */}
+            <div className="flex items-start justify-between">
+              <div>
+                <span
+                  style={{
+                    fontSize: 'clamp(0.9rem, 1.1vw, 1.15rem)',
+                    fontWeight: 600,
+                    color: 'var(--fd-text-1)',
+                    display: 'block',
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {dayAbbrev}
                 </span>
                 <span
-                  className="tabular-nums"
-                  style={{ color: 'var(--fd-text-2)', opacity: 0.6 }}
+                  style={{
+                    fontSize: 'clamp(0.65rem, 0.8vw, 0.85rem)',
+                    color: 'var(--fd-text-2)',
+                    display: 'block',
+                  }}
                 >
-                  {Math.round(weather.low)}&deg;
+                  {monthDate}
                 </span>
               </div>
-            )}
+              {weather && (
+                <div
+                  className="flex items-center gap-0.5"
+                  style={{
+                    fontSize: 'clamp(0.7rem, 0.85vw, 0.9rem)',
+                    color: 'var(--fd-accent)',
+                  }}
+                >
+                  <WeatherIcon
+                    code={weather.weatherCode}
+                    size="clamp(0.9rem, 1vw, 1.1rem)"
+                  />
+                  <span className="tabular-nums font-medium">
+                    {Math.round(weather.high)}&deg;
+                  </span>
+                  <span
+                    className="tabular-nums"
+                    style={{ color: 'var(--fd-text-2)', opacity: 0.6 }}
+                  >
+                    {Math.round(weather.low)}&deg;
+                  </span>
+                </div>
+              )}
+            </div>
 
             {/* Events */}
             {visibleEvents.length > 0 ? (

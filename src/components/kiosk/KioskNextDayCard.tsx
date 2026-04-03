@@ -40,8 +40,8 @@ export function KioskNextDayCard({ day, dailyWeather }: KioskNextDayCardProps) {
 
   return (
     <section className="kiosk-next-day-card">
-      <header className="mb-[clamp(4px,0.6vw,8px)]">
-        <div className="flex items-center justify-between gap-2">
+      <header className="flex items-start justify-between mb-[clamp(4px,0.6vw,8px)]">
+        <div>
           <h3
             className="font-semibold leading-none"
             style={{
@@ -52,6 +52,7 @@ export function KioskNextDayCard({ day, dailyWeather }: KioskNextDayCardProps) {
             {dayTitle}
           </h3>
           <span
+            className="block mt-1"
             style={{
               fontSize: 'clamp(0.85rem, 1vw, 1.1rem)',
               color: 'var(--fd-text-2)',
@@ -62,7 +63,7 @@ export function KioskNextDayCard({ day, dailyWeather }: KioskNextDayCardProps) {
         </div>
         {dailyWeather && (
           <div
-            className="mt-1 inline-flex items-center gap-1"
+            className="flex items-center gap-1"
             style={{
               color: 'var(--fd-text-2)',
               fontSize: 'clamp(0.85rem, 1vw, 1.1rem)',

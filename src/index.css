@@ -304,13 +304,13 @@ body {
 
 .ticker-carousel {
   position: relative;
-  height: 2.6em;
+  height: 3.2rem;
   overflow: hidden;
 }
 
 .ticker-slide {
-  height: 2.6em;
-  line-height: 2.6em;
+  height: 3.2rem;
+  line-height: 3.2rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
