@@ -28,7 +28,7 @@ export function GlobalFallback({ error }: FallbackProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       window.location.reload();
-    }, 30_000);
+    }, 120_000);
     return () => clearTimeout(timer);
   }, []);
 
