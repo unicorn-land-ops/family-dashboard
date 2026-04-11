@@ -9,6 +9,8 @@ export interface PhotoItem {
   url: string;
   width: number;
   height: number;
+  takenAt?: string | null;  // ISO 8601 string from EXIF; worker may omit on older cache versions
+  place?: string | null;     // "City, Country" from reverse geocoding; null if no GPS
 }
 
 /** Fisher-Yates in-place shuffle — returns a new shuffled array copy */

@@ -1,5 +1,6 @@
 import { useGooglePhotos } from '../../hooks/useGooglePhotos';
 import { PHOTO_WORKER_URL, PHOTO_SIZE_SUFFIX } from '../../config/photos';
+import { PhotoMetaOverlay } from './PhotoMetaOverlay';
 
 interface KioskPhotoFrameProps {
   workerUrl?: string;
@@ -14,6 +15,11 @@ export function KioskPhotoFrame({ workerUrl = PHOTO_WORKER_URL }: KioskPhotoFram
 
   const currentPhoto = photos[currentIndex];
   const nextPhoto = photos[nextIndex];
+
+  // The "live" photo whose caption should be displayed is the one currently fully visible.
+  // During a crossfade, the `next` photo is the one becoming active.
+  const livePhoto = isTransitioning ? nextPhoto : currentPhoto;
+  const liveIndex = isTransitioning ? nextIndex : currentIndex;
 
   return (
     <div className="photo-frame">
@@ -31,6 +37,7 @@ export function KioskPhotoFrame({ workerUrl = PHOTO_WORKER_URL }: KioskPhotoFram
         aria-hidden="true"
         draggable={false}
       />
+      <PhotoMetaOverlay photo={livePhoto} photoKey={liveIndex} />
     </div>
   );
 }
