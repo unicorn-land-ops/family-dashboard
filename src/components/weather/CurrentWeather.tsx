@@ -76,17 +76,35 @@ export const CurrentWeather = React.memo(function CurrentWeather({
           }
         />
         <div className="flex flex-col items-end leading-tight">
-          <span
-            className="font-bold tabular-nums"
-            style={{
-              color: 'var(--fd-text-1)',
-              fontSize: isKiosk
-                ? 'clamp(3rem, 5vw, 5.5rem)'
-                : 'clamp(1.5rem, 3vw, 3rem)',
-            }}
-          >
-            {temp}&deg;C
-          </span>
+          <div className="flex items-baseline gap-[clamp(6px,0.8vw,12px)]">
+            <span
+              className="font-bold tabular-nums"
+              style={{
+                color: 'var(--fd-text-1)',
+                fontSize: isKiosk
+                  ? 'clamp(3rem, 5vw, 5.5rem)'
+                  : 'clamp(1.5rem, 3vw, 3rem)',
+              }}
+            >
+              {temp}&deg;C
+            </span>
+            {isKiosk && data.daily && (
+              <span
+                className="tabular-nums"
+                style={{
+                  fontSize: 'clamp(1.1rem, 1.6vw, 1.45rem)',
+                  lineHeight: 1,
+                }}
+              >
+                <span style={{ color: 'var(--fd-accent)' }}>
+                  {Math.round(data.daily.temperature_2m_max[0])}&deg;
+                </span>
+                <span style={{ color: 'var(--fd-text-2)', opacity: 0.6 }}>
+                  {' '}/{' '}{Math.round(data.daily.temperature_2m_min[0])}&deg;
+                </span>
+              </span>
+            )}
+          </div>
           <span
             style={{
               color: 'var(--fd-text-2)',

@@ -65,7 +65,6 @@ export function KioskNextDayCard({ day, dailyWeather }: KioskNextDayCardProps) {
           <div
             className="flex items-center gap-1"
             style={{
-              color: 'var(--fd-text-2)',
               fontSize: 'clamp(0.85rem, 1vw, 1.1rem)',
             }}
           >
@@ -75,7 +74,8 @@ export function KioskNextDayCard({ day, dailyWeather }: KioskNextDayCardProps) {
               size="clamp(1.1rem, 1.3vw, 1.5rem)"
             />
             <span className="tabular-nums">
-              {Math.round(dailyWeather.high)}&deg; / {Math.round(dailyWeather.low)}&deg;
+              <span style={{ color: 'var(--fd-accent)' }}>{Math.round(dailyWeather.high)}&deg;</span>
+              <span style={{ color: 'var(--fd-text-2)', opacity: 0.6 }}> / {Math.round(dailyWeather.low)}&deg;</span>
             </span>
           </div>
         )}

@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import type { CalendarEvent } from '../../lib/calendar/types';
 import { WeatherIcon } from '../weather/WeatherIcon';
 
-const MAX_EVENTS = 2;
+const MAX_EVENTS = 3;
 
 interface CompactDay {
   date: Date;
@@ -24,9 +24,9 @@ function CompactEvent({ event }: { event: CalendarEvent }) {
     <div
       className="truncate"
       style={{
-        fontSize: 'clamp(0.65rem, 0.8vw, 0.85rem)',
+        fontSize: 'clamp(0.78rem, 1vw, 1.05rem)',
         color: 'var(--fd-text-2)',
-        lineHeight: 1.3,
+        lineHeight: 1.35,
       }}
       title={event.summary}
     >
@@ -53,7 +53,7 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
               <div>
                 <span
                   style={{
-                    fontSize: 'clamp(0.9rem, 1.1vw, 1.15rem)',
+                    fontSize: 'clamp(1.05rem, 1.35vw, 1.4rem)',
                     fontWeight: 600,
                     color: 'var(--fd-text-1)',
                     display: 'block',
@@ -64,7 +64,7 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
                 </span>
                 <span
                   style={{
-                    fontSize: 'clamp(0.65rem, 0.8vw, 0.85rem)',
+                    fontSize: 'clamp(0.78rem, 0.95vw, 1rem)',
                     color: 'var(--fd-text-2)',
                     display: 'block',
                   }}
@@ -76,22 +76,22 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
                 <div
                   className="flex items-center gap-0.5"
                   style={{
-                    fontSize: 'clamp(0.7rem, 0.85vw, 0.9rem)',
-                    color: 'var(--fd-accent)',
+                    fontSize: 'clamp(0.85rem, 1.05vw, 1.1rem)',
                   }}
                 >
                   <WeatherIcon
                     code={weather.weatherCode}
-                    size="clamp(0.9rem, 1vw, 1.1rem)"
+                    size="clamp(1rem, 1.2vw, 1.3rem)"
+                    style={{ color: 'var(--fd-accent)' }}
                   />
-                  <span className="tabular-nums font-medium">
+                  <span className="tabular-nums font-medium" style={{ color: 'var(--fd-accent)' }}>
                     {Math.round(weather.high)}&deg;
                   </span>
                   <span
                     className="tabular-nums"
                     style={{ color: 'var(--fd-text-2)', opacity: 0.6 }}
                   >
-                    {Math.round(weather.low)}&deg;
+                    /{Math.round(weather.low)}&deg;
                   </span>
                 </div>
               )}
@@ -106,7 +106,7 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
                 {extraCount > 0 && (
                   <span
                     style={{
-                      fontSize: 'clamp(0.6rem, 0.7vw, 0.75rem)',
+                      fontSize: 'clamp(0.72rem, 0.85vw, 0.9rem)',
                       color: 'var(--fd-text-2)',
                       opacity: 0.5,
                     }}
@@ -118,7 +118,7 @@ export function KioskCompactRow({ days, dailyWeather }: KioskCompactRowProps) {
             ) : (
               <span
                 style={{
-                  fontSize: 'clamp(0.65rem, 0.8vw, 0.85rem)',
+                  fontSize: 'clamp(0.78rem, 0.95vw, 1rem)',
                   color: 'var(--fd-text-2)',
                   opacity: 0.35,
                   fontStyle: 'italic',
