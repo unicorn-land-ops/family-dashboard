@@ -92,7 +92,7 @@ export const CurrentWeather = React.memo(function CurrentWeather({
               <span
                 className="tabular-nums"
                 style={{
-                  fontSize: 'clamp(1.1rem, 1.6vw, 1.45rem)',
+                  fontSize: 'clamp(1.8rem, 2.8vw, 2.5rem)',
                   lineHeight: 1,
                 }}
               >
@@ -100,7 +100,7 @@ export const CurrentWeather = React.memo(function CurrentWeather({
                   {Math.round(data.daily.temperature_2m_max[0])}&deg;
                 </span>
                 <span style={{ color: 'var(--fd-text-2)', opacity: 0.6 }}>
-                  {' '}/{' '}{Math.round(data.daily.temperature_2m_min[0])}&deg;
+                  /{Math.round(data.daily.temperature_2m_min[0])}&deg;
                 </span>
               </span>
             )}
