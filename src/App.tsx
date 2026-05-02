@@ -22,6 +22,7 @@ import { useMobileNav } from './hooks/useMobileNav';
 import { usePriorityInterrupt } from './hooks/usePriorityInterrupt';
 import { useTimeOfDay } from './hooks/useTimeOfDay';
 import { KioskDashboard } from './components/kiosk/KioskDashboard';
+import { KidChoreView } from './components/chore/KidChoreView';
 
 function DefaultDashboard() {
   const { activeCount: activeTimerCount, completedTimers } = useTimers();
@@ -94,15 +95,20 @@ function DefaultDashboard() {
   );
 }
 
-function resolveDashboardView(): 'default' | 'kiosk' {
-  const viewParam = new URLSearchParams(window.location.search).get('view');
-  return viewParam?.toLowerCase() === 'kiosk' ? 'kiosk' : 'default';
+function resolveDashboardView(): { mode: 'default' | 'kiosk' | 'kid'; childId?: string } {
+  const params = new URLSearchParams(window.location.search);
+  const viewParam = params.get('view')?.toLowerCase();
+  const childParam = params.get('child')?.toLowerCase();
+
+  if (viewParam === 'kiosk') return { mode: 'kiosk' };
+  if (viewParam === 'chores' && childParam) return { mode: 'kid', childId: childParam };
+  return { mode: 'default' };
 }
 
 function App() {
   useAutoRefresh();
   useMemoryWatchdog();
-  const view = resolveDashboardView();
+  const { mode, childId } = resolveDashboardView();
   const phase = useTimeOfDay();
 
   useEffect(() => {
@@ -110,8 +116,12 @@ function App() {
     return () => document.documentElement.removeAttribute('data-phase');
   }, [phase]);
 
-  if (view === 'kiosk') {
+  if (mode === 'kiosk') {
     return <KioskDashboard />;
+  }
+
+  if (mode === 'kid' && childId) {
+    return <KidChoreView childId={childId} />;
   }
 
   return <DefaultDashboard />;
