@@ -6,6 +6,7 @@ import { KioskNextDayCard } from './KioskNextDayCard';
 import { KioskCompactRow } from './KioskCompactRow';
 import { KioskPhotoFrame } from './KioskPhotoFrame';
 import { KioskNewsTicker } from './KioskNewsTicker';
+import { GroceryPanel } from '../grocery/GroceryPanel';
 import { PanelFallback, GlobalFallback, logError } from '../ErrorFallback';
 import { useCalendar } from '../../hooks/useCalendar';
 import { useWeather } from '../../hooks/useWeather';
@@ -27,8 +28,6 @@ export function KioskDashboard() {
   const dayAfterDay = days[2];
   const compactDaysRow1 = days.slice(3, 7);
   const compactWeatherRow1 = compactDaysRow1.map((_, i) => getDailyWeather(weather, i + 3));
-  const compactDaysRow2 = days.slice(7, 11);
-  const compactWeatherRow2 = compactDaysRow2.map((_, i) => getDailyWeather(weather, i + 7));
 
   return (
     <ErrorBoundary FallbackComponent={GlobalFallback} onError={logError}>
@@ -71,8 +70,8 @@ export function KioskDashboard() {
         </ErrorBoundary>
 
         <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
-          <div className="kiosk-compact-area-2">
-            <KioskCompactRow days={compactDaysRow2} dailyWeather={compactWeatherRow2} />
+          <div className="kiosk-grocery-area">
+            <GroceryPanel variant="compact" />
           </div>
         </ErrorBoundary>
 

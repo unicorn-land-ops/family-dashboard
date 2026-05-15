@@ -128,7 +128,7 @@ body {
     'today'
     'next'
     'compact'
-    'compact2'
+    'grocery'
     'photo'
     'ticker'
     'status';
@@ -185,9 +185,10 @@ body {
   min-height: 0;
 }
 
-.kiosk-compact-area-2 {
-  grid-area: compact2;
+.kiosk-grocery-area {
+  grid-area: grocery;
   min-height: 0;
+  overflow: hidden;
 }
 
 /* Rotating stage — full-width zone for life/world rotation */
