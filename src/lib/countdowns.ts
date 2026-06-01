@@ -206,6 +206,12 @@ const CAMP_EVENTS: CountdownEvent[] = [
     label: 'Beach Camp',
     date: new Date('2026-07-13'), // "Summer camp" in the calendar — Mon before horse camp
   },
+  {
+    id: 'wren-america-2026',
+    emoji: '\u{1F1FA}\u{1F1F8}', // 🇺🇸
+    label: 'Wren in America!',
+    date: new Date('2026-07-21'),
+  },
 ];
 
 // ---------------------------------------------------------------------------
