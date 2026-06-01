@@ -9,10 +9,15 @@
  */
 
 import React from 'react';
-import { COUNTDOWN_EVENTS, getUpcomingCountdowns } from '../../lib/countdowns';
+import { COUNTDOWN_EVENTS, getUpcomingCountdowns, eventRowToCountdown } from '../../lib/countdowns';
+import { useEvents } from '../../hooks/useEvents';
 
 export const CountdownPanel = React.memo(function CountdownPanel() {
-  const countdowns = getUpcomingCountdowns(COUNTDOWN_EVENTS);
+  const { events } = useEvents();
+  const countdowns = getUpcomingCountdowns([
+    ...COUNTDOWN_EVENTS,
+    ...events.map(eventRowToCountdown),
+  ]);
 
   return (
     <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex-1 flex flex-col gap-2">

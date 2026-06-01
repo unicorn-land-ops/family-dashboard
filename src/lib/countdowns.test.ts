@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   computeEaster,
   getUpcomingCountdowns,
+  eventRowToCountdown,
   COUNTDOWN_EVENTS,
   type CountdownEvent,
 } from './countdowns';
@@ -108,6 +109,41 @@ describe('getUpcomingCountdowns', () => {
     const result = getUpcomingCountdowns(mockEvents, 4, TODAY);
     expect(result[0].daysRemaining).toBe(0); // today-1 is nearest
     expect(result[1].id).toBe('soon-1'); // 5 days
+  });
+});
+
+// ---------------------------------------------------------------------------
+// eventRowToCountdown — Supabase row → CountdownEvent mapping
+// ---------------------------------------------------------------------------
+describe('eventRowToCountdown', () => {
+  const row = {
+    id: 'abc-123',
+    emoji: '🎉',
+    label: 'Party',
+    event_date: '2026-09-15',
+  };
+
+  it('maps id, emoji and label straight through', () => {
+    const c = eventRowToCountdown(row);
+    expect(c.id).toBe('abc-123');
+    expect(c.emoji).toBe('🎉');
+    expect(c.label).toBe('Party');
+  });
+
+  it('parses event_date into a Date', () => {
+    const c = eventRowToCountdown(row);
+    expect(c.date).toBeInstanceOf(Date);
+    expect(c.date.getUTCFullYear()).toBe(2026);
+    expect(c.date.getUTCMonth()).toBe(8); // 0-indexed: 8 = September
+    expect(c.date.getUTCDate()).toBe(15);
+  });
+
+  it('merges with static events and sorts correctly via getUpcomingCountdowns', () => {
+    const TODAY = new Date('2026-09-01T12:00:00');
+    const dynamic = [eventRowToCountdown(row)];
+    const merged = getUpcomingCountdowns([...dynamic], 10, TODAY);
+    expect(merged.find((e) => e.id === 'abc-123')).toBeDefined();
+    expect(merged[0].daysRemaining).toBe(14);
   });
 });
 

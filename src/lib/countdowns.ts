@@ -60,6 +60,24 @@ export function computeEaster(year: number): Date {
  * Uses differenceInDays(startOfDay(target), startOfDay(now)) — DST-safe.
  * Returns daysRemaining = 0 for same-day events (displayed as "TODAY").
  */
+/**
+ * Maps a Supabase `events` row to a CountdownEvent so user-managed events
+ * can be merged with the static COUNTDOWN_EVENTS before sorting/filtering.
+ */
+export function eventRowToCountdown(row: {
+  id: string;
+  emoji: string;
+  label: string;
+  event_date: string;
+}): CountdownEvent {
+  return {
+    id: row.id,
+    emoji: row.emoji,
+    label: row.label,
+    date: new Date(row.event_date),
+  };
+}
+
 export function getUpcomingCountdowns(
   events: CountdownEvent[],
   count = 4,

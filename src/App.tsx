@@ -8,6 +8,7 @@ import { CalendarPanel } from './components/calendar/CalendarPanel';
 import { GroceryPanel } from './components/grocery/GroceryPanel';
 import { TimerPanel } from './components/timer/TimerPanel';
 import { ChorePanel } from './components/chore/ChorePanel';
+import { EventsPanel } from './components/events/EventsPanel';
 import { useTimers } from './hooks/useTimers';
 import { CountdownPanel } from './components/kiosk/CountdownPanel';
 import { ContentRotator } from './components/sidebar/ContentRotator';
@@ -53,6 +54,11 @@ function DefaultDashboard() {
           {activeView === 'chores' && (
             <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
               <ChorePanel variant="full" />
+            </ErrorBoundary>
+          )}
+          {activeView === 'events' && (
+            <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
+              <EventsPanel />
             </ErrorBoundary>
           )}
         </div>

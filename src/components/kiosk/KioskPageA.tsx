@@ -5,9 +5,10 @@
  */
 
 import React from 'react';
-import { COUNTDOWN_EVENTS, getUpcomingCountdowns } from '../../lib/countdowns';
+import { COUNTDOWN_EVENTS, getUpcomingCountdowns, eventRowToCountdown } from '../../lib/countdowns';
 import { useGroceries } from '../../hooks/useGroceries';
 import { useChores } from '../../hooks/useChores';
+import { useEvents } from '../../hooks/useEvents';
 import { isChoreCompleted } from '../../lib/choreSchedule';
 
 const titleStyle: React.CSSProperties = {
@@ -39,7 +40,11 @@ const badgeStyle = (bg: string): React.CSSProperties => ({
 });
 
 export function KioskPageA() {
-  const countdowns = getUpcomingCountdowns(COUNTDOWN_EVENTS);
+  const { events } = useEvents();
+  const countdowns = getUpcomingCountdowns([
+    ...COUNTDOWN_EVENTS,
+    ...events.map(eventRowToCountdown),
+  ]);
   const { items, isLoading: groceriesLoading, uncheckedCount } = useGroceries();
   const { chores, completions, completedCount, totalCount, isLoading: choresLoading } = useChores();
 

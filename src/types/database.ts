@@ -5,6 +5,8 @@ export type Grocery = Database['public']['Tables']['groceries']['Row'];
 export type Timer = Database['public']['Tables']['timers']['Row'];
 export type Chore = Database['public']['Tables']['chores']['Row'];
 export type ChoreCompletion = Database['public']['Tables']['chore_completions']['Row'];
+// EventRow (not `Event`) to avoid clashing with the DOM `Event` global
+export type EventRow = Database['public']['Tables']['events']['Row'];
 
 export interface Database {
   public: {
@@ -89,6 +91,33 @@ export interface Database {
           assigned_to?: string | null;
           schedule?: 'daily' | 'weekly' | 'once';
           is_active?: boolean;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      events: {
+        Row: {
+          id: string;
+          label: string;
+          emoji: string;
+          event_date: string; // 'YYYY-MM-DD'
+          added_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          label: string;
+          emoji?: string;
+          event_date: string;
+          added_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          label?: string;
+          emoji?: string;
+          event_date?: string;
+          added_by?: string | null;
           created_at?: string;
         };
         Relationships: [];
