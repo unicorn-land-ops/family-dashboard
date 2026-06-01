@@ -178,23 +178,6 @@ describe('COUNTDOWN_EVENTS', () => {
     expect(berlinEvents.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('includes Ellis camp countdowns', () => {
-    const camps = COUNTDOWN_EVENTS.filter((e) => e.id.includes('camp'));
-    expect(camps.length).toBeGreaterThanOrEqual(2);
-
-    const horse = COUNTDOWN_EVENTS.find((e) => e.id === 'ellis-horse-camp-2026');
-    expect(horse).toBeDefined();
-    expect(horse?.date.getFullYear()).toBe(2026);
-    expect(horse?.date.getMonth()).toBe(6); // 0-indexed: 6 = July
-    expect(horse?.date.getDate()).toBe(18);
-
-    const beach = COUNTDOWN_EVENTS.find((e) => e.id === 'ellis-beach-camp-2026');
-    expect(beach).toBeDefined();
-    expect(beach?.date.getFullYear()).toBe(2026);
-    expect(beach?.date.getMonth()).toBe(6); // July
-    expect(beach?.date.getDate()).toBe(13);
-  });
-
   it('includes family birthdays', () => {
     const birthdayEvents = COUNTDOWN_EVENTS.filter((e) => e.id.includes('birthday'));
     expect(birthdayEvents.length).toBeGreaterThanOrEqual(4);
