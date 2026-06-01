@@ -9,6 +9,7 @@ import { GroceryPanel } from './components/grocery/GroceryPanel';
 import { TimerPanel } from './components/timer/TimerPanel';
 import { ChorePanel } from './components/chore/ChorePanel';
 import { useTimers } from './hooks/useTimers';
+import { CountdownPanel } from './components/kiosk/CountdownPanel';
 import { ContentRotator } from './components/sidebar/ContentRotator';
 import { TransitPanel } from './components/sidebar/TransitPanel';
 import { HoroscopePanel } from './components/sidebar/HoroscopePanel';
@@ -68,6 +69,7 @@ function DefaultDashboard() {
             <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
               <div className="sidebar-rotation-enter flex flex-col gap-[clamp(10px,1vw,20px)] flex-1">
                 <ContentRotator activeIndex={activeIndex}>
+                  <CountdownPanel />
                   <TransitPanel />
                   <HoroscopePanel />
                   <CountryPanel />
@@ -75,7 +77,7 @@ function DefaultDashboard() {
                 <RotationIndicator
                   activeIndex={activeIndex}
                   panelCount={panelCount}
-                  labels={['Transit', 'Horoscopes', 'Country']}
+                  labels={['Coming Up', 'Transit', 'Horoscopes', 'Country']}
                   onSelect={goTo}
                 />
               </div>

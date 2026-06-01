@@ -23,7 +23,7 @@ export const CLOCK_INTERVAL_MS = 1000; // 1 second
 
 // Content rotation configuration
 export const ROTATION_INTERVAL_MS = 15_000; // 15 seconds per panel
-export const ROTATION_PANELS = ['transit', 'horoscopes', 'country'] as const;
+export const ROTATION_PANELS = ['countdown', 'transit', 'horoscopes', 'country'] as const;
 
 // Transit configuration
 export const TRANSIT_REFRESH_MS = 60_000; // 60 seconds

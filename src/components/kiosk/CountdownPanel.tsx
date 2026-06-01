@@ -4,8 +4,8 @@
  * Renders: emoji + label + days remaining (or "TODAY") for the 4 nearest events.
  * Data source: COUNTDOWN_EVENTS static config in src/lib/countdowns.ts
  *
- * Phase 3 will wire this panel into KioskDashboard (Page A: Life Stuff).
- * This component is built and exported in isolation.
+ * Used as the first panel in the default dashboard's sidebar rotation
+ * (see App.tsx). The kiosk view renders its own inline countdown in KioskPageA.
  */
 
 import React from 'react';
@@ -15,7 +15,7 @@ export const CountdownPanel = React.memo(function CountdownPanel() {
   const countdowns = getUpcomingCountdowns(COUNTDOWN_EVENTS);
 
   return (
-    <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex flex-col gap-2">
+    <div className="card-glass p-[clamp(12px,1.5vw,24px)] flex-1 flex flex-col gap-2">
       <h3
         className="font-semibold text-[clamp(11px,0.9vw,14px)] uppercase tracking-wider mb-1"
         style={{ color: 'var(--fd-text-2)' }}

@@ -189,6 +189,26 @@ const FAMILY_EVENTS: CountdownEvent[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Config: One-off camps & trips — specific dates, not annual.
+// Remove or update each entry once the date has passed.
+// ---------------------------------------------------------------------------
+
+const CAMP_EVENTS: CountdownEvent[] = [
+  {
+    id: 'ellis-horse-camp-2026',
+    emoji: '\u{1F434}', // 🐴
+    label: 'Horse Camp',
+    date: new Date('2026-07-18'), // iCanDo "Reiten auf dem Schloss", 18–25 Jul 2026
+  },
+  {
+    id: 'ellis-beach-camp-2026',
+    emoji: '\u{1F3D6}️', // 🏖️
+    label: 'Beach Camp',
+    date: new Date('2026-07-13'), // "Summer camp" in the calendar — Mon before horse camp
+  },
+];
+
+// ---------------------------------------------------------------------------
 // Main export: all countdown events
 // ---------------------------------------------------------------------------
 
@@ -202,4 +222,7 @@ export const COUNTDOWN_EVENTS: CountdownEvent[] = [
 
   // Family birthdays and annual events
   ...FAMILY_EVENTS,
+
+  // One-off camps & trips
+  ...CAMP_EVENTS,
 ];
