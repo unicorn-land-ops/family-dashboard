@@ -4,6 +4,7 @@ import { StatusBar } from '../layout/StatusBar';
 import { KioskTodayCard } from './KioskTodayCard';
 import { KioskNextDayCard } from './KioskNextDayCard';
 import { KioskCompactRow } from './KioskCompactRow';
+import { KioskCountdownRow } from './KioskCountdownRow';
 import { KioskPhotoFrame } from './KioskPhotoFrame';
 import { KioskNewsTicker } from './KioskNewsTicker';
 import { GroceryPanel } from '../grocery/GroceryPanel';
@@ -66,6 +67,12 @@ export function KioskDashboard() {
         <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
           <div className="kiosk-compact-area">
             <KioskCompactRow days={compactDaysRow1} dailyWeather={compactWeatherRow1} />
+          </div>
+        </ErrorBoundary>
+
+        <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
+          <div className="kiosk-countdown-area">
+            <KioskCountdownRow />
           </div>
         </ErrorBoundary>
 

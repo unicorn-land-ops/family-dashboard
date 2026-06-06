@@ -128,12 +128,13 @@ body {
     'today'
     'next'
     'compact'
+    'countdown'
     'grocery'
     'photo'
     'ticker'
     'status';
   grid-template-columns: 1fr;
-  grid-template-rows: auto auto auto auto auto minmax(200px, 1fr) auto auto;
+  grid-template-rows: auto auto auto auto auto auto minmax(200px, 1fr) auto auto;
 }
 
 /* Stage card — white container with colored top-border */
@@ -183,6 +184,12 @@ body {
 .kiosk-compact-area {
   grid-area: compact;
   min-height: 0;
+}
+
+.kiosk-countdown-area {
+  grid-area: countdown;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .kiosk-grocery-area {
