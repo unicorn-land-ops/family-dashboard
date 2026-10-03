@@ -1,5 +1,5 @@
 import { startOfDay, startOfWeek } from 'date-fns';
-import { toZonedTime } from 'date-fns-tz';
+import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 import type { Chore, ChoreCompletion } from '../types/database';
 
 const TIMEZONE = 'Europe/Berlin';
@@ -11,8 +11,9 @@ const TIMEZONE = 'Europe/Berlin';
 export function getPeriodStart(schedule: 'daily' | 'weekly' | 'once'): Date {
   if (schedule === 'once') return new Date(0);
   const berlinNow = toZonedTime(new Date(), TIMEZONE);
-  if (schedule === 'daily') return startOfDay(berlinNow);
-  return startOfWeek(berlinNow, { weekStartsOn: 1 });
+  const start = schedule === 'daily' ? startOfDay(berlinNow) : startOfWeek(berlinNow, { weekStartsOn: 1 });
+  // Back to a real instant, so this is also right on a UTC host (voice-worker).
+  return fromZonedTime(start, TIMEZONE);
 }
 
 /**

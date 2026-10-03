@@ -7,6 +7,8 @@ export type Chore = Database['public']['Tables']['chores']['Row'];
 export type ChoreCompletion = Database['public']['Tables']['chore_completions']['Row'];
 // EventRow (not `Event`) to avoid clashing with the DOM `Event` global
 export type EventRow = Database['public']['Tables']['events']['Row'];
+export type Reward = Database['public']['Tables']['rewards']['Row'];
+export type PointsBalance = Database['public']['Views']['points_balances']['Row'];
 
 export interface Database {
   public: {
@@ -76,6 +78,7 @@ export interface Database {
           schedule: 'daily' | 'weekly' | 'once';
           is_active: boolean;
           created_at: string;
+          points?: number; // absent until supabase/migrations/2026-10-03-rewards.sql runs
         };
         Insert: {
           id?: string;
@@ -84,6 +87,7 @@ export interface Database {
           schedule?: 'daily' | 'weekly' | 'once';
           is_active?: boolean;
           created_at?: string;
+          points?: number;
         };
         Update: {
           id?: string;
@@ -122,6 +126,54 @@ export interface Database {
         };
         Relationships: [];
       };
+      rewards: {
+        Row: {
+          id: string;
+          title: string;
+          cost: number;
+          emoji: string;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          cost: number;
+          emoji?: string;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          cost?: number;
+          emoji?: string;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      reward_redemptions: {
+        Row: {
+          id: string;
+          reward_id: string;
+          redeemed_by: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          reward_id: string;
+          redeemed_by: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          reward_id?: string;
+          redeemed_by?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       chore_completions: {
         Row: {
           id: string;
@@ -153,7 +205,15 @@ export interface Database {
       };
     };
     Views: {
-      [_ in never]: never;
+      points_balances: {
+        Row: {
+          person: string;
+          earned: number;
+          spent: number;
+          balance: number;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       [_ in never]: never;
