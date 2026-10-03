@@ -1,0 +1,12 @@
+# family-voice: Siri Shortcuts endpoint. Deploy steps: docs/voice-siri-shortcuts.md
+# Secrets (never put them in this file):
+#   npx wrangler secret put VOICE_TOKEN
+#   npx wrangler secret put SUPABASE_URL
+#   npx wrangler secret put SUPABASE_ANON_KEY
+name = "family-voice"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[observability]
+enabled = true
