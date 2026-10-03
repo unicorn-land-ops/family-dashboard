@@ -4,6 +4,7 @@ import { isChoreCompleted, getCompletionInfo, getChoreProgress } from '../../lib
 import { CALENDAR_FEEDS } from '../../lib/calendar/config';
 import { supabaseEnabled } from '../../lib/supabase';
 import type { Chore, ChoreCompletion } from '../../types/database';
+import { RewardsPanel } from './RewardsPanel';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Wake Lock — keeps the screen on while the kid view is mounted.
@@ -209,6 +210,9 @@ export function KidChoreView({ childId }: KidChoreViewProps) {
 
       {/* ── Chore list ── */}
       <div className="flex-1 overflow-y-auto overscroll-contain">
+        <div className="max-w-2xl mx-auto w-full">
+          <RewardsPanel people={[childId]} />
+        </div>
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-xl animate-pulse" style={{ color: 'var(--fd-text-2)' }}>Loading…</p>

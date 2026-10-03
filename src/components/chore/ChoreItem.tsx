@@ -78,18 +78,18 @@ export function ChoreItem({
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center gap-3 min-h-[44px] px-3 py-2">
+      <div className="flex items-center gap-3 min-h-[56px] px-3 py-2">
         {/* Completion toggle */}
         <button
           type="button"
           onClick={handleTap}
-          className="flex items-center justify-center w-[44px] h-[44px] shrink-0"
+          className="flex items-center justify-center w-[56px] h-[56px] shrink-0"
           aria-label={completed ? 'Undo completion' : 'Complete chore'}
         >
           {completed ? (
-            <IoCheckmarkCircle className="w-6 h-6 text-green-400" />
+            <IoCheckmarkCircle className="w-8 h-8 text-green-400" />
           ) : (
-            <IoEllipseOutline className="w-6 h-6" style={{ color: 'var(--fd-text-2)' }} />
+            <IoEllipseOutline className="w-8 h-8" style={{ color: 'var(--fd-text-2)' }} />
           )}
         </button>
 
@@ -108,6 +108,9 @@ export function ChoreItem({
               </span>
             )}
             <span className="text-xs shrink-0" style={{ color: 'var(--fd-text-2)', opacity: 0.6 }}>{scheduleLabel}</span>
+            {chore.points !== undefined && (
+              <span className="text-xs shrink-0" style={{ color: 'var(--fd-accent)' }}>⭐{chore.points}</span>
+            )}
           </div>
 
           {completed && completedByPerson && (

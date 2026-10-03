@@ -5,6 +5,7 @@ import { KioskTodayCard } from './KioskTodayCard';
 import { KioskNextDayCard } from './KioskNextDayCard';
 import { KioskCompactRow } from './KioskCompactRow';
 import { KioskCountdownRow } from './KioskCountdownRow';
+import { KioskChoresRow } from './KioskChoresRow';
 import { KioskPhotoFrame } from './KioskPhotoFrame';
 import { KioskNewsTicker } from './KioskNewsTicker';
 import { GroceryPanel } from '../grocery/GroceryPanel';
@@ -73,6 +74,12 @@ export function KioskDashboard() {
         <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
           <div className="kiosk-countdown-area">
             <KioskCountdownRow />
+          </div>
+        </ErrorBoundary>
+
+        <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
+          <div className="kiosk-chores-area">
+            <KioskChoresRow />
           </div>
         </ErrorBoundary>
 

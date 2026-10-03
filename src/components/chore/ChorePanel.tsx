@@ -3,6 +3,7 @@ import { isChoreCompleted } from '../../lib/choreSchedule';
 import { supabaseEnabled } from '../../lib/supabase';
 import { ChoreInput } from './ChoreInput';
 import { ChoreList } from './ChoreList';
+import { RewardsPanel } from './RewardsPanel';
 
 interface ChorePanelProps {
   variant?: 'full' | 'compact';
@@ -116,6 +117,7 @@ export function ChorePanel({ variant = 'full' }: ChorePanelProps) {
 
       {/* List area */}
       <div className="flex-1 overflow-y-auto">
+        <RewardsPanel people={['wren', 'ellis']} />
         {chores.length === 0 ? (
           <p className="text-center py-8" style={{ color: 'var(--fd-text-2)', opacity: 0.5 }}>No chores yet</p>
         ) : (
