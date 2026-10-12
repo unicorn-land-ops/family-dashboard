@@ -8,7 +8,7 @@ import { KioskCountdownRow } from './KioskCountdownRow';
 import { KioskChoresRow } from './KioskChoresRow';
 import { KioskPhotoFrame } from './KioskPhotoFrame';
 import { KioskNewsTicker } from './KioskNewsTicker';
-import { GroceryPanel } from '../grocery/GroceryPanel';
+import { KioskReminders } from './KioskReminders';
 import { PanelFallback, GlobalFallback, logError } from '../ErrorFallback';
 import { useCalendar } from '../../hooks/useCalendar';
 import { useWeather } from '../../hooks/useWeather';
@@ -85,7 +85,7 @@ export function KioskDashboard() {
 
         <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
           <div className="kiosk-grocery-area">
-            <GroceryPanel variant="compact" />
+            <KioskReminders />
           </div>
         </ErrorBoundary>
 
