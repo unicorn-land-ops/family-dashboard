@@ -12,7 +12,7 @@ export interface Reminder {
 
 // ponytail: static list, edit + push to add one. Move to a Supabase table if adding from the phone matters.
 export const REMINDERS: Reminder[] = [
-  { text: 'Wren: take Geldbeutel', date: '2026-10-14', flashFrom: '07:30', flashTo: '07:40' },
+  { text: 'Wren: Summer-Camp-Formular abgeben (Mensa, 8:00)', date: '2026-10-15', flashFrom: '07:20', flashTo: '07:30' },
 ];
 
 export function activeReminders(now: Date, list: Reminder[] = REMINDERS) {
