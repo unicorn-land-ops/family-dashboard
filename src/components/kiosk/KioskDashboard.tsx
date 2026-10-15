@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { formatInTimeZone } from 'date-fns-tz';
 import './kioskD.css';
 import { StatusBar } from '../layout/StatusBar';
 import { KioskPhotoFrame } from './KioskPhotoFrame';
-import { KioskDial, EMOJI, personOf, minutesOf, type DialTimer } from './KioskDial';
+import { KioskDial, EMOJI, minutesOf, type DialTimer } from './KioskDial';
 import { KioskIcon, choreIcon } from './KioskIcon';
 import { WeatherIcon } from '../weather/WeatherIcon';
 import { PanelFallback, GlobalFallback, logError } from '../ErrorFallback';
@@ -20,15 +20,17 @@ import { activeReminders } from '../../lib/reminders';
 import { COUNTDOWN_EVENTS, getUpcomingCountdowns, eventRowToCountdown } from '../../lib/countdowns';
 import { getWeatherInfo } from '../../lib/utils/weatherCodes';
 import { TIMEZONE } from '../../lib/utils/timeFormat';
-import { addDaysIso, bedtime, holidayName, isWeekendMode, kitFor, u2Disruption, wear, type Kid } from '../../lib/familyRules';
+import { addDaysIso, bedtime, groupMeetings, holidayName, isWeekendMode, kitFor, u2Disruption, wear, type Kid } from '../../lib/familyRules';
 import type { CalendarEvent, DaySchedule } from '../../lib/calendar/types';
 import type { Chore, ChoreCompletion } from '../../types/database';
 
+/** How long each block of the rotating lower half stays up. Joshua asked for 5 s (15.10.2026). */
+export const ROTATE_MS = 5_000;
+
 const TIMER_COLORS = ['var(--t1)', 'var(--t2)', 'var(--t3)'];
-const KID_NAME: Record<Kid, string> = { wren: 'Wren', ellis: 'Ellis' };
+const KIDS: { kid: Kid; name: string }[] = [{ kid: 'ellis', name: 'Ellis' }, { kid: 'wren', name: 'Wren' }];
 const hm = (d: Date) => formatInTimeZone(d, TIMEZONE, 'HH:mm');
-const isWork = (e: CalendarEvent) => e.persons.some((p) => p.endsWith('-work'));
-const LEAD_EMOJI = /^(\p{Extended_Pictographic}[\uFE0F\u200D\p{Extended_Pictographic}]*)\s*/u;
+const LEAD_EMOJI = /^(\p{Extended_Pictographic}[️‍\p{Extended_Pictographic}]*)\s*/u;
 /** '🛏️ Make Bed' → ['🛏️', 'Make Bed'] */
 const splitEmoji = (t: string): [string | null, string] => { const m = t.match(LEAD_EMOJI); return m ? [m[1], t.slice(m[0].length)] : [null, t]; };
 
@@ -54,34 +56,24 @@ function useFit() {
   return s;
 }
 
-function inMinutes(nowHm: string, at: string) {
+/** Minutes until a HH:mm later today, or null once it has passed. */
+function minutesUntil(nowHm: string, at: string) {
   const d = minutesOf(at) - minutesOf(nowHm);
-  if (d <= 0) return null;
-  return d < 60 ? `in ${d} Min` : `in ${Math.floor(d / 60)} h ${String(d % 60).padStart(2, '0')}`;
+  return d > 0 ? d : null;
+}
+const inText = (d: number) => (d < 60 ? `in ${d} min` : `in ${Math.floor(d / 60)} h ${String(d % 60).padStart(2, '0')}`);
+
+function Wear({ temp, rain }: { temp: number; rain: number }) {
+  return <>{wear(temp, rain).map((w) => <span key={w.label} role="img" aria-label={w.label}>{w.emoji}</span>)}</>;
 }
 
-function Wear({ temp, rain, when }: { temp: number; rain: number; when?: string }) {
+function KitChips({ iso, events }: { iso: string; events: CalendarEvent[] }) {
   return (
-    <div className="kd-wear">
-      {when && <span className="kd-when">{when}</span>}
-      {wear(temp, rain).map((w) => <span key={w.label} role="img" aria-label={w.label}>{w.emoji}</span>)}
-    </div>
-  );
-}
-
-function KitStrip({ iso, events, label, extra }: { iso: string; events: CalendarEvent[]; label: string; extra?: React.ReactNode }) {
-  const kit = kitFor(iso, events);
-  if (!kit.length && !extra) return null;
-  return (
-    <div className="kd-strip">
-      {kit.length > 0 && <span className="kd-lbl">{label}</span>}
-      {kit.map((k) => (
-        <span key={k.kid + k.label} className={`kd-chip is-kit is-${k.kid} ${k.kid === 'ellis' ? 'de' : ''}`}>
-          {EMOJI[k.kid]} {k.emoji} {k.label}
-        </span>
+    <>
+      {kitFor(iso, events).map((k) => (
+        <span key={k.kid + k.label} className={`kd-chip is-${k.kid}`}>{EMOJI[k.kid]} {k.emoji} {k.label}</span>
       ))}
-      {extra}
-    </div>
+    </>
   );
 }
 
@@ -103,11 +95,11 @@ function Routine({ chores, completions }: { chores: Chore[]; completions: ChoreC
   if (!wren.length && !ellis.length) return null;
   return (
     <div className="kd-routine">
-      <div className="kd-kid is-wren">
+      <div className="kd-kid">
         <h3>🌸 Wren</h3>
         <div className="kd-wl">{wren.slice(0, 4).map((c) => <ChoreBox key={c.id} chore={c} done={done(c)} />)}</div>
       </div>
-      <div className="kd-kid is-ellis de">
+      <div className="kd-kid de">
         <h3>🥭 Ellis</h3>
         {cur ? (
           <div className="kd-jetzt">
@@ -127,7 +119,8 @@ function Routine({ chores, completions }: { chores: Chore[]; completions: ChoreC
   );
 }
 
-function DayStrip({ days, weather }: { days: DaySchedule[]; weather: ReturnType<typeof useWeather>['data'] }) {
+/** The week ahead: five days, each parent's evening meetings folded into one line. */
+function Week({ days, weather }: { days: DaySchedule[]; weather: ReturnType<typeof useWeather>['data'] }) {
   return (
     <div className="kd-days">
       {days.map((d) => {
@@ -135,22 +128,19 @@ function DayStrip({ days, weather }: { days: DaySchedule[]; weather: ReturnType<
         const w = weather?.daily;
         const wi = w ? w.time.indexOf(iso) : -1;
         const allDay = d.events.find((e) => e.isAllDay)?.summary ?? holidayName(iso);
-        const timed = d.events.filter((e) => !e.isAllDay);
-        const shown = timed.length > 3 ? timed.slice(0, 2) : timed;
+        const items = groupMeetings(d.events);
+        const shown = items.length > 4 ? items.slice(0, 3) : items;
         return (
           <div key={iso} className="kd-day">
-            <div className="kd-hd">
-              {formatInTimeZone(d.date, TIMEZONE, 'EEE')}
-              {wi >= 0 && <small><WeatherIcon code={w!.weather_code[wi]} size="1.1em" /> {Math.round(w!.temperature_2m_max[wi])}°/{Math.round(w!.temperature_2m_min[wi])}°</small>}
-            </div>
+            <div className="kd-hd">{formatInTimeZone(d.date, TIMEZONE, 'EEE')}<span>{formatInTimeZone(d.date, TIMEZONE, 'd')}</span></div>
+            {wi >= 0 && <div className="kd-dwx"><WeatherIcon code={w!.weather_code[wi]} size="1.2em" /> {Math.round(w!.temperature_2m_max[wi])}° / {Math.round(w!.temperature_2m_min[wi])}°</div>}
             {allDay && <div className="kd-ad">{allDay}</div>}
-            {shown.map((e) => (
-              <div key={e.id + e.startTime.getTime()} className="kd-e">
-                {EMOJI[personOf(e)]} {isWork(e) ? `${hm(e.startTime)} Meeting` : `${hm(e.startTime)} ${e.summary}`}
-              </div>
-            ))}
-            {timed.length > 3 && <div className="kd-more">+{timed.length - 2} more</div>}
-            {!allDay && timed.length === 0 && <div className="kd-free">Free</div>}
+            {shown.map((e) => {
+              const [main, sub] = e.title.split(' · ');
+              return <div key={e.key} className="kd-e"><span>{EMOJI[e.person]}</span><span>{main}{sub && <small>{sub}</small>}</span></div>;
+            })}
+            {items.length > 4 && <div className="kd-more">+{items.length - 3} more</div>}
+            {!allDay && items.length === 0 && <div className="kd-free">Free</div>}
           </div>
         );
       })}
@@ -158,27 +148,43 @@ function DayStrip({ days, weather }: { days: DaySchedule[]; weather: ReturnType<
   );
 }
 
-function Stage({ now }: { now: Date }) {
+function Countdowns({ now }: { now: Date }) {
   const { events } = useEvents();
   const { headlines } = useNewsTicker();
   const cds = getUpcomingCountdowns([...COUNTDOWN_EVENTS, ...events.map(eventRowToCountdown)], 4);
   const h = headlines.length ? headlines[Math.floor(now.getTime() / 20_000) % headlines.length] : null;
   return (
-    <div className="kd-stage kd-grow">
-      {cds.length > 0 && (
-        <div className="kd-cd">
-          {cds.map((c) => (
-            <div key={c.id}><b>{c.daysRemaining === 0 ? 'Today' : c.daysRemaining}</b>{c.emoji} {c.label}</div>
-          ))}
-        </div>
-      )}
+    <div className="kd-block kd-countdowns">
+      <div className="kd-cd">
+        {cds.map((c) => (
+          <div key={c.id}><b>{c.daysRemaining === 0 ? 'Today' : c.daysRemaining}</b><span>{c.emoji} {c.label}</span></div>
+        ))}
+      </div>
       {h && <div className="kd-news"><b>{h.source}</b> {h.title}</div>}
     </div>
   );
 }
 
-function Photo() {
-  return <div className="kd-photo kd-grow"><KioskPhotoFrame /></div>;
+/** Blocks crossfade in place; one block id may appear more than once in the order (the photo does). */
+function Rotator({ order, blocks }: { order: string[]; blocks: Record<string, ReactNode> }) {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    if (order.length < 2) return;
+    const id = setInterval(() => setI((x) => x + 1), ROTATE_MS);
+    return () => clearInterval(id);
+  }, [order.length]);
+  const pos = order.length ? i % order.length : 0;
+  const active = order[pos];
+  return (
+    <div className="kd-rot kd-grow">
+      {[...new Set(order)].map((id) => (
+        <div key={id} className={`kd-slide is-${id} ${id === active ? 'is-on' : ''}`} aria-hidden={id !== active}>{blocks[id]}</div>
+      ))}
+      {order.length > 1 && (
+        <div className="kd-dots" aria-hidden="true">{order.map((_, j) => <i key={j} className={j === pos ? 'is-on' : ''} />)}</div>
+      )}
+    </div>
+  );
 }
 
 export function KioskDashboard() {
@@ -192,20 +198,22 @@ export function KioskDashboard() {
   const iso = formatInTimeZone(now, TIMEZONE, 'yyyy-MM-dd');
   const tomorrowIso = addDaysIso(iso, 1);
   const nowHm = hm(now);
-  const morning = minutesOf(nowHm) < 12 * 60;
+  const nowMin = minutesOf(nowHm);
+  const morning = nowMin < 12 * 60;
   const today = days.find((d) => d.dateStr === iso) ?? days[0];
   const tomorrow = days.find((d) => d.dateStr === tomorrowIso);
   const todayEvents = today?.events ?? [];
   const weekend = isWeekendMode(iso, todayEvents);
-  const { data: deps } = useTransit(morning && !weekend);
-  const disruption = morning && !weekend && deps ? u2Disruption(deps) : null;
+  const schoolMorning = morning && !weekend;
+  const { data: deps } = useTransit(schoolMorning);
+  const disruption = schoolMorning && deps ? u2Disruption(deps) : null;
 
   const daily = weather?.daily;
   const di = daily ? daily.time.indexOf(iso) : -1;
   const ti = daily ? daily.time.indexOf(tomorrowIso) : -1;
   const reminders = activeReminders(now);
   const todayRem = reminders.filter((r) => r.date === iso);
-  const tomorrowRem = reminders.filter((r) => r.date === tomorrowIso);
+  const tomorrowRem = morning ? [] : reminders.filter((r) => r.date === tomorrowIso);
   const dialRem = todayRem.find((r) => r.flashFrom && r.flashTo);
 
   const timers = [...activeTimers, ...completedTimers].slice(0, 3);
@@ -214,8 +222,12 @@ export function KioskDashboard() {
     fraction: t.duration_seconds ? getRemainingSeconds(t) / t.duration_seconds : 0,
     color: TIMER_COLORS[i],
   }));
-  const bedtimes = (['ellis', 'wren'] as Kid[]).map((kid) => ({ kid, at: bedtime(kid, iso, tomorrow?.events) }));
+  const bedtimes = KIDS.map(({ kid, name }) => ({ kid, name, at: bedtime(kid, iso, tomorrow?.events) }));
+  // A bedtime earns a pinned row from two hours before until it passes.
+  const bedSoon = bedtimes.filter((b) => { const m = minutesUntil(nowHm, b.at); return m !== null && m <= 120; });
   const holiday = holidayName(iso);
+  // School mornings until 09:00: the kids' jobs stay put (Ellis's one-step-at-a-time card must not flip away).
+  const kidsPinned = schoolMorning && nowMin < 9 * 60;
 
   const centre = () => {
     if (timers.length === 1) {
@@ -261,9 +273,15 @@ export function KioskDashboard() {
         {weekend && morning && holiday ? (
           <div className="kd-modechip">{holiday}</div>
         ) : morning && w && daily && di >= 0 ? (
-          <Wear temp={w.temperature_2m} rain={daily.precipitation_probability_max?.[di] ?? 0} />
+          <div className="kd-wear"><Wear temp={w.temperature_2m} rain={daily.precipitation_probability_max?.[di] ?? 0} /></div>
         ) : !morning && daily && ti >= 0 ? (
-          <Wear temp={daily.temperature_2m_min[ti]} rain={daily.precipitation_probability_max?.[ti] ?? 0} when="Tomorrow" />
+          // The one place tomorrow's weather lives in the evening.
+          <div className="kd-tmrw">
+            <span className="kd-when">Tomorrow</span>
+            <span className="kd-tmrwico"><WeatherIcon code={daily.weather_code[ti]} size="1em" /></span>
+            <b>{Math.round(daily.temperature_2m_max[ti])}° / {Math.round(daily.temperature_2m_min[ti])}°</b>
+            <span className="kd-wearsm"><Wear temp={daily.temperature_2m_min[ti]} rain={daily.precipitation_probability_max?.[ti] ?? 0} /></span>
+          </div>
         ) : null}
       </>
     );
@@ -275,62 +293,38 @@ export function KioskDashboard() {
     </div>
   );
 
-  const body = () => {
-    if (!morning) {
-      return (
-        <>
-          {bedtimes.filter((b) => inMinutes(nowHm, b.at)).map((b) => (
-            <div key={b.kid} className={`kd-row ${b.kid === 'ellis' ? 'de' : ''}`}>
-              <KioskIcon name="bed" />
-              <span>{EMOJI[b.kid]} {b.kid === 'ellis' ? 'Schlafenszeit' : `${KID_NAME[b.kid]}: bedtime`}</span>
-              <small>{b.at} · {inMinutes(nowHm, b.at)}</small>
-            </div>
+  const kitToday = kitFor(iso, todayEvents).length > 0;
+  const kitTomorrow = !morning && kitFor(tomorrowIso, tomorrow?.events ?? []).length > 0;
+  const trainsOk = kidsPinned && !!deps && !disruption;
+
+  // Kids block: bedtimes and kit for tomorrow in the evening, kit for today in the morning, and the jobs.
+  const kids = (
+    <div className="kd-block kd-kids">
+      {!morning && (
+        <div className="kd-beds">
+          {bedtimes.map((b) => (
+            <div key={b.kid}><KioskIcon name="bed" /> {EMOJI[b.kid]} <span>{b.name}</span><b>{b.at}</b></div>
           ))}
-          {tomorrowRem.map((r) => reminderRow(r, 'Tomorrow: '))}
-          {daily && ti >= 0 && (
-            <div className="kd-row">
-              <span className="kd-rowico"><WeatherIcon code={daily.weather_code[ti]} size="1em" /></span>
-              <span>Tomorrow: {Math.round(daily.temperature_2m_max[ti])}° / {Math.round(daily.temperature_2m_min[ti])}°, {getWeatherInfo(daily.weather_code[ti]).description.toLowerCase()}</span>
-              {holidayName(tomorrowIso) && <small>{holidayName(tomorrowIso)}</small>}
-            </div>
-          )}
-          <KitStrip iso={tomorrowIso} events={tomorrow?.events ?? []} label="Pack for tomorrow" />
-          <Photo />
-          <DayStrip days={days.slice(1, 6)} weather={weather} />
-        </>
-      );
-    }
-    if (weekend) {
-      return (
-        <>
-          {todayRem.map((r) => reminderRow(r))}
-          {todayEvents.filter((e) => e.isAllDay && e.endTime.getTime() - e.startTime.getTime() <= 86_400_000).map((e) => (
-            <div key={e.id} className="kd-row"><KioskIcon name="star" /><span>{EMOJI[personOf(e)]} {e.summary}</span><small>today</small></div>
-          ))}
-          <Routine chores={chores} completions={completions} />
-          <Photo />
-          <DayStrip days={days.slice(1, 6)} weather={weather} />
-        </>
-      );
-    }
-    return (
-      <>
-        {todayRem.map((r) => reminderRow(r))}
-        {disruption && (
-          <div className="kd-row is-flashing"><i className="kd-line">U2</i><span className="de"><b>{disruption}</b></span></div>
-        )}
-        <KitStrip
-          iso={iso}
-          events={todayEvents}
-          label="Today, bring"
-          extra={!disruption && deps ? <span className="kd-chip is-ok"><KioskIcon name="train" /> U2 on time</span> : undefined}
-        />
-        <Routine chores={chores} completions={completions} />
-        <DayStrip days={days.slice(1, 6)} weather={weather} />
-        <Stage now={now} />
-      </>
-    );
+        </div>
+      )}
+      {((morning ? kitToday : kitTomorrow) || trainsOk) && (
+        <div className="kd-strip">
+          {(morning ? kitToday : kitTomorrow) && <span className="kd-lbl">{morning ? 'Today, bring' : 'Pack for tomorrow'}</span>}
+          <KitChips iso={morning ? iso : tomorrowIso} events={(morning ? todayEvents : tomorrow?.events) ?? []} />
+          {trainsOk && <span className="kd-ok"><KioskIcon name="train" /> U2 on time</span>}
+        </div>
+      )}
+      <Routine chores={chores} completions={completions} />
+    </div>
+  );
+
+  const blocks: Record<string, ReactNode> = {
+    photo: <div className="kd-photo"><KioskPhotoFrame /></div>,
+    week: <div className="kd-block"><Week days={days.slice(1, 6)} weather={weather} /></div>,
+    kids,
+    countdowns: <Countdowns now={now} />,
   };
+  const order = kidsPinned ? ['week', 'photo', 'countdowns', 'photo'] : ['kids', 'photo', 'week', 'photo', 'countdowns'];
 
   return (
     <ErrorBoundary FallbackComponent={GlobalFallback} onError={logError}>
@@ -340,7 +334,7 @@ export function KioskDashboard() {
             <div className="kd-dialwrap">
               <KioskDial
                 now={now}
-                events={todayEvents}
+                items={groupMeetings(todayEvents)}
                 sunrise={di >= 0 ? daily!.sunrise[di].slice(11, 16) : undefined}
                 sunset={di >= 0 ? daily!.sunset[di].slice(11, 16) : undefined}
                 reminder={dialRem ? { from: dialRem.flashFrom!, to: dialRem.flashTo!, flashing: dialRem.flashing } : undefined}
@@ -351,7 +345,22 @@ export function KioskDashboard() {
             <div className="kd-center">{centre()}</div>
           </ErrorBoundary>
           <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
-            <div className="kd-flow">{body()}</div>
+            <div className="kd-flow">
+              {/* Pinned: never rotates away */}
+              {todayRem.map((r) => reminderRow(r))}
+              {tomorrowRem.map((r) => reminderRow(r, 'Tomorrow: '))}
+              {disruption && (
+                <div className="kd-row is-flashing"><i className="kd-line">U2</i><span><b>{disruption}</b></span></div>
+              )}
+              {bedSoon.map((b) => (
+                <div key={b.kid} className="kd-row">
+                  <KioskIcon name="bed" /><span>{EMOJI[b.kid]} {b.name}: bedtime</span>
+                  <small>{b.at} · {inText(minutesUntil(nowHm, b.at)!)}</small>
+                </div>
+              ))}
+              {kidsPinned && kids}
+              <Rotator order={order} blocks={blocks} />
+            </div>
           </ErrorBoundary>
           <div className="kd-status"><StatusBar variant="kiosk" /></div>
         </div>

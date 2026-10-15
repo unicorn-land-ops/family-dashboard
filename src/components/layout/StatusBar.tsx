@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { TIMEZONE } from '../../lib/constants';
 import { ConnectionStatus } from './ConnectionStatus';
 
@@ -7,9 +8,16 @@ interface StatusBarProps {
 }
 
 export function StatusBar({ variant = 'default' }: StatusBarProps) {
-  const [lastRefresh] = useState(() =>
-    new Date().toLocaleTimeString('de-DE', { timeZone: TIMEZONE })
+  // Newest successful data fetch across all queries (calendar, weather, chores…). It used to be the
+  // page-load time, which froze at the last reload and said nothing about whether data was flowing.
+  const queryCache = useQueryClient().getQueryCache();
+  const lastUpdated = useSyncExternalStore(
+    (onChange) => queryCache.subscribe(onChange),
+    () => Math.max(0, ...queryCache.getAll().map((q) => q.state.dataUpdatedAt)),
   );
+  const lastRefresh = lastUpdated
+    ? new Date(lastUpdated).toLocaleTimeString('de-DE', { timeZone: TIMEZONE })
+    : '…';
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

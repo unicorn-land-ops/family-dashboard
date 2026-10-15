@@ -1,3 +1,4 @@
+import { formatInTimeZone } from 'date-fns-tz';
 import { computeEaster } from './countdowns';
 import type { CalendarEvent } from './calendar/types';
 
@@ -77,7 +78,7 @@ export function bedtime(kid: Kid, todayIso: string, tomorrowEvents: CalendarEven
 /** Kit to bring, by weekday (1 = Mon). Wren: 8a timetable Spo Tue/Thu. Ellis: 3B Schwimmbus Wed. */
 const KIT: Record<Kid, Record<number, { emoji: string; label: string }>> = {
   wren: { 1: { emoji: '🃏', label: 'Card games' }, 2: { emoji: '👟', label: 'Sport' }, 3: { emoji: '🏸', label: 'Badminton' }, 4: { emoji: '👟', label: 'Sport' } },
-  ellis: { 1: { emoji: '👟', label: 'Sportzeug' }, 3: { emoji: '🏊', label: 'Schwimmzeug' } },
+  ellis: { 1: { emoji: '👟', label: 'Sport' }, 3: { emoji: '🏊', label: 'Swimming' } },
 };
 export function kitFor(iso: string, events: CalendarEvent[] = []) {
   return KIDS.flatMap((kid) => {
@@ -110,4 +111,36 @@ export function u2Disruption(
   }
   const late = Math.max(0, ...u2.map((d) => d.delay ?? 0));
   return late >= 300 ? `U2 +${Math.round(late / 60)} Min` : null;
+}
+
+/** One line on the dial / in the week: an event, or a parent's evening meetings folded together. */
+export interface DayItem { key: string; person: string; start: Date; end: Date; title: string; count: number }
+
+const hmBerlin = (d: Date) => formatInTimeZone(d, 'Europe/Berlin', 'HH:mm');
+const personOfEvent = (e: CalendarEvent) => (e.persons[0] ?? 'family').replace(/-work$/, '');
+
+/**
+ * Timed events of a day, with each parent's work meetings from 17:00 folded into one item:
+ * "18:00 Meeting" for one, "18:00–21:00 · 3 meetings" for several (end = the last one's end).
+ */
+export function groupMeetings(events: CalendarEvent[]): DayItem[] {
+  const out: DayItem[] = [];
+  const meet: Record<string, CalendarEvent[]> = {};
+  for (const e of events) {
+    if (e.isAllDay) continue;
+    const p = personOfEvent(e);
+    const work = e.persons.some((x) => x.endsWith('-work')) && (p === 'papa' || p === 'daddy');
+    if (work && hmBerlin(e.startTime) >= '17:00') (meet[p] ??= []).push(e);
+    else out.push({ key: e.id + e.startTime.getTime(), person: p, start: e.startTime, end: e.endTime, title: `${hmBerlin(e.startTime)} ${e.summary}`, count: 1 });
+  }
+  for (const [p, list] of Object.entries(meet)) {
+    list.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+    const start = list[0].startTime;
+    const end = new Date(Math.max(...list.map((e) => e.endTime.getTime())));
+    out.push({
+      key: `${p}-meetings-${start.getTime()}`, person: p, start, end, count: list.length,
+      title: list.length === 1 ? `${hmBerlin(start)} Meeting` : `${hmBerlin(start)}–${hmBerlin(end)} · ${list.length} meetings`,
+    });
+  }
+  return out.sort((a, b) => a.start.getTime() - b.start.getTime());
 }

@@ -24,7 +24,8 @@
   --p-papa: #a8c95c; --p-daddy: #dba269; --p-wren: #f08db0; --p-ellis: #f2b544; --p-family: #7ba4d9;
   --shadow: 0 8px 24px #00000055;
 }
-.kd-viewport { position: fixed; inset: 0; overflow: hidden; background: #141210; }
+.kd-viewport { position: fixed; inset: 0; overflow: hidden; background: #141210; cursor: none; }
+.kd-viewport * { cursor: none; }
 :root:not([data-phase="dusk"]):not([data-phase="night"]) .kd-viewport { background: #aea8b5; }
 .kd {
   width: 1080px; height: 1920px; position: relative; overflow: hidden; transform-origin: 0 0;
@@ -101,7 +102,6 @@
 .kd-chip { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 999px; font-size: 36px; font-weight: 600; line-height: 1.1; }
 .kd-chip.is-wren { background: var(--t1-tint); }
 .kd-chip.is-ellis { background: var(--t2-tint); }
-.kd-chip.is-ok { margin-left: auto; color: var(--ink-2); font-weight: 500; font-size: 28px; padding: 0; }
 
 .kd-routine { display: grid; grid-template-columns: 1fr 1.6fr; gap: 14px; }
 .kd-kid { background: var(--panel); border-radius: 26px; padding: 22px 28px; min-width: 0; }
@@ -122,23 +122,57 @@
 .kd-then .kd-ico { font-size: 40px; color: var(--p-ellis); }
 .kd-then .is-d .kd-ico { color: var(--now); }
 
-.kd-days { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-.kd-day { background: var(--panel); border-radius: 20px; padding: 14px 16px; height: 192px; overflow: hidden; }
-.kd-hd { display: flex; align-items: center; font-size: 32px; font-weight: 600; }
-.kd-hd small { font-size: 22px; color: var(--ink-2); font-weight: 400; margin-left: auto; display: flex; gap: 4px; align-items: center; white-space: nowrap; }
-.kd-ad { font-size: 21px; color: var(--p-family); font-weight: 600; margin: 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.kd-e { font-size: 23px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.kd-more { font-size: 21px; color: var(--ink-2); font-weight: 600; }
-.kd-free { font-size: 24px; color: var(--ink-3); margin-top: 6px; }
+/* ---- Rotating lower half: blocks crossfade on opacity only (compositor-cheap on the Pi) ---- */
+.kd-rot { position: relative; }
+.kd-slide { position: absolute; inset: 0 0 34px; opacity: 0; transition: opacity 700ms cubic-bezier(.16, 1, .3, 1); pointer-events: none; }
+.kd-slide.is-on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .kd-slide { transition: none; } }
+.kd-dots { position: absolute; left: 0; right: 0; bottom: 6px; display: flex; justify-content: center; gap: 12px; }
+.kd-dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--ink-2); opacity: .35; transition: opacity 300ms; }
+.kd-dots i.is-on { opacity: 1; }
+.kd-block { height: 100%; display: flex; flex-direction: column; gap: 14px; }
+.kd-flow > .kd-block { height: auto; }
+/* The kids block has room when it rotates: bigger type, cards fill the height */
+.kd-slide .kd-routine { flex: 1; }
+.kd-slide .kd-kid h3 { font-size: 48px; }
+.kd-slide .kd-wl { font-size: 44px; gap: 20px; }
+.kd-slide .kd-box { width: 54px; height: 54px; }
+.kd-slide .kd-big { font-size: 72px; }
+.kd-slide .kd-then { font-size: 32px; }
 
-.kd-stage { background: var(--panel); border-radius: 22px; padding: 22px 26px; display: flex; flex-direction: column; justify-content: center; gap: 22px; overflow: hidden; }
-.kd-cd { display: flex; justify-content: space-between; gap: 16px; font-size: 28px; }
-.kd-cd b { font-size: 58px; color: var(--accent); display: block; line-height: 1; }
-.kd-news { font-size: 32px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.kd-days { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; height: 100%; }
+.kd-day { background: var(--panel); border-radius: 22px; padding: 20px 18px; overflow: hidden; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.kd-hd { display: flex; align-items: baseline; gap: 8px; font-size: 40px; font-weight: 600; line-height: 1; }
+.kd-hd span { font-size: 28px; color: var(--ink-2); font-weight: 500; }
+.kd-dwx { display: flex; align-items: center; gap: 6px; font-size: 26px; color: var(--ink-2); white-space: nowrap; }
+.kd-ad { font-size: 24px; color: var(--p-family); font-weight: 600; line-height: 1.2; }
+.kd-e { display: grid; grid-template-columns: auto 1fr; gap: 8px; font-size: 28px; line-height: 1.25; }
+.kd-e small { display: block; font-size: 24px; color: var(--ink-2); }
+.kd-e span:last-child { overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.kd-more { font-size: 24px; color: var(--ink-2); font-weight: 600; }
+.kd-free { font-size: 28px; color: var(--ink-3); }
+
+.kd-kids { justify-content: flex-start; }
+.kd-beds { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.kd-beds > div { display: flex; align-items: center; gap: 14px; background: var(--panel); border-radius: 22px; padding: 22px 26px; font-size: 40px; font-weight: 500; }
+.kd-beds b { margin-left: auto; font-size: 52px; font-weight: 600; }
+.kd-beds .kd-ico { font-size: 44px; color: var(--ink-2); }
+
+.kd-countdowns { background: var(--panel); border-radius: 26px; padding: 26px 30px; justify-content: center; gap: 24px; overflow: hidden; }
+.kd-cd { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.kd-cd b { font-size: 84px; color: var(--accent); display: block; line-height: 1; font-weight: 600; }
+.kd-cd span { font-size: 30px; display: block; }
+.kd-news { font-size: 34px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .kd-news b { color: var(--accent); }
-.kd-photo { border-radius: 26px; overflow: hidden; background: var(--panel-2); }
+.kd-photo { height: 100%; border-radius: 26px; overflow: hidden; background: var(--panel-2); }
 .kd-photo .photo-frame { border-radius: 0; }
 .kd-photo .photo-img { object-fit: cover; }
+.kd-ok { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 28px; color: var(--ink-2); font-weight: 500; }
 
+/* Evening, inside the dial: tomorrow in one line */
+.kd-tmrw { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 26px; }
+.kd-tmrw b { font-size: 44px; font-weight: 600; }
+.kd-tmrwico { font-size: 56px; color: var(--accent); display: inline-flex; }
+.kd-wearsm { font-size: 60px; display: inline-flex; gap: 10px; }
 .kd-status { position: absolute; left: 40px; right: 40px; bottom: 6px; height: 32px; display: flex; align-items: center; }
 .kd-status footer { width: 100%; opacity: 1; font-size: 18px !important; color: var(--ink-2) !important; }

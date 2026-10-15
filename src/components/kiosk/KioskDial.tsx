@@ -1,12 +1,11 @@
 import { formatInTimeZone } from 'date-fns-tz';
 import { TIMEZONE } from '../../lib/utils/timeFormat';
-import type { CalendarEvent } from '../../lib/calendar/types';
+import type { DayItem } from '../../lib/familyRules';
 
 // 24-hour dial: midnight at the bottom, noon at the top. viewBox 1000×1000.
 const R = 440;
 const C = 500;
 
-export const personOf = (event: CalendarEvent) => (event.persons[0] ?? 'family').replace(/-work$/, '');
 export const EMOJI: Record<string, string> = { papa: '🥑', daddy: '🍪', wren: '🌸', ellis: '🥭', family: '🏠' };
 
 const hm = (d: Date) => formatInTimeZone(d, TIMEZONE, 'HH:mm');
@@ -26,7 +25,7 @@ export interface DialMark { time: string; emoji: string; color: string }
 
 interface Props {
   now: Date;
-  events: CalendarEvent[];
+  items: DayItem[];
   sunrise?: string;
   sunset?: string;
   reminder?: { from: string; to: string; flashing: boolean };
@@ -34,8 +33,7 @@ interface Props {
   marks: DialMark[];
 }
 
-export function KioskDial({ now, events, sunrise, sunset, reminder, timers, marks }: Props) {
-  const timed = events.filter((e) => !e.isAllDay);
+export function KioskDial({ now, items, sunrise, sunset, reminder, timers, marks }: Props) {
   const a = ang(hm(now));
   const [hx, hy] = pt(a, R + 22);
   const [tx, ty] = pt(a, R - 30);
@@ -44,9 +42,9 @@ export function KioskDial({ now, events, sunrise, sunset, reminder, timers, mark
     <svg className="kd-dial" viewBox="0 0 1000 1000" role="img" aria-label={`Day dial, ${hm(now)}`}>
       <circle className="kd-track" cx={C} cy={C} r={R} />
       {sunrise && sunset && <path className="kd-daylight" d={arc(ang(sunrise), ang(sunset), R)} />}
-      {timed.map((e) => {
-        const end = minutesOf(hm(e.endTime)) <= minutesOf(hm(e.startTime)) ? '23:59' : hm(e.endTime);
-        return <path key={`a${e.id}${e.startTime.getTime()}`} className="kd-ev" stroke={`var(--p-${personOf(e)})`} d={arc(ang(hm(e.startTime)) + 0.6, ang(end) - 0.6, R)} />;
+      {items.map((e) => {
+        const end = minutesOf(hm(e.end)) <= minutesOf(hm(e.start)) ? '23:59' : hm(e.end);
+        return <path key={`a${e.key}`} className="kd-ev" stroke={`var(--p-${e.person})`} d={arc(ang(hm(e.start)) + 0.6, ang(end) - 0.6, R)} />;
       })}
       {reminder && <path className={`kd-rem ${reminder.flashing ? 'is-flashing' : ''}`} d={arc(ang(reminder.from), ang(reminder.to) + 2, R - 46)} />}
       {timers.map((t, i) => {
@@ -68,7 +66,7 @@ export function KioskDial({ now, events, sunrise, sunset, reminder, timers, mark
       <line className="kd-hand" x1={tx} y1={ty} x2={hx} y2={hy} />
       <circle cx={hx} cy={hy} r={14} fill="var(--now)" />
       {marks.map((m) => {
-        const [x, y] = pt(ang(m.time), R - 82);
+        const [x, y] = pt(ang(m.time), R);
         return (
           <g key={`m${m.time}${m.emoji}`} className="kd-pin is-small">
             <circle cx={x} cy={y} r={26} stroke={m.color} />
@@ -76,13 +74,12 @@ export function KioskDial({ now, events, sunrise, sunset, reminder, timers, mark
           </g>
         );
       })}
-      {timed.map((e) => {
-        const [x, y] = pt(ang(hm(e.startTime)), R);
-        const p = personOf(e);
+      {items.map((e) => {
+        const [x, y] = pt(ang(hm(e.start)), R);
         return (
-          <g key={`p${e.id}${e.startTime.getTime()}`} className="kd-pin">
-            <circle cx={x} cy={y} r={34} stroke={`var(--p-${p})`} />
-            <text x={x} y={y + 2}>{EMOJI[p] ?? '•'}</text>
+          <g key={`p${e.key}`} className="kd-pin">
+            <circle cx={x} cy={y} r={34} stroke={`var(--p-${e.person})`} />
+            <text x={x} y={y + 2}>{EMOJI[e.person] ?? '•'}</text>
           </g>
         );
       })}

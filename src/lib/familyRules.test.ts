@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { bedtime, hasSchool, isWeekendMode, kitFor, wear, u2Disruption, berlinPublicHolidays } from './familyRules';
+import { groupMeetings, bedtime, hasSchool, isWeekendMode, kitFor, wear, u2Disruption, berlinPublicHolidays } from './familyRules';
 import type { CalendarEvent } from './calendar/types';
 
 const schulfrei = (kid: string, iso: string): CalendarEvent => ({
@@ -46,7 +46,7 @@ describe('weekend mode and kit', () => {
   });
   it('kit days: Mon both, Wed badminton + swimming, Thu Wren sport, Fri nothing, none in Ferien', () => {
     expect(kitFor('2026-11-02').map((k) => k.emoji).join('')).toBe('🃏👟');
-    expect(kitFor('2026-11-04').map((k) => k.label).join()).toBe('Badminton,Schwimmzeug');
+    expect(kitFor('2026-11-04').map((k) => k.label).join()).toBe('Badminton,Swimming');
     expect(kitFor('2026-10-15').map((k) => k.kid).join()).toBe('wren');
     expect(kitFor('2026-11-06')).toEqual([]);
     expect(kitFor('2026-10-21')).toEqual([]);
@@ -70,5 +70,20 @@ describe('u2Disruption', () => {
     expect(u2Disruption([dep([{ type: 'warning', summary: 'Störung', text: 'Ersatzverkehr mit Bus' }])])).toBe('Störung');
     expect(u2Disruption([dep([], 420)])).toBe('U2 +7 Min');
     expect(u2Disruption([dep([], 120)])).toBeNull();
+  });
+});
+
+describe('groupMeetings', () => {
+  const ev = (person: string, from: string, to: string, summary = 'Call'): CalendarEvent => ({
+    id: person + from, summary, startTime: new Date(`2026-10-20T${from}:00+02:00`), endTime: new Date(`2026-10-20T${to}:00+02:00`),
+    isAllDay: false, persons: [person],
+  });
+  it('folds each parent’s evening work meetings into one item, keeps the rest', () => {
+    const g = groupMeetings([ev('daddy-work', '18:00', '19:00'), ev('daddy-work', '19:30', '20:00'), ev('daddy-work', '20:00', '21:00'), ev('papa-work', '19:30', '20:30'), ev('wren', '12:30', '13:00', 'Ortho')]);
+    expect(g.map((i) => i.title)).toEqual(['12:30 Ortho', '18:00–21:00 · 3 meetings', '19:30 Meeting']);
+    expect(g[1].person).toBe('daddy');
+  });
+  it('leaves daytime work events alone', () => {
+    expect(groupMeetings([ev('papa-work', '10:00', '11:00', 'Board')])[0].title).toBe('10:00 Board');
   });
 });

@@ -93,7 +93,7 @@ components:
 
 One fixed 1080×1920 portrait screen on the kitchen wall, no touch. The top 1000px is a 24-hour dial: midnight at the bottom, noon at the top, every hour numbered (0, 6, 12, 18 bold). Today's timed events sit on the ring as arcs in the person's colour with their emoji pinned at the start time (🥑 Papa, 🍪 Daddy, 🌸 Wren, 🥭 Ellis). The light part of the ring is daylight (sunrise to sunset); a teal hand marks now. Inside the dial: the clock, date, weather and what to wear, or the timers when any run.
 
-Underneath, the content follows the clock, not the theme: before 12:00 it is the school morning (reminders, U2 disruption, kit to bring, the kids' jobs, next five days, countdowns and news); from 12:00 it is the evening (bedtimes, tomorrow's reminders, weather and kit, the photo, next five days). Saturdays, Sundays and days when both kids are off school use weekend mode: no kit, no train line, the holiday name inside the dial, the photo.
+Underneath, a **rotating stage**: blocks crossfade every `ROTATE_MS` (5 s, Joshua's ask; one constant in `KioskDashboard.tsx`) with progress dots. Blocks: the photo (full-bleed, twice per cycle so it comes back with a different picture), the week ahead, the kids (bedtimes and kit for tomorrow in the evening, kit for today in the morning, and the jobs), countdowns with a headline. **Pinned above the stage, never rotating:** today's reminders (flashing in their window), tomorrow's reminders in the evening, a U2 disruption, a bedtime from two hours before it, and on school mornings until 09:00 the kids' block itself, because Ellis's one-step card must not flip away while he is following it. Timers live on the dial. Before 12:00 is morning, after is evening; Saturdays, Sundays and days when both kids are off school use weekend mode (no kit, no train line, the holiday name inside the dial).
 
 Code: `src/components/kiosk/KioskDashboard.tsx`, `KioskDial.tsx`, `KioskIcon.tsx`, `kioskD.css`; rules in `src/lib/familyRules.ts` (tested).
 
@@ -107,7 +107,7 @@ Text that sits directly on the page uses `day-ink` (7.75:1) or `day-ink-2` (4.7:
 
 ## Typography
 
-Outfit throughout, tabular numerals. ABeeZee for anything Ellis reads (his card, his bedtime row, his kit chip), in German. The clock is 240px; rows 40px; labels 28px; nothing a passer-by needs is under 21px.
+Outfit throughout, tabular numerals. ABeeZee for Ellis's chore card, whose "Jetzt / Dann" stays German; everything else on the screen is English. Size steps in use (px): 240 clock / 260 single-timer countdown; 128 temperature; 84–96 countdown numbers and what-to-wear emoji; 72 big steps; 52–60 bedtimes and Ellis's step; 44–48 card headings, day names; 40 rows; 34–36 secondary lines; 28–30 labels and week events; 24–26 meta (dates in day cards, "+n more"); 18 footer. Nothing a passer-by needs is under 24px.
 
 ## Layout
 
@@ -127,7 +127,8 @@ Pills for chips, 26px cards, 22px rows, 20px day cards. Dial strokes: 44px ring,
 - **Timers:** one timer fills the centre with a 260px countdown; two or three list as label + countdown in the ring's colour, each keyed by a dot and a knob at the ring's end. No separate boxes, no Siri phrase echo. A finished timer blinks for 60 s.
 - **Kit chips:** kid emoji, kit emoji, one word. Suppressed when that kid has no school.
 - **Ellis's card:** one big "Jetzt:" step with a picture (the chore's own emoji, or a drawn icon), then "Dann:" with the rest.
-- **Day cards:** weekday, weather, the all-day/holiday line, up to three events; work events collapse to "HH:MM Meeting".
+- **Week block:** five day cards at full stage height: weekday and date, weather, the all-day/holiday line, events. Each parent's work meetings from 17:00 fold into one line per day: "18:00 Meeting", or "18:00–21:00" with "3 meetings" under it. The dial uses the same folding: one arc from first start to last end, one pin.
+- **Footer:** "Last refresh" is the newest successful data fetch across all queries, not the page-load time.
 
 ## Do's and Don'ts
 
