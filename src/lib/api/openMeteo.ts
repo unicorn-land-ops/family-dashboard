@@ -16,6 +16,7 @@ export interface WeatherResponse {
     weather_code: number[];
     sunrise: string[];
     sunset: string[];
+    precipitation_probability_max?: number[];
   };
   timezone: string;
 }
@@ -35,7 +36,7 @@ export async function fetchWeatherForLocation({
     latitude: String(latitude),
     longitude: String(longitude),
     current: 'temperature_2m,weather_code',
-    daily: 'temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset',
+    daily: 'temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset,precipitation_probability_max',
     timezone,
     forecast_days: '14',
   });

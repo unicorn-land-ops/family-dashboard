@@ -6,12 +6,13 @@ import { TRANSIT_STALE_MS, TRANSIT_REFRESH_MS } from '../lib/constants';
  * React Query wrapper for BVG departure data at Senefelderplatz.
  * Stale after 30 seconds, refetches every 60 seconds.
  */
-export function useTransit() {
+export function useTransit(enabled = true) {
   return useQuery({
     queryKey: ['transit', 'senefelderplatz'],
     queryFn: fetchDepartures,
     staleTime: TRANSIT_STALE_MS,
     refetchInterval: TRANSIT_REFRESH_MS,
     retry: 2,
+    enabled,
   });
 }
