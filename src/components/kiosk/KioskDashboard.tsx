@@ -123,8 +123,8 @@ function Routine({ chores, completions }: { chores: Chore[]; completions: ChoreC
   );
 }
 
-/** The week ahead: five days, each parent's evening meetings folded into one line. */
-function Week({ days, weather }: { days: DaySchedule[]; weather: ReturnType<typeof useWeather>['data'] }) {
+/** Today and the next two days, each parent's evening meetings folded into one line. */
+function Week({ days, weather, todayIso }: { days: DaySchedule[]; weather: ReturnType<typeof useWeather>['data']; todayIso: string }) {
   return (
     <div className="kd-days">
       {days.map((d) => {
@@ -133,17 +133,17 @@ function Week({ days, weather }: { days: DaySchedule[]; weather: ReturnType<type
         const wi = w ? w.time.indexOf(iso) : -1;
         const allDay = d.events.find((e) => e.isAllDay)?.summary ?? holidayName(iso);
         const items = groupMeetings(d.events);
-        const shown = items.length > 4 ? items.slice(0, 3) : items;
+        const shown = items.length > 6 ? items.slice(0, 5) : items;
         return (
           <div key={iso} className="kd-day">
-            <div className="kd-hd">{formatInTimeZone(d.date, TIMEZONE, 'EEE')}<span>{formatInTimeZone(d.date, TIMEZONE, 'd')}</span></div>
+            <div className="kd-hd">{d.dateStr === todayIso ? 'Today' : formatInTimeZone(d.date, TIMEZONE, 'EEEE')}<span>{formatInTimeZone(d.date, TIMEZONE, 'd MMM')}</span></div>
             {wi >= 0 && <div className="kd-dwx"><WeatherIcon code={w!.weather_code[wi]} size="1.2em" /> {Math.round(w!.temperature_2m_max[wi])}° / {Math.round(w!.temperature_2m_min[wi])}°</div>}
             {allDay && <div className="kd-ad">{allDay}</div>}
             {shown.map((e) => {
               const [main, sub] = e.title.split(' · ');
               return <div key={e.key} className="kd-e"><span>{EMOJI[e.person]}</span><span>{main}{sub && <small>{sub}</small>}</span></div>;
             })}
-            {items.length > 4 && <div className="kd-more">+{items.length - 3} more</div>}
+            {items.length > 6 && <div className="kd-more">+{items.length - 5} more</div>}
             {!allDay && items.length === 0 && <div className="kd-free">Free</div>}
           </div>
         );
@@ -346,7 +346,7 @@ export function KioskDashboard() {
   const blocks: Record<string, (a: number) => ReactNode> = {
     photo0: photoAt(0),
     photo1: photoAt(1),
-    week: () => <div className="kd-block"><Week days={days.slice(1, 6)} weather={weather} /></div>,
+    week: () => <div className="kd-block"><Week days={days.filter((d) => d.dateStr >= iso).slice(0, 3)} weather={weather} todayIso={iso} /></div>,
     kids: () => kids,
     countdowns: () => <Countdowns now={now} />,
   };

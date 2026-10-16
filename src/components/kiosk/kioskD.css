@@ -140,15 +140,15 @@
 .kd-slide .kd-big { font-size: 72px; }
 .kd-slide .kd-then { font-size: 32px; }
 
-.kd-days { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; height: 100%; }
-.kd-day { background: var(--panel); border-radius: 22px; padding: 20px 18px; overflow: hidden; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.kd-hd { display: flex; align-items: baseline; gap: 8px; font-size: 40px; font-weight: 600; line-height: 1; }
-.kd-hd span { font-size: 28px; color: var(--ink-2); font-weight: 500; }
-.kd-dwx { display: flex; align-items: center; gap: 6px; font-size: 26px; color: var(--ink-2); white-space: nowrap; }
-.kd-ad { font-size: 24px; color: var(--p-family); font-weight: 600; line-height: 1.2; }
-.kd-e { display: grid; grid-template-columns: auto 1fr; gap: 8px; font-size: 28px; line-height: 1.25; }
-.kd-e small { display: block; font-size: 24px; color: var(--ink-2); }
-.kd-e span:last-child { overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.kd-days { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; height: 100%; }
+.kd-day { background: var(--panel); border-radius: 22px; padding: 22px 24px; overflow: hidden; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.kd-hd { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px; font-size: 44px; font-weight: 600; line-height: 1; }
+.kd-hd span { white-space: nowrap; font-size: 30px; color: var(--ink-2); font-weight: 500; }
+.kd-dwx { display: flex; align-items: center; gap: 8px; font-size: 30px; color: var(--ink-2); white-space: nowrap; }
+.kd-ad { font-size: 28px; color: var(--p-family); font-weight: 600; line-height: 1.2; }
+.kd-e { display: grid; grid-template-columns: auto 1fr; gap: 10px; font-size: 32px; line-height: 1.25; }
+.kd-e small { display: block; font-size: 26px; color: var(--ink-2); }
+.kd-e span:last-child { overflow-wrap: break-word; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .kd-more { font-size: 24px; color: var(--ink-2); font-weight: 600; }
 .kd-free { font-size: 28px; color: var(--ink-3); }
 
