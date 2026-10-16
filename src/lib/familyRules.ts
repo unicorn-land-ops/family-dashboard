@@ -117,7 +117,16 @@ export function u2Disruption(
 export interface DayItem { key: string; person: string; start: Date; end: Date; title: string; count: number }
 
 const hmBerlin = (d: Date) => formatInTimeZone(d, 'Europe/Berlin', 'HH:mm');
-const personOfEvent = (e: CalendarEvent) => (e.persons[0] ?? 'family').replace(/-work$/, '');
+/**
+ * Whose event this is. dedup merges the same event from several feeds (Joshua blocks Wren's ortho in his
+ * Masawa calendar, so it arrives as ['papa-work', 'wren']): a kid wins, then a personal feed over a work one.
+ */
+export function personOfEvent(e: CalendarEvent): string {
+  const kid = e.persons.find((p) => p === 'wren' || p === 'ellis');
+  return (kid ?? e.persons.find((p) => !p.endsWith('-work')) ?? e.persons[0] ?? 'family').replace(/-work$/, '');
+}
+/** A work meeting only if every feed it came from is a work calendar. */
+const isWorkOnly = (e: CalendarEvent) => e.persons.length > 0 && e.persons.every((p) => p.endsWith('-work'));
 
 /**
  * Timed events of a day, with each parent's work meetings from 17:00 folded into one item:
@@ -129,7 +138,7 @@ export function groupMeetings(events: CalendarEvent[]): DayItem[] {
   for (const e of events) {
     if (e.isAllDay) continue;
     const p = personOfEvent(e);
-    const work = e.persons.some((x) => x.endsWith('-work')) && (p === 'papa' || p === 'daddy');
+    const work = isWorkOnly(e) && (p === 'papa' || p === 'daddy');
     if (work && hmBerlin(e.startTime) >= '17:00') (meet[p] ??= []).push(e);
     else out.push({ key: e.id + e.startTime.getTime(), person: p, start: e.startTime, end: e.endTime, title: `${hmBerlin(e.startTime)} ${e.summary}`, count: 1 });
   }

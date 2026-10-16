@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { groupMeetings, bedtime, hasSchool, isWeekendMode, kitFor, wear, u2Disruption, berlinPublicHolidays } from './familyRules';
+import { groupMeetings, personOfEvent, bedtime, hasSchool, isWeekendMode, kitFor, wear, u2Disruption, berlinPublicHolidays } from './familyRules';
 import type { CalendarEvent } from './calendar/types';
 
 const schulfrei = (kid: string, iso: string): CalendarEvent => ({
@@ -82,6 +82,12 @@ describe('groupMeetings', () => {
     const g = groupMeetings([ev('daddy-work', '18:00', '19:00'), ev('daddy-work', '19:30', '20:00'), ev('daddy-work', '20:00', '21:00'), ev('papa-work', '19:30', '20:30'), ev('wren', '12:30', '13:00', 'Ortho')]);
     expect(g.map((i) => i.title)).toEqual(['12:30 Ortho', '18:00–21:00 · 3 meetings', '19:30 Meeting']);
     expect(g[1].person).toBe('daddy');
+  });
+  it('an event merged from Joshua’s work calendar and Wren’s belongs to Wren, with its real title', () => {
+    const merged = { ...ev('papa-work', '18:30', '19:00', 'Wren Ortho'), persons: ['papa-work', 'wren'] };
+    const g = groupMeetings([merged, ev('papa-work', '19:30', '20:00')]);
+    expect(g.map((i) => [i.person, i.title])).toEqual([['wren', '18:30 Wren Ortho'], ['papa', '19:30 Meeting']]);
+    expect(personOfEvent({ ...merged, persons: ['daddy-work', 'daddy'] })).toBe('daddy');
   });
   it('leaves daytime work events alone', () => {
     expect(groupMeetings([ev('papa-work', '10:00', '11:00', 'Board')])[0].title).toBe('10:00 Board');
