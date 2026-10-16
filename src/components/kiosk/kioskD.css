@@ -158,15 +158,20 @@
 .kd-beds b { margin-left: auto; font-size: 52px; font-weight: 600; }
 .kd-beds .kd-ico { font-size: 44px; color: var(--ink-2); }
 
-.kd-countdowns { background: var(--panel); border-radius: 26px; padding: 26px 30px; justify-content: center; gap: 24px; overflow: hidden; }
-.kd-cd { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-.kd-cd b { font-size: 96px; color: var(--accent); display: block; line-height: 1; font-weight: 600; }
-.kd-cd span { font-size: 32px; display: block; margin-top: 6px; }
-.kd-news { font-size: 34px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.kd-countdowns { gap: 14px; }
+.kd-cd { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, 1fr); grid-auto-rows: 1fr; gap: 14px; }
+.kd-cd > div { background: var(--panel); border-radius: 26px; padding: 22px 28px; display: grid; grid-template-columns: auto 1fr; grid-template-rows: 1fr auto; column-gap: 18px; align-items: end; min-height: 0; overflow: hidden; }
+.kd-cdemoji { grid-row: 1 / 3; align-self: center; font-size: 72px; line-height: 1; }
+.kd-cd b { font-size: 104px; color: var(--accent); line-height: .9; font-weight: 600; letter-spacing: -0.02em; }
+.kd-cd span:last-child { font-size: 30px; color: var(--ink-2); line-height: 1.2; }
+.kd-news { flex: none; background: var(--panel); border-radius: 22px; padding: 20px 28px; font-size: 32px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .kd-news b { color: var(--accent); }
-.kd-photo { height: 100%; border-radius: 26px; overflow: hidden; background: var(--panel-2); }
-.kd-photo .photo-frame { border-radius: 0; }
-.kd-photo .photo-img { object-fit: cover; }
+.kd-photo { position: relative; height: 100%; border-radius: 26px; overflow: hidden; background: var(--panel-2); }
+.kd-photo img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.kd-photo-img { object-fit: contain; }
+.kd-photo.is-cover .kd-photo-img { object-fit: cover; object-position: 50% 30%; }
+.kd-photo-bg { object-fit: cover; transform: scale(1.1); opacity: .85; }
+.kd-photo-cap { position: absolute; right: 16px; bottom: 16px; padding: 6px 14px; border-radius: 999px; background: #000000a0; color: #fff; font-size: 22px; font-weight: 500; }
 .kd-ok { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 28px; color: var(--ink-2); font-weight: 500; }
 
 /* Evening, inside the dial: tomorrow in one line */

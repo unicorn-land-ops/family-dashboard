@@ -3,7 +3,9 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { formatInTimeZone } from 'date-fns-tz';
 import './kioskD.css';
 import { StatusBar } from '../layout/StatusBar';
-import { KioskPhotoFrame } from './KioskPhotoFrame';
+import { KioskPhoto } from './KioskPhoto';
+import { useGooglePhotos } from '../../hooks/useGooglePhotos';
+import { PHOTO_WORKER_URL } from '../../config/photos';
 import { KioskDial, EMOJI, minutesOf, type DialTimer } from './KioskDial';
 import { KioskIcon, choreIcon } from './KioskIcon';
 import { WeatherIcon } from '../weather/WeatherIcon';
@@ -26,6 +28,8 @@ import type { Chore, ChoreCompletion } from '../../types/database';
 
 /** How long each block of the rotating lower half stays up. Joshua asked for 5 s (15.10.2026). */
 export const ROTATE_MS = 5_000;
+/** Chores come back with the HomePod (30.10): flip to true and the kids' jobs return, pinned on school mornings. */
+export const SHOW_CHORES = false;
 
 const TIMER_COLORS = ['var(--t1)', 'var(--t2)', 'var(--t3)'];
 const KIDS: { kid: Kid; name: string }[] = [{ kid: 'ellis', name: 'Ellis' }, { kid: 'wren', name: 'Wren' }];
@@ -148,6 +152,12 @@ function Week({ days, weather }: { days: DaySchedule[]; weather: ReturnType<type
   );
 }
 
+/** Feeds hand us titles with HTML entities still in them ("Cal AI&#8217;s"). */
+const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
+const decodeEntities = (t: string) =>
+  t.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (m, e: string) =>
+    e[0] === '#' ? String.fromCodePoint(parseInt(e.slice(e[1].toLowerCase() === 'x' ? 2 : 1), e[1].toLowerCase() === 'x' ? 16 : 10)) : ENTITIES[e.toLowerCase()] ?? m);
+
 function Countdowns({ now }: { now: Date }) {
   const { events } = useEvents();
   const { headlines } = useNewsTicker();
@@ -157,16 +167,24 @@ function Countdowns({ now }: { now: Date }) {
     <div className="kd-block kd-countdowns">
       <div className="kd-cd">
         {cds.map((c) => (
-          <div key={c.id}><b>{c.daysRemaining === 0 ? 'Today' : c.daysRemaining}</b><span>{c.emoji} {c.label}</span></div>
+          <div key={c.id}>
+            <span className="kd-cdemoji">{c.emoji}</span>
+            <b>{c.daysRemaining === 0 ? 'Today' : c.daysRemaining}</b>
+            <span>{c.daysRemaining === 0 ? c.label : `${c.daysRemaining === 1 ? 'day' : 'days'} to ${c.label}`}</span>
+          </div>
         ))}
       </div>
-      {h && <div className="kd-news"><b>{h.source}</b> {h.title}</div>}
+      {h && <div className="kd-news"><b>{h.source}</b> {decodeEntities(h.title)}</div>}
     </div>
   );
 }
 
-/** Blocks crossfade in place; one block id may appear more than once in the order (the photo does). */
-function Rotator({ order, blocks }: { order: string[]; blocks: Record<string, ReactNode> }) {
+/**
+ * Blocks crossfade in place. Each block renders with its appearance number: the count of the showing it is
+ * on or waiting for, which ticks over right after the block hides, so a photo block can load its next
+ * picture while it's out of sight.
+ */
+function Rotator({ order, blocks }: { order: string[]; blocks: Record<string, (appearance: number) => ReactNode> }) {
   const [i, setI] = useState(0);
   useEffect(() => {
     if (order.length < 2) return;
@@ -177,8 +195,10 @@ function Rotator({ order, blocks }: { order: string[]; blocks: Record<string, Re
   const active = order[pos];
   return (
     <div className="kd-rot kd-grow">
-      {[...new Set(order)].map((id) => (
-        <div key={id} className={`kd-slide is-${id} ${id === active ? 'is-on' : ''}`} aria-hidden={id !== active}>{blocks[id]}</div>
+      {order.map((id, p) => (
+        <div key={id} className={`kd-slide ${id === active ? 'is-on' : ''}`} aria-hidden={id !== active}>
+          {blocks[id](Math.max(0, Math.ceil((i - p) / order.length)))}
+        </div>
       ))}
       {order.length > 1 && (
         <div className="kd-dots" aria-hidden="true">{order.map((_, j) => <i key={j} className={j === pos ? 'is-on' : ''} />)}</div>
@@ -193,6 +213,7 @@ export function KioskDashboard() {
   const { data: weather } = useWeather();
   const { activeTimers, completedTimers } = useTimers();
   const { chores, completions } = useChores();
+  const { photos } = useGooglePhotos(PHOTO_WORKER_URL);
   const now = useNow(activeTimers.length + completedTimers.length > 0);
 
   const iso = formatInTimeZone(now, TIMEZONE, 'yyyy-MM-dd');
@@ -227,7 +248,7 @@ export function KioskDashboard() {
   const bedSoon = bedtimes.filter((b) => { const m = minutesUntil(nowHm, b.at); return m !== null && m <= 120; });
   const holiday = holidayName(iso);
   // School mornings until 09:00: the kids' jobs stay put (Ellis's one-step-at-a-time card must not flip away).
-  const kidsPinned = schoolMorning && nowMin < 9 * 60;
+  const kidsPinned = SHOW_CHORES && schoolMorning && nowMin < 9 * 60;
 
   const centre = () => {
     if (timers.length === 1) {
@@ -295,9 +316,17 @@ export function KioskDashboard() {
 
   const kitToday = kitFor(iso, todayEvents).length > 0;
   const kitTomorrow = !morning && kitFor(tomorrowIso, tomorrow?.events ?? []).length > 0;
-  const trainsOk = kidsPinned && !!deps && !disruption;
+  const trainsOk = schoolMorning && nowMin < 9 * 60 && !!deps && !disruption;
 
-  // Kids block: bedtimes and kit for tomorrow in the evening, kit for today in the morning, and the jobs.
+  const kitStrip = ((morning ? kitToday : kitTomorrow) || trainsOk) && (
+    <div className="kd-strip">
+      {(morning ? kitToday : kitTomorrow) && <span className="kd-lbl">{morning ? 'Today, bring' : 'Pack for tomorrow'}</span>}
+      <KitChips iso={morning ? iso : tomorrowIso} events={(morning ? todayEvents : tomorrow?.events) ?? []} />
+      {trainsOk && <span className="kd-ok"><KioskIcon name="train" /> U2 on time</span>}
+    </div>
+  );
+
+  // Kids block (only with chores on): bedtimes in the evening, kit, and the jobs.
   const kids = (
     <div className="kd-block kd-kids">
       {!morning && (
@@ -307,24 +336,21 @@ export function KioskDashboard() {
           ))}
         </div>
       )}
-      {((morning ? kitToday : kitTomorrow) || trainsOk) && (
-        <div className="kd-strip">
-          {(morning ? kitToday : kitTomorrow) && <span className="kd-lbl">{morning ? 'Today, bring' : 'Pack for tomorrow'}</span>}
-          <KitChips iso={morning ? iso : tomorrowIso} events={(morning ? todayEvents : tomorrow?.events) ?? []} />
-          {trainsOk && <span className="kd-ok"><KioskIcon name="train" /> U2 on time</span>}
-        </div>
-      )}
+      {kitStrip}
       <Routine chores={chores} completions={completions} />
     </div>
   );
 
-  const blocks: Record<string, ReactNode> = {
-    photo: <div className="kd-photo"><KioskPhotoFrame /></div>,
-    week: <div className="kd-block"><Week days={days.slice(1, 6)} weather={weather} /></div>,
-    kids,
-    countdowns: <Countdowns now={now} />,
+  // Two photo slots per cycle, each showing a different picture every time it comes round.
+  const photoAt = (k: number) => (a: number) => <KioskPhoto photo={photos.length ? photos[(a * 2 + k) % photos.length] : undefined} />;
+  const blocks: Record<string, (a: number) => ReactNode> = {
+    photo0: photoAt(0),
+    photo1: photoAt(1),
+    week: () => <div className="kd-block"><Week days={days.slice(1, 6)} weather={weather} /></div>,
+    kids: () => kids,
+    countdowns: () => <Countdowns now={now} />,
   };
-  const order = kidsPinned ? ['week', 'photo', 'countdowns', 'photo'] : ['kids', 'photo', 'week', 'photo', 'countdowns'];
+  const order = !SHOW_CHORES || kidsPinned ? ['photo0', 'week', 'photo1', 'countdowns'] : ['kids', 'photo0', 'week', 'photo1', 'countdowns'];
 
   return (
     <ErrorBoundary FallbackComponent={GlobalFallback} onError={logError}>
@@ -358,7 +384,7 @@ export function KioskDashboard() {
                   <small>{b.at} · {inText(minutesUntil(nowHm, b.at)!)}</small>
                 </div>
               ))}
-              {kidsPinned && kids}
+              {SHOW_CHORES ? kidsPinned && kids : kitStrip}
               <Rotator order={order} blocks={blocks} />
             </div>
           </ErrorBoundary>
