@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { formatInTimeZone } from 'date-fns-tz';
 import './kioskD.css';
@@ -26,8 +26,8 @@ import { addDaysIso, bedtime, groupMeetings, holidayName, isWeekendMode, kitFor,
 import type { CalendarEvent, DaySchedule } from '../../lib/calendar/types';
 import type { Chore, ChoreCompletion } from '../../types/database';
 
-/** How long each block of the rotating lower half stays up. Joshua asked for 5 s (15.10.2026). */
-export const ROTATE_MS = 5_000;
+/** How long each block of the rotating lower half stays up. Joshua: 5 s (15.10), then 7 s (17.10.2026). */
+export const ROTATE_MS = 7_000;
 /** Chores come back with the HomePod (30.10): flip to true and the kids' jobs return, pinned on school mornings. */
 export const SHOW_CHORES = false;
 
@@ -123,11 +123,32 @@ function Routine({ chores, completions }: { chores: Chore[]; completions: ChoreC
   );
 }
 
-/** Today and the next two days, each parent's evening meetings folded into one line. */
+/**
+ * The days ahead as rows, top to bottom: up to five (today + 4), as many as fit whole. Rows that would be
+ * cut by the block's height are hidden, never clipped, so a busy day costs the later days, not its own lines.
+ */
 function Week({ days, weather, todayIso }: { days: DaySchedule[]; weather: ReturnType<typeof useWeather>['data']; todayIso: string }) {
+  const box = useRef<HTMLDivElement>(null);
+  const [fits, setFits] = useState(days.length);
+  const signature = days.map((d) => d.dateStr + d.events.length).join();
+  useLayoutEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const measure = () => {
+      const rows = [...el.children] as HTMLElement[];
+      const n = rows.filter((r) => r.offsetTop + r.offsetHeight <= el.clientHeight + 1).length;
+      setFits(Math.max(1, n));
+    };
+    measure();
+    // Rows grow when weather or fonts arrive, so watch them as well as the block.
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    for (const r of el.children) ro.observe(r);
+    return () => ro.disconnect();
+  }, [signature]);
   return (
-    <div className="kd-days">
-      {days.map((d) => {
+    <div className="kd-days" ref={box}>
+      {days.map((d, i) => {
         const iso = d.dateStr;
         const w = weather?.daily;
         const wi = w ? w.time.indexOf(iso) : -1;
@@ -135,16 +156,21 @@ function Week({ days, weather, todayIso }: { days: DaySchedule[]; weather: Retur
         const items = groupMeetings(d.events);
         const shown = items.length > 6 ? items.slice(0, 5) : items;
         return (
-          <div key={iso} className="kd-day">
-            <div className="kd-hd">{d.dateStr === todayIso ? 'Today' : formatInTimeZone(d.date, TIMEZONE, 'EEEE')}<span>{formatInTimeZone(d.date, TIMEZONE, 'd MMM')}</span></div>
-            {wi >= 0 && <div className="kd-dwx"><WeatherIcon code={w!.weather_code[wi]} size="1.2em" /> {Math.round(w!.temperature_2m_max[wi])}° / {Math.round(w!.temperature_2m_min[wi])}°</div>}
-            {allDay && <div className="kd-ad">{allDay}</div>}
-            {shown.map((e) => {
-              const [main, sub] = e.title.split(' · ');
-              return <div key={e.key} className="kd-e"><span>{EMOJI[e.person]}</span><span>{main}{sub && <small>{sub}</small>}</span></div>;
-            })}
-            {items.length > 6 && <div className="kd-more">+{items.length - 5} more</div>}
-            {!allDay && items.length === 0 && <div className="kd-free">Free</div>}
+          <div key={iso} className="kd-day" style={i >= fits ? { visibility: 'hidden' } : undefined}>
+            <div className="kd-when-col">
+              <div className="kd-hd">{iso === todayIso ? 'Today' : formatInTimeZone(d.date, TIMEZONE, 'EEEE')}</div>
+              <div className="kd-dd">{formatInTimeZone(d.date, TIMEZONE, 'd MMM')}</div>
+              {wi >= 0 && <div className="kd-dwx"><WeatherIcon code={w!.weather_code[wi]} size="1.2em" /> {Math.round(w!.temperature_2m_max[wi])}° / {Math.round(w!.temperature_2m_min[wi])}°</div>}
+            </div>
+            <div className="kd-what">
+              {allDay && <div className="kd-ad">{allDay}</div>}
+              {shown.map((e) => {
+                const [main, sub] = e.title.split(' · ');
+                return <div key={e.key} className="kd-e"><span>{EMOJI[e.person]}</span><span>{main}{sub && <small>{sub}</small>}</span></div>;
+              })}
+              {items.length > 6 && <div className="kd-more">+{items.length - 5} more</div>}
+              {!allDay && items.length === 0 && <div className="kd-free">Free</div>}
+            </div>
           </div>
         );
       })}
@@ -250,22 +276,21 @@ export function KioskDashboard() {
   // School mornings until 09:00: the kids' jobs stay put (Ellis's one-step-at-a-time card must not flip away).
   const kidsPinned = SHOW_CHORES && schoolMorning && nowMin < 9 * 60;
 
-  const centre = () => {
+  // The dial's centre: one middle element exactly at the circle's centre, the rest above and below it.
+  const centre = (): [ReactNode, ReactNode, ReactNode] => {
     if (timers.length === 1) {
       const t = timers[0];
       const left = getRemainingSeconds(t);
-      return (
-        <div className={`kd-t1 ${left === 0 ? 'is-ringing' : ''}`}>
-          <div className="kd-tclock">{nowHm}</div>
-          <div className="kd-tbig">{formatCountdown(left)}</div>
-          <div className="kd-tlbl"><KioskIcon name="timer" /> {t.label}</div>
-        </div>
-      );
+      return [
+        <div className="kd-tclock">{nowHm}</div>,
+        <div className={`kd-tbig ${left === 0 ? 'is-ringing' : ''}`}>{formatCountdown(left)}</div>,
+        <div className="kd-tlbl"><KioskIcon name="timer" /> {t.label}</div>,
+      ];
     }
     if (timers.length > 1) {
-      return (
+      return [
+        <div className="kd-tclock">{nowHm}</div>,
         <div className="kd-tn">
-          <div className="kd-tclock">{nowHm}</div>
           {timers.map((t, i) => {
             const left = getRemainingSeconds(t);
             return (
@@ -276,14 +301,18 @@ export function KioskDashboard() {
               </div>
             );
           })}
-        </div>
-      );
+        </div>,
+        null,
+      ];
     }
     const w = weather?.current;
-    return (
+    return [
       <>
-        <div className="kd-time">{nowHm}</div>
-        <div className="kd-date">{formatInTimeZone(now, TIMEZONE, 'EEEE d MMMM')}</div>
+        <div className="kd-weekday">{formatInTimeZone(now, TIMEZONE, 'EEEE')}</div>
+        <div className="kd-date">{formatInTimeZone(now, TIMEZONE, 'd MMMM')}</div>
+      </>,
+      <div className="kd-time">{nowHm}</div>,
+      <>
         {w && daily && di >= 0 && (
           <div className="kd-wx">
             <span className="kd-wxico"><WeatherIcon code={w.weather_code} size="1em" /></span>
@@ -304,9 +333,10 @@ export function KioskDashboard() {
             <span className="kd-wearsm"><Wear temp={daily.temperature_2m_min[ti]} rain={daily.precipitation_probability_max?.[ti] ?? 0} /></span>
           </div>
         ) : null}
-      </>
-    );
+      </>,
+    ];
   };
+  const [above, middle, below] = centre();
 
   const reminderRow = (r: (typeof reminders)[number], prefix = '') => (
     <div key={r.date + r.text} className={`kd-row ${r.flashing ? 'is-flashing' : ''}`}>
@@ -346,7 +376,7 @@ export function KioskDashboard() {
   const blocks: Record<string, (a: number) => ReactNode> = {
     photo0: photoAt(0),
     photo1: photoAt(1),
-    week: () => <div className="kd-block"><Week days={days.filter((d) => d.dateStr >= iso).slice(0, 3)} weather={weather} todayIso={iso} /></div>,
+    week: () => <div className="kd-block"><Week days={days.filter((d) => d.dateStr >= iso).slice(0, 5)} weather={weather} todayIso={iso} /></div>,
     kids: () => kids,
     countdowns: () => <Countdowns now={now} />,
   };
@@ -368,7 +398,7 @@ export function KioskDashboard() {
                 marks={!morning ? bedtimes.map((b) => ({ time: b.at, emoji: EMOJI[b.kid], color: `var(--p-${b.kid})` })) : []}
               />
             </div>
-            <div className="kd-center">{centre()}</div>
+            <div className="kd-center"><div className="kd-above">{above}</div><div className="kd-mid">{middle}</div><div className="kd-below">{below}</div></div>
           </ErrorBoundary>
           <ErrorBoundary FallbackComponent={PanelFallback} onError={logError}>
             <div className="kd-flow">

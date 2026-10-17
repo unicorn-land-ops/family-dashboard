@@ -2,8 +2,8 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { TIMEZONE } from '../../lib/utils/timeFormat';
 import type { DayItem } from '../../lib/familyRules';
 
-// 24-hour dial: midnight at the bottom, noon at the top. viewBox 1000×1000.
-const R = 440;
+// 24-hour dial: midnight at the bottom, noon at the top, hour numbers set on the ring band. viewBox 1000×1000.
+const R = 470;
 const C = 500;
 
 export const EMOJI: Record<string, string> = { papa: '🥑', daddy: '🍪', wren: '🌸', ellis: '🥭', family: '🏠' };
@@ -60,8 +60,10 @@ export function KioskDial({ now, items, sunrise, sunset, reminder, timers, marks
         );
       })}
       {Array.from({ length: 24 }, (_, h) => {
-        const [x, y] = pt(ang(`${h}:00`), R + 62);
-        return <text key={h} className={`kd-hour ${h % 6 ? '' : 'is-q'}`} x={x} y={y}>{h}</text>;
+        const [x, y] = pt(ang(`${h}:00`), R);
+        // Over an event arc the band is a strong colour, so the number flips to the light tone.
+        const onEv = items.some((e) => { const a0 = minutesOf(hm(e.start)); const a1 = minutesOf(hm(e.end)) > a0 ? minutesOf(hm(e.end)) : 1440; return h * 60 >= a0 && h * 60 < a1; });
+        return <text key={h} className={`kd-hour ${h % 6 ? '' : 'is-q'} ${onEv ? 'is-on-ev' : ''}`} x={x} y={y + 1}>{h}</text>;
       })}
       <line className="kd-hand" x1={tx} y1={ty} x2={hx} y2={hy} />
       <circle cx={hx} cy={hy} r={14} fill="var(--now)" />
