@@ -5,7 +5,9 @@ import { isChoreCompleted, getCompletionInfo } from '../../lib/choreSchedule';
 import { CALENDAR_FEEDS } from '../../lib/calendar/config';
 
 /** Family members eligible for chore completion (excludes 'family' feed). */
-const PEOPLE = CALENDAR_FEEDS.filter((f) => f.id !== 'family');
+const PEOPLE = CALENDAR_FEEDS.filter(
+  (f, i, all) => f.id !== 'family' && all.findIndex((g) => g.id === f.id) === i,
+);
 
 const STORAGE_KEY = 'chore-default-person';
 

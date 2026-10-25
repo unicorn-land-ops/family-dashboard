@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from 'react';
 import { CALENDAR_FEEDS } from '../../lib/calendar/config';
 
-const PEOPLE = CALENDAR_FEEDS.filter((f) => f.id !== 'family');
+const PEOPLE = CALENDAR_FEEDS.filter(
+  (f, i, all) => f.id !== 'family' && all.findIndex((g) => g.id === f.id) === i,
+);
 
 const SCHEDULES: { value: 'daily' | 'weekly' | 'once'; label: string }[] = [
   { value: 'daily', label: 'Daily' },
