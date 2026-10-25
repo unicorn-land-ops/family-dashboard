@@ -1,190 +1,102 @@
 # Family Dashboard
 
-A self-hosted DAKboard replacement using Home Assistant, featuring:
-- Clock and date display
-- Google Calendar integration
-- Weather widget
-- BVG Berlin transit departures
-- **Alexa timer display** (new!)
-- **Shared grocery list with voice commands** (new!)
+A self-hosted family dashboard (React 19 + Vite 7 + TypeScript + Tailwind 4 + Supabase)
+for the wall display and phones at home. Replaces the earlier Home Assistant
+prototype (see "Legacy" below).
 
-## Architecture
+## Views
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    WALL DISPLAY (Pi)                    │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │     Home Assistant Lovelace Dashboard           │   │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────────────┐│   │
-│  │  │ Calendar │ │ Weather  │ │  BVG Departures  ││   │
-│  │  └──────────┘ └──────────┘ └──────────────────┘│   │
-│  │  ┌──────────────────┐ ┌───────────────────────┐│   │
-│  │  │  ALEXA TIMERS    │ │    GROCERY LIST       ││   │
-│  │  │  🍳 Eggs: 4:32   │ │    ☐ Milk            ││   │
-│  │  │  🍞 Bread: 12:00 │ │    ☐ Eggs            ││   │
-│  │  └──────────────────┘ └───────────────────────┘│   │
-│  └─────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────┘
-```
+The view is selected by URL query parameter in `src/App.tsx`:
 
-## Prerequisites
+| URL | View |
+|---|---|
+| `/` | Default dashboard: header, main panel (Calendar / Groceries / Chores / Events via bottom nav), auto-rotating sidebar (Countdown, Transit, Horoscope, Country), timers take over the sidebar in priority mode, status bar. |
+| `?view=kiosk` | Wall-display kiosk: fixed grid with today + next days, countdowns, compact groceries, Google Photos frame, news ticker, status bar. |
+| `?view=chores&child=<name>` | Kid chore checklist view. |
 
-- Raspberry Pi 4 (4GB recommended, 2GB minimum)
-- MicroSD card (32GB+)
-- Display with HDMI input
-- Amazon Echo device (for Alexa timers)
-- Google account (for calendar)
-- OurGroceries account (free)
+## Data sources
 
-## Quick Start
+- **Supabase** (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`): `groceries`,
+  `timers`, `chores`, `chore_completions`, `events` tables (see `supabase/`).
+  Data layer is TanStack Query + Supabase Realtime invalidation + optimistic
+  mutations (`src/hooks/useGroceries.ts` is the reference implementation).
+  If the env vars are absent the app runs without Supabase (`supabaseEnabled`).
+- **Calendars**: ICS feeds per family member via `VITE_CAL_*` env vars, fetched
+  through `VITE_CORS_PROXY_URL` (see `src/lib/calendar/config.ts`).
+  A reference Cloudflare CORS proxy lives in `cloudflare-worker/`.
+- **Weather**: Open-Meteo (`src/lib/api/openMeteo.ts`, `src/hooks/useWeather.ts`).
+- **Photos**: Google Photos via a worker URL (see `src/config/photos.ts`,
+  `src/hooks/useGooglePhotos.ts`).
+- **Transit**: BVG departures (`src/lib/api/bvgTransit.ts`).
+- **News ticker**: see `src/lib/news/` and `src/hooks/useNewsTicker.ts`.
 
-### Phase 1: Install Home Assistant
-
-1. Download Home Assistant OS from https://www.home-assistant.io/installation/raspberrypi
-2. Flash to SD card using Raspberry Pi Imager
-3. Boot the Pi and wait ~20 minutes for initial setup
-4. Access at `http://homeassistant.local:8123`
-5. Complete the onboarding wizard
-
-### Phase 2: Add Core Integrations
-
-#### Google Calendar
-1. Go to Settings → Devices & Services → Add Integration
-2. Search for "Google Calendar"
-3. Follow OAuth flow to authenticate
-4. Select calendars to sync
-
-#### Weather
-1. Settings → Devices & Services → Add Integration
-2. Search for "OpenWeatherMap" (or your preferred provider)
-3. Get free API key from https://openweathermap.org/api
-4. Configure location (Berlin)
-
-### Phase 3: Alexa Timer Display
-
-See [docs/alexa-timer-setup.md](docs/alexa-timer-setup.md) for detailed instructions.
-
-Summary:
-1. Install HACS (Home Assistant Community Store)
-2. Install Alexa Media Player via HACS
-3. Install card-alexa-alarms-timers custom card
-4. Add to dashboard
-
-### Phase 4: Grocery List (OurGroceries)
-
-1. Create account at https://www.ourgroceries.com
-2. In HA: Settings → Devices & Services → Add Integration → OurGroceries
-3. Enter your credentials
-4. Test voice commands:
-   - "Hey Siri, add milk with OurGroceries"
-   - "Alexa, add eggs with OurGroceries"
-
-### Phase 5: BVG Transit
-
-1. In HACS, add custom repository: `vas3k/home-assistant-berlin-transport`
-2. Install Berlin Transport integration
-3. Restart Home Assistant
-4. Add integration via Settings → Devices & Services
-5. Configure your station and walking time
-
-### Phase 6: Dashboard Setup
-
-1. Copy `ha-config/lovelace/wall-dashboard.yaml` content
-2. In HA: Settings → Dashboards → Add Dashboard
-3. Name it "Wall Display"
-4. Edit dashboard → Raw configuration editor
-5. Paste the YAML
-6. Save
-
-### Phase 7: Pi Kiosk Mode
+## Quick start
 
 ```bash
-# Run the kiosk setup script
-chmod +x scripts/kiosk-setup.sh
-sudo ./scripts/kiosk-setup.sh
-
-# Configure autostart
-chmod +x scripts/autostart.sh
-mkdir -p ~/.config/autostart
-cp scripts/autostart.sh ~/.config/autostart/
-
-# Reboot to apply
-sudo reboot
+npm install
+npm run dev      # local dev server
+npm run build    # type-check + production build into dist/
+npm run preview  # serve the production build locally
+npm run test     # vitest
 ```
 
-## Configuration Files
+Deploy by serving `dist/` with any static file server (the kiosk just needs the
+built files; there is no server-side component in this repo).
 
-| File | Purpose |
-|------|---------|
-| `ha-config/configuration.yaml` | HA configuration snippets to add |
-| `ha-config/lovelace/wall-dashboard.yaml` | Dashboard layout |
-| `scripts/kiosk-setup.sh` | Pi display configuration |
-| `scripts/autostart.sh` | Browser auto-launch |
-| `docs/alexa-timer-setup.md` | Alexa Media Player guide |
+Required env vars (`.env`): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`,
+`VITE_CAL_PAPA`, `VITE_CAL_PAPA_WORK`, `VITE_CAL_DADDY`, `VITE_CAL_DADDY_WORK`,
+`VITE_CAL_Wren`, `VITE_CAL_ELLIS`, `VITE_CAL_FAMILY`, `VITE_CAL_TRIPIT`,
+`VITE_CORS_PROXY_URL`. Optional travel overrides: `VITE_DADDY_TRAVEL_TIMEZONE`,
+`VITE_DADDY_TRAVEL_LOCATION`, `VITE_DADDY_TRAVEL_LAT`, `VITE_DADDY_TRAVEL_LON`.
 
-## Voice Commands
+## Project structure
 
-### Alexa
-- "Alexa, set a 5 minute timer"
-- "Alexa, set a timer for eggs for 10 minutes"
-- "Alexa, add milk with OurGroceries"
+```
+src/
+  App.tsx                 # view router (default / kiosk / kid chores)
+  main.tsx                # entry; unregisters stale service workers
+  components/
+    layout/               # DashboardShell, Header, StatusBar, MobileNav, ...
+    calendar/             # CalendarPanel
+    grocery/              # GroceryPanel
+    timer/                # TimerPanel
+    chore/                # ChorePanel, KidChoreView
+    events/               # EventsPanel
+    sidebar/              # Countdown, Transit, Horoscope, Country panels + rotator
+    kiosk/                # KioskDashboard + kiosk cards/frame/ticker
+    clock/ weather/       # shared clock + weather widgets (used by Header)
+  hooks/                  # data hooks (useGroceries, useCalendar, useWeather, ...)
+  lib/                    # api clients, calendar/ics parsing, chore schedule, utils
+  config/                 # photos + app constants
+  types/database.ts       # hand-written Supabase row types (5 tables)
+supabase/                 # schema.sql, rls-policies.sql, events.sql, ...
+_archive/                 # retired files, kept for reversibility (see its README)
+docs/                     # design docs and implementation plans
+```
 
-### Siri
-- "Hey Siri, add bread with OurGroceries"
-- "Hey Siri, add bananas to my grocery list" (if OurGroceries is set as default)
+## Important: what NOT to touch
 
-## Verification Checklist
+- **Supabase schema**: `supabase/*.sql` is the source of truth. Do not add or
+  alter tables/policies without explicit approval.
+- **EXIT checklist sync**: the EXIT-games checklist lives in
+  `~/Projects/Personal/docs/exit-games.md` and syncs against a *different*
+  Supabase project/table (`public.checklists`, row `exit-games`). This dashboard
+  never touches that table — keep it that way.
 
-- [ ] Alexa timer appears on dashboard within 30 seconds
-- [ ] Voice-added grocery items appear on dashboard
-- [ ] Calendar events sync from Google
-- [ ] BVG departures show real-time arrivals
-- [ ] Dashboard auto-loads on Pi reboot
-- [ ] Screen stays on overnight (no blanking)
+## Legacy (superseded, kept for reference)
 
-## Troubleshooting
+The original approach was a Home Assistant + Raspberry Pi kiosk. It is no longer
+the product; the React app above is. These remain on disk for reference only:
 
-### Alexa timers not showing
-- Check Alexa Media Player is authenticated (may need re-auth periodically)
-- Verify the timer sensor entity exists in Developer Tools → States
-- Ensure your Echo is selected in the card configuration
+- `ha-config/` — Home Assistant Lovelace dashboard YAML
+- `scripts/kiosk-setup.sh`, `scripts/autostart.sh` — Pi kiosk setup
+- `calendar-proxy/Code.gs` — Apps Script calendar proxy
+- `docs/alexa-timer-setup.md` — Alexa Media Player guide
 
-### Grocery list not updating
-- Verify OurGroceries credentials are correct
-- Check the shopping_list entity in Developer Tools
-- Restart the OurGroceries integration
+## Housekeeping notes
 
-### Dashboard not loading on boot
-- Check autostart script permissions
-- Verify chromium-browser is installed
-- Check HA URL is accessible from Pi
-
-### Screen blanking despite settings
-- Check both DPMS and screensaver are disabled
-- Verify xset commands in autostart
-- May need to edit `/etc/lightdm/lightdm.conf`
-
-## Cost Comparison
-
-| Item | DAKboard | This Solution |
-|------|----------|---------------|
-| Annual cost | $35/year | $0 |
-| Alexa Timers | ❌ | ✅ |
-| Voice grocery list | Limited | ✅ Full |
-| Customization | Limited | Unlimited |
-
-## Future Enhancements
-
-- [ ] Add smart home device controls
-- [ ] Add family member location/presence
-- [ ] Add package tracking
-- [ ] Add meal planning integration
-- [ ] Add photo slideshow from Google Photos
-
-## Resources
-
-- [Home Assistant Docs](https://www.home-assistant.io/docs/)
-- [HACS](https://hacs.xyz/)
-- [Alexa Media Player](https://github.com/custom-components/alexa_media_player)
-- [Berlin Transport Integration](https://github.com/vas3k/home-assistant-berlin-transport)
-- [OurGroceries Integration](https://www.home-assistant.io/integrations/ourgroceries/)
+- 2026-09-26: structural refresh — archived the pre-kiosk-v5 dead files
+  (`KioskPageA/B`, `KioskRotatingStage`, `useStageRotation`, `index.old.html`)
+  to `_archive/2026-09-26-kiosk-v5-cleanup/`; rewrote this README (it still
+  described the Home Assistant prototype); fixed the table count in
+  `src/types/database.ts`. No Supabase changes. No behavior changes.

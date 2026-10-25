@@ -1,5 +1,5 @@
 // Supabase database types for family-dashboard
-// Hand-written to match Supabase CLI output format (only 4 tables, stable schema)
+// Hand-written to match Supabase CLI output format (5 tables, stable schema)
 
 export type Grocery = Database['public']['Tables']['groceries']['Row'];
 export type Timer = Database['public']['Tables']['timers']['Row'];

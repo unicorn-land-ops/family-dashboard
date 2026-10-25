@@ -1,0 +1,13 @@
+# gitleaks config — extends the built-in ruleset with an allowlist for
+# values that are public-by-design and safe to commit.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Public-by-design values (safe to commit)"
+regexes = [
+  # Supabase publishable / anon keys are meant to ship in client code.
+  # Real protection is Row-Level Security, not key secrecy.
+  '''sb_publishable_[A-Za-z0-9_-]+''',
+  '''sb_anon_[A-Za-z0-9_-]+''',
+]
