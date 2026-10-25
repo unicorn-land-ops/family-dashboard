@@ -21,9 +21,17 @@ export const CALENDAR_FEEDS: PersonConfig[] = [
     isWorkCalendar: true,
   },
   {
+    // Chore assignee only. VITE_CAL_DADDY is the shared "Culley.Haynes" calendar, where Papa's
+    // trips live, so it's tagged Papa below (25.10.2026). ICS has no event creator to split it by.
     id: 'daddy',
     name: 'Daddy',
     emoji: '\u{1F36A}',
+    calendarUrl: '',
+  },
+  {
+    id: 'papa',
+    name: 'Papa',
+    emoji: '\u{1F951}',
     calendarUrl: import.meta.env.VITE_CAL_DADDY ?? '',
     travelTimezone: import.meta.env.VITE_DADDY_TRAVEL_TIMEZONE || undefined,
     travelLocationName: import.meta.env.VITE_DADDY_TRAVEL_LOCATION || undefined,
