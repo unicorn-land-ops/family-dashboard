@@ -10,6 +10,7 @@ sentence that Siri reads out loud.
 | `POST /chore` | `{"kid": "ellis", "chore": "teeth"}` | Done! Brush teeth. Ellis has 23 points. |
 | `POST /redeem` | `{"kid": "wren", "reward": "ice cream"}` | Enjoy Ice cream! Wren has 5 points left. |
 | `GET /points?kid=ellis` | none | Ellis has 23 points. 27 more for Cinema night. |
+| `POST /timer` | `{"text": "10 minutes of tablet", "kid": "ellis"}` (`kid` optional) | 10 minutes for Ellis: Tablet. It's on the dashboard. |
 
 Every request needs the header `Authorization: Bearer <VOICE_TOKEN>`. Replies are plain
 text. Add `?json=1` to any URL to get JSON instead.

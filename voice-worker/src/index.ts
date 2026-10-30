@@ -4,6 +4,7 @@
 //   POST /chore   {kid, chore}    tick off the best-matching chore
 //   POST /redeem  {kid, reward}   spend points on the best-matching reward
 //   GET  /points?kid=             how many points, what's next
+//   POST /timer   {text, kid?}    "10 minutes tablet" -> a timer on the kiosk dial
 //
 // Every request needs `Authorization: Bearer <VOICE_TOKEN>`.
 // Replies are one speakable sentence (text/plain); add ?json=1 for JSON.
@@ -104,6 +105,24 @@ async function grocery(env: Env, body: Record<string, unknown>): Promise<Reply> 
   return ok(`Added ${item} to the list.`, { item });
 }
 
+async function timer(env: Env, body: Record<string, unknown>): Promise<Reply> {
+  const text = str(body.text, 100);
+  const m = text?.match(/(\d+)\s*(h(?:ours?|rs?)?|s(?:ec(?:ond)?s?)?|m(?:in(?:ute)?s?)?)?\b/i);
+  if (!text || !m) return bad('How long? Say a number of minutes.');
+  const n = parseInt(m[1], 10);
+  const unit = (m[2] ?? 'm').toLowerCase();
+  const seconds = unit.startsWith('h') ? n * 3600 : unit.startsWith('s') ? n : n * 60;
+  if (seconds < 1 || seconds > 12 * 3600) return bad('That timer is too long.');
+  const what = text.replace(m[0], '').replace(/\b(of|for)\b/gi, ' ').replace(/\s+/g, ' ').trim();
+  const kid = kidOf(body.kid);
+  const label = [kid && cap(kid), what && cap(what)].filter(Boolean).join(': ') || 'Timer';
+  await insert(env, 'timers', {
+    label, duration_seconds: seconds, started_at: new Date().toISOString(), created_by: kid ?? 'siri',
+  });
+  const spoken = unit.startsWith('h') ? `${n} hour${n === 1 ? '' : 's'}` : unit.startsWith('s') ? `${n} seconds` : `${n} minute${n === 1 ? '' : 's'}`;
+  return ok(`${spoken} for ${label}. It's on the dashboard.`, { label, seconds });
+}
+
 async function chore(env: Env, body: Record<string, unknown>): Promise<Reply> {
   const kid = kidOf(body.kid);
   const said = str(body.chore);
@@ -180,7 +199,7 @@ async function route(req: Request, env: Env, url: URL): Promise<Reply> {
   const key = `${req.method} ${url.pathname.replace(/\/+$/, '')}`;
   if (key === 'GET /points') return pointsRoute(env, url);
 
-  const handler = { 'POST /grocery': grocery, 'POST /chore': chore, 'POST /redeem': redeem }[key];
+  const handler = { 'POST /grocery': grocery, 'POST /chore': chore, 'POST /redeem': redeem, 'POST /timer': timer }[key];
   if (!handler) return bad('Not found', 404);
 
   let body: unknown;

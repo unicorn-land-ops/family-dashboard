@@ -28,8 +28,8 @@ import type { Chore, ChoreCompletion } from '../../types/database';
 
 /** How long each block of the rotating lower half stays up. Joshua: 5 s (15.10), then 7 s (17.10.2026). */
 export const ROTATE_MS = 7_000;
-/** Chores come back with the HomePod (30.10): flip to true and the kids' jobs return, pinned on school mornings. */
-export const SHOW_CHORES = false;
+/** Chores are back since the HomePod arrived (30.10.2026), pinned on school mornings. */
+export const SHOW_CHORES = true;
 
 const TIMER_COLORS = ['var(--t1)', 'var(--t2)', 'var(--t3)'];
 const KIDS: { kid: Kid; name: string }[] = [{ kid: 'ellis', name: 'Ellis' }, { kid: 'wren', name: 'Wren' }];

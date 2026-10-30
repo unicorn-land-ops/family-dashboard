@@ -49,6 +49,14 @@ describe('family-voice worker', () => {
     expect(inserts).toEqual([{ table: 'groceries', body: { name: 'Milch', checked: false, added_by: 'siri' } }]);
   });
 
+  it('starts a timer from spoken text', async () => {
+    fakeSupabase({});
+    const res = await call('/timer', { text: '10 minutes of tablet', kid: 'Ellis' });
+    expect(await res.text()).toBe("10 minutes for Ellis: Tablet. It's on the dashboard.");
+    expect(inserts[0]).toMatchObject({ table: 'timers', body: { label: 'Ellis: Tablet', duration_seconds: 600, created_by: 'ellis' } });
+    expect((await call('/timer', { text: 'tablet' })).status).toBe(400);
+  });
+
   it('completes a fuzzy-matched chore and speaks the balance', async () => {
     fakeSupabase({
       'chores?': [{ id: 'c1', title: 'Brush teeth', schedule: 'daily', assigned_to: 'ellis', is_active: true, created_at: '' }],
