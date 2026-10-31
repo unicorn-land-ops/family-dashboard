@@ -5,6 +5,7 @@
 //   POST /redeem  {kid, reward}   spend points on the best-matching reward
 //   GET  /points?kid=             how many points, what's next
 //   POST /timer   {text, kid?}    "10 minutes tablet" -> a timer on the kiosk dial
+//   POST /timer/cancel {label?}   cancel the newest running timer (matching the label, if given)
 //   GET  /cal/:feed               the dashboard's iCal feeds, held here so the public bundle has no
 //                                 secret calendar URLs (leak found 25.10, fixed 31.10.2026).
 //                                 Needs `Bearer <DASH_KEY>`, a read-only key, never the voice token.
@@ -130,6 +131,20 @@ async function timer(env: Env, body: Record<string, unknown>): Promise<Reply> {
   return ok(`${spoken} for ${label}. It's on the dashboard.`, { label, seconds });
 }
 
+async function cancelTimer(env: Env, body: Record<string, unknown>): Promise<Reply> {
+  const label = str(body.label, 60)?.toLowerCase() ?? '';
+  const since = new Date(Date.now() - 12 * 3600 * 1000).toISOString();
+  const rows = await sb<{ id: string; label: string; started_at: string; duration_seconds: number }[]>(
+    env,
+    `timers?select=id,label,started_at,duration_seconds&cancelled=eq.false&started_at=gte.${since}&order=started_at.desc`,
+  );
+  const running = rows.filter((t) => new Date(t.started_at).getTime() + t.duration_seconds * 1000 > Date.now());
+  const hit = running.find((t) => !label || t.label.toLowerCase().includes(label)) ?? (label ? undefined : running[0]);
+  if (!hit) return bad(label ? `No ${label} timer is running.` : 'No timer is running.', 404);
+  await sb(env, `timers?id=eq.${hit.id}`, { method: 'PATCH', body: JSON.stringify({ cancelled: true }) });
+  return ok(`Cancelled ${hit.label}.`, { label: hit.label });
+}
+
 async function chore(env: Env, body: Record<string, unknown>): Promise<Reply> {
   const kid = kidOf(body.kid);
   const said = str(body.chore);
@@ -206,7 +221,7 @@ async function route(req: Request, env: Env, url: URL): Promise<Reply> {
   const key = `${req.method} ${url.pathname.replace(/\/+$/, '')}`;
   if (key === 'GET /points') return pointsRoute(env, url);
 
-  const handler = { 'POST /grocery': grocery, 'POST /chore': chore, 'POST /redeem': redeem, 'POST /timer': timer }[key];
+  const handler = { 'POST /grocery': grocery, 'POST /chore': chore, 'POST /redeem': redeem, 'POST /timer': timer, 'POST /timer/cancel': cancelTimer }[key];
   if (!handler) return bad('Not found', 404);
 
   let body: unknown;

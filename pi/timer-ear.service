@@ -1,0 +1,13 @@
+[Unit]
+Description=timer-ear: HomePod Siri timers onto the dashboard (USB mic + offline Vosk)
+After=network-online.target sound.target
+
+[Service]
+User=pi
+ExecStart=/home/pi/timer-ear/run.sh
+Restart=always
+RestartSec=30
+Nice=10
+
+[Install]
+WantedBy=multi-user.target

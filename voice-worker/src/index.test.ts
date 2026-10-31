@@ -71,6 +71,22 @@ describe('family-voice worker', () => {
     expect((await call('/timer', { text: 'tablet' })).status).toBe(400);
   });
 
+  it('cancels the running timer that matches the label', async () => {
+    const now = new Date().toISOString();
+    fakeSupabase({ 'timers?': [
+      { id: 't1', label: 'Pasta', started_at: now, duration_seconds: 600 },
+      { id: 't2', label: 'Rice', started_at: now, duration_seconds: 600 },
+    ] });
+    const patched: string[] = [];
+    const base = vi.mocked(fetch).getMockImplementation()!;
+    vi.mocked(fetch).mockImplementation(async (url, init) => {
+      if (init?.method === 'PATCH') { patched.push(String(url)); return new Response(null, { status: 204 }); }
+      return base(url as string, init);
+    });
+    expect(await (await call('/timer/cancel', { label: 'rice' })).text()).toBe('Cancelled Rice.');
+    expect(patched[0]).toContain('id=eq.t2');
+  });
+
   it('completes a fuzzy-matched chore and speaks the balance', async () => {
     fakeSupabase({
       'chores?': [{ id: 'c1', title: 'Brush teeth', schedule: 'daily', assigned_to: 'ellis', is_active: true, created_at: '' }],
