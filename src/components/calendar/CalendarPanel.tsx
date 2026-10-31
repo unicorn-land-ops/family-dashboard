@@ -23,8 +23,8 @@ export function CalendarPanel() {
         <div className="text-center" style={{ color: 'var(--fd-text-2)' }}>
           <p className="text-lg mb-1">Calendar unavailable</p>
           <p className="text-sm opacity-70">
-            {errors.length > 0 && errors[0]?.message?.includes('CORS_PROXY_URL')
-              ? 'CORS proxy not configured. Set VITE_CORS_PROXY_URL in .env'
+            {errors.length > 0 && errors[0]?.message?.includes('Dashboard key')
+              ? 'Dashboard key missing. Open the dashboard once with its key link.'
               : 'Unable to load calendar feeds. Will retry automatically.'}
           </p>
         </div>

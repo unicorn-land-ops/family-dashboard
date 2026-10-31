@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import worker from './index';
 
-const env = { SUPABASE_URL: 'https://sb.test', SUPABASE_ANON_KEY: 'anon', VOICE_TOKEN: 'secret' };
+const env = {
+  SUPABASE_URL: 'https://sb.test', SUPABASE_ANON_KEY: 'anon', VOICE_TOKEN: 'secret',
+  DASH_KEY: 'dash', CAL_FEEDS: JSON.stringify({ wren: 'https://cal.test/wren.ics' }),
+};
 
 // Fake PostgREST: answers by path prefix, records inserts.
 let inserts: { table: string; body: unknown }[] = [];
@@ -47,6 +50,17 @@ describe('family-voice worker', () => {
     const res = await call('/grocery', { item: 'Milch' });
     expect(await res.text()).toBe('Added Milch to the list.');
     expect(inserts).toEqual([{ table: 'groceries', body: { name: 'Milch', checked: false, added_by: 'siri' } }]);
+  });
+
+  it('serves a calendar feed only with the dashboard key', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('BEGIN:VCALENDAR')));
+    const get = (feed: string, key: string) =>
+      worker.fetch(new Request(`https://voice.test/cal/${feed}`, { headers: { Authorization: `Bearer ${key}` } }), env);
+    expect((await get('wren', 'secret')).status).toBe(401); // the voice token is not enough
+    expect((await get('papa', 'dash')).status).toBe(404);
+    const res = await get('wren', 'dash');
+    expect(await res.text()).toBe('BEGIN:VCALENDAR');
+    expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://unicorn-land-ops.github.io');
   });
 
   it('starts a timer from spoken text', async () => {

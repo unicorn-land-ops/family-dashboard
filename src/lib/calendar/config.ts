@@ -6,18 +6,20 @@ function parseOptionalNumber(value: string | undefined): number | undefined {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
+// `feed` names a calendar held by the family-voice worker (GET /cal/:feed). The secret iCal URLs
+// used to be baked into this public bundle; they live in the worker's CAL_FEEDS secret since 31.10.2026.
 export const CALENDAR_FEEDS: PersonConfig[] = [
   {
     id: 'papa',
     name: 'Papa',
     emoji: '\u{1F951}',
-    calendarUrl: import.meta.env.VITE_CAL_PAPA ?? '',
+    feed: 'papa',
   },
   {
     id: 'papa-work',
     name: 'Papa',
     emoji: '\u{1F951}',
-    calendarUrl: import.meta.env.VITE_CAL_PAPA_WORK ?? '',
+    feed: 'papa-work',
     isWorkCalendar: true,
   },
   {
@@ -26,13 +28,13 @@ export const CALENDAR_FEEDS: PersonConfig[] = [
     id: 'daddy',
     name: 'Daddy',
     emoji: '\u{1F36A}',
-    calendarUrl: '',
+    feed: '',
   },
   {
     id: 'papa',
     name: 'Papa',
     emoji: '\u{1F951}',
-    calendarUrl: import.meta.env.VITE_CAL_DADDY ?? '',
+    feed: 'culley-haynes',
     travelTimezone: import.meta.env.VITE_DADDY_TRAVEL_TIMEZONE || undefined,
     travelLocationName: import.meta.env.VITE_DADDY_TRAVEL_LOCATION || undefined,
     travelLat: parseOptionalNumber(import.meta.env.VITE_DADDY_TRAVEL_LAT),
@@ -42,32 +44,32 @@ export const CALENDAR_FEEDS: PersonConfig[] = [
     id: 'daddy-work',
     name: 'Daddy',
     emoji: '\u{1F36A}',
-    calendarUrl: import.meta.env.VITE_CAL_DADDY_WORK ?? '',
+    feed: 'daddy-work',
     isWorkCalendar: true,
   },
   {
     id: 'wren',
     name: 'Wren',
     emoji: '\u{1F338}',
-    calendarUrl: import.meta.env.VITE_CAL_WREN ?? '',
+    feed: 'wren',
   },
   {
     id: 'ellis',
     name: 'Ellis',
     emoji: '\u{1F96D}',
-    calendarUrl: import.meta.env.VITE_CAL_ELLIS ?? '',
+    feed: 'ellis',
   },
   {
     id: 'family',
     name: 'Family',
     emoji: '\u{1F3E0}',
-    calendarUrl: import.meta.env.VITE_CAL_FAMILY ?? '',
+    feed: 'family',
   },
   {
     id: 'papa',
     name: 'Papa',
     emoji: '\u{1F951}',
-    calendarUrl: import.meta.env.VITE_CAL_TRIPIT ?? '',
+    feed: '', // TripIt: never configured
     isTravelCalendar: true,
   },
 ];

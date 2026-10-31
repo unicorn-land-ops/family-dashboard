@@ -5,6 +5,9 @@
 //   POST /redeem  {kid, reward}   spend points on the best-matching reward
 //   GET  /points?kid=             how many points, what's next
 //   POST /timer   {text, kid?}    "10 minutes tablet" -> a timer on the kiosk dial
+//   GET  /cal/:feed               the dashboard's iCal feeds, held here so the public bundle has no
+//                                 secret calendar URLs (leak found 25.10, fixed 31.10.2026).
+//                                 Needs `Bearer <DASH_KEY>`, a read-only key, never the voice token.
 //
 // Every request needs `Authorization: Bearer <VOICE_TOKEN>`.
 // Replies are one speakable sentence (text/plain); add ?json=1 for JSON.
@@ -18,7 +21,11 @@ interface Env {
   SUPABASE_URL: string;
   SUPABASE_ANON_KEY: string;
   VOICE_TOKEN: string;
+  DASH_KEY: string;
+  CAL_FEEDS: string; // JSON {feed: ics url}
 }
+
+const DASHBOARD_ORIGIN = 'https://unicorn-land-ops.github.io';
 
 const PEOPLE = ['wren', 'ellis', 'papa', 'daddy'];
 
@@ -183,17 +190,17 @@ async function pointsRoute(env: Env, url: URL): Promise<Reply> {
 
 // ---------------------------------------------------------------------------
 
-async function authorized(req: Request, env: Env): Promise<boolean> {
-  if (!env.VOICE_TOKEN) return false; // never run open if the secret is missing
+async function authorized(req: Request, secret: string): Promise<boolean> {
+  if (!secret) return false; // never run open if the secret is missing
   const got = new TextEncoder().encode(req.headers.get('Authorization') ?? '');
-  const want = new TextEncoder().encode(`Bearer ${env.VOICE_TOKEN}`);
+  const want = new TextEncoder().encode(`Bearer ${secret}`);
   // timingSafeEqual is a Workers extension of SubtleCrypto.
   const subtle = crypto.subtle as SubtleCrypto & { timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean };
   return got.byteLength === want.byteLength && subtle.timingSafeEqual(got, want);
 }
 
 async function route(req: Request, env: Env, url: URL): Promise<Reply> {
-  if (!(await authorized(req, env))) return bad('Unauthorized', 401);
+  if (!(await authorized(req, env.VOICE_TOKEN))) return bad('Unauthorized', 401);
   if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return bad('Supabase is not configured.', 500);
 
   const key = `${req.method} ${url.pathname.replace(/\/+$/, '')}`;
@@ -212,9 +219,28 @@ async function route(req: Request, env: Env, url: URL): Promise<Reply> {
   return handler(env, body as Record<string, unknown>);
 }
 
+async function calendar(req: Request, env: Env, feed: string): Promise<Response> {
+  const cors = {
+    'Access-Control-Allow-Origin': DASHBOARD_ORIGIN,
+    'Access-Control-Allow-Headers': 'Authorization',
+    Vary: 'Origin',
+  };
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+  if (!(await authorized(req, env.DASH_KEY))) return new Response('Unauthorized', { status: 401, headers: cors });
+  const src = (JSON.parse(env.CAL_FEEDS || '{}') as Record<string, string>)[feed];
+  if (!src) return new Response('Unknown feed', { status: 404, headers: cors });
+  const up = await fetch(src);
+  if (!up.ok) return new Response(`Upstream ${up.status}`, { status: 502, headers: cors });
+  return new Response(await up.text(), {
+    headers: { ...cors, 'Content-Type': 'text/calendar; charset=utf-8', 'Cache-Control': 'private, max-age=300' },
+  });
+}
+
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
+    const cal = url.pathname.match(/^\/cal\/([a-z-]+)$/);
+    if (cal) return calendar(req, env, cal[1]);
     let reply: Reply;
     try {
       reply = await route(req, env, url);

@@ -12,11 +12,11 @@ export function useCalendar() {
   const queries = useQueries({
     queries: CALENDAR_FEEDS.map((feed, index) => ({
       queryKey: ['calendar', feed.id, index],
-      queryFn: () => fetchCalendarFeed(feed.calendarUrl),
+      queryFn: () => fetchCalendarFeed(feed.feed),
       staleTime: 5 * 60 * 1000,
       refetchInterval: 15 * 60 * 1000,
       retry: 3,
-      enabled: !!feed.calendarUrl,
+      enabled: !!feed.feed,
     })),
   });
 
